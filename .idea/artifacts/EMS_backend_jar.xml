@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="EMS-backend:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/EMS_backend_jar</output-path>
+    <root id="archive" name="EMS-backend.jar" />
+  </artifact>
+</component>

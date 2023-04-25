@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="generator.mapper.PurchaseApplyMapper">
+
+    <resultMap id="BaseResultMap" type="generator.domain.PurchaseApply">
+            <id property="purchaseApplyID" column="PurchaseApplyID" jdbcType="INTEGER"/>
+            <result property="purchaseApplySheetID" column="PurchaseApplySheetID" jdbcType="INTEGER"/>
+            <result property="deviceName" column="DeviceName" jdbcType="VARCHAR"/>
+            <result property="deviceType" column="DeviceType" jdbcType="VARCHAR"/>
+            <result property="deviceModel" column="DeviceModel" jdbcType="VARCHAR"/>
+            <result property="deviceQuantity" column="DeviceQuantity" jdbcType="INTEGER"/>
+            <result property="purchaseBudget" column="PurchaseBudget" jdbcType="DECIMAL"/>
+            <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        PurchaseApplyID,PurchaseApplySheetID,DeviceName,
+        DeviceType,DeviceModel,DeviceQuantity,
+        PurchaseBudget,IsDeleted,CreateTime,
+        UpdateTime
+    </sql>
+</mapper>

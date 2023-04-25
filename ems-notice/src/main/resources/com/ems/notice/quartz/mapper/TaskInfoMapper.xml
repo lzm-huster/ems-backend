@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ems.notice.quartz.mapper.TaskInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.ems.notice.quartz.model.entity.TaskInfo">
+            <id property="taskID" column="TaskID" jdbcType="INTEGER"/>
+            <result property="taskGroup" column="TaskGroup" jdbcType="VARCHAR"/>
+            <result property="taskName" column="TaskName" jdbcType="VARCHAR"/>
+            <result property="taskDescription" column="TaskDescription" jdbcType="VARCHAR"/>
+            <result property="taskStatus" column="TaskStatus" jdbcType="TINYINT"/>
+            <result property="taskCron" column="TaskCron" jdbcType="VARCHAR"/>
+            <result property="taskClass" column="TaskClass" jdbcType="VARCHAR"/>
+            <result property="noticeCreatorID" column="NoticeCreatorID" jdbcType="INTEGER"/>
+            <result property="noticeReceiverID" column="NoticeReceiverID" jdbcType="INTEGER"/>
+            <result property="noticeInfo" column="NoticeInfo" jdbcType="VARCHAR"/>
+            <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        TaskID,TaskGroup,TaskName,
+        TaskDescription,TaskStatus,TaskCron,
+        TaskClass,NoticeCreatorID,NoticeReceiverID,
+        NoticeInfo,IsDeleted,CreateTime,
+        UpdateTime
+    </sql>
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from TaskInfo
+        where id = #{TaskID,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from TaskInfo
+        where id = #{TaskID,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" parameterType="com.ems.notice.quartz.model.entity.TaskInfo">
+        <selectKey resultType="java.lang.Integer" keyProperty="TaskID" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into TaskInfo (TaskGroup, TaskName, TaskDescription,taskStatus,taskCron,
+        createTime, updateTime)
+        values (#{TaskCron,jdbcType=VARCHAR}, #{TaskName,jdbcType=VARCHAR}, #{status,jdbcType=CHAR},
+        #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
+    </insert>
+    <insert id="insertSelective" parameterType="com.ems.notice.quartz.model.entity.TaskInfo">
+        <selectKey resultType="java.lang.Integer" keyProperty="id" order="AFTER">
+            SELECT LAST_INSERT_ID()
+        </selectKey>
+        insert into TaskInfo
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cron != null">
+                cron,
+            </if>
+            <if test="jobName != null">
+                job_name,
+            </if>
+            <if test="status != null">
+                status,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+            <if test="updateTime != null">
+                update_time,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cron != null">
+                #{TaskCron,jdbcType=VARCHAR},
+            </if>
+            <if test="jobName != null">
+                #{TaskName,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=CHAR},
+            </if>
+            <if test="createTime != null">
+                #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.ems.notice.quartz.model.entity.TaskInfo">
+        update TaskInfo
+        <set>
+            <if test="cron != null">
+                cron = #{TaskCron,jdbcType=VARCHAR},
+            </if>
+            <if test="jobName != null">
+                job_name = #{TaskName,jdbcType=VARCHAR},
+            </if>
+            <if test="status != null">
+                status = #{status,jdbcType=CHAR},
+            </if>
+            <if test="createTime != null">
+                create_time = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="updateTime != null">
+                update_time = #{updateTime,jdbcType=TIMESTAMP},
+            </if>
+        </set>
+        where id = #{TaskID,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.ems.notice.quartz.model.entity.TaskInfo">
+        update TaskInfo
+        set cron = #{TaskCron,jdbcType=VARCHAR},
+            job_name = #{TaskName,jdbcType=VARCHAR},
+            status = #{status,jdbcType=CHAR},
+            create_time = #{createTime,jdbcType=TIMESTAMP},
+            update_time = #{updateTime,jdbcType=TIMESTAMP}
+        where id = #{TaskID,jdbcType=INTEGER}
+    </update>
+
+    <select id="selectByJobName" resultMap="BaseResultMap"
+            parameterType="java.lang.String">
+        select * from TaskInfo where job_name=#{TaskName}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select * from TaskInfo
+    </select>
+
+    <select id="selectTaskInfos" resultMap="BaseResultMap"
+            parameterType="com.ems.notice.quartz.model.vo.TaskInfoReq">
+        select * from TaskInfo
+        <where>
+            <if test="searchKey != null and searchKey != ''">job_name like concat('%',concat(trim(#{searchKey}),'%'))
+            </if>
+            <if test="status != null and status != ''">and status=#{status}</if>
+        </where>
+    </select>
+</mapper>

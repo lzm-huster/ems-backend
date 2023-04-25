@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="generator.mapper.TaskInfoMapper">
+
+    <resultMap id="BaseResultMap" type="generator.domain.TaskInfo">
+            <id property="taskID" column="TaskID" jdbcType="INTEGER"/>
+            <result property="taskGroup" column="TaskGroup" jdbcType="VARCHAR"/>
+            <result property="taskName" column="TaskName" jdbcType="VARCHAR"/>
+            <result property="taskDescription" column="TaskDescription" jdbcType="VARCHAR"/>
+            <result property="taskStatus" column="TaskStatus" jdbcType="TINYINT"/>
+            <result property="taskCron" column="TaskCron" jdbcType="VARCHAR"/>
+            <result property="taskClass" column="TaskClass" jdbcType="VARCHAR"/>
+            <result property="noticeCreatorID" column="NoticeCreatorID" jdbcType="INTEGER"/>
+            <result property="noticeReceiverID" column="NoticeReceiverID" jdbcType="INTEGER"/>
+            <result property="noticeInfo" column="NoticeInfo" jdbcType="VARCHAR"/>
+            <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        TaskID,TaskGroup,TaskName,
+        TaskDescription,TaskStatus,TaskCron,
+        TaskClass,NoticeCreatorID,NoticeReceiverID,
+        NoticeInfo,IsDeleted,CreateTime,
+        UpdateTime
+    </sql>
+</mapper>
