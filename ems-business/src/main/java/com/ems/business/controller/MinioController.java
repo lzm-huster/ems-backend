@@ -1,7 +1,7 @@
 package com.ems.business.controller;
 
 
-import com.ems.cos.MinioConfigProperties;
+import com.ems.cos.config.MinioConfigProperties;
 import com.ems.cos.MinioUtil;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +24,11 @@ public class MinioController {
     @PostMapping(value = "/upload")
     public String upload(@RequestParam(name = "file") MultipartFile multipartFile) {
         String fileName = multipartFile.getOriginalFilename();
-        if(!minioUtil.bucketExists(minioProperties.getBucketName())){
+        if(!minioUtil.bucketExists()){
             minioUtil.createBucket(minioProperties.getBucketName());
         }
-        minioUtil.upload( multipartFile, fileName,minioProperties.getBucketName());
-        return minioUtil.getPreSignedObjectUrl(minioProperties.getBucketName(), fileName);
+        minioUtil.upload( multipartFile, fileName);
+        String filePath = minioProperties.getEndpoint()+"/"+minioProperties.getBucketName()+"/"+fileName;
+        return filePath;
     }
 }

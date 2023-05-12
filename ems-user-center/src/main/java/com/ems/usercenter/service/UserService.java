@@ -1,5 +1,7 @@
 package com.ems.usercenter.service;
 
+import com.ems.usercenter.model.entity.User;
+
 public interface UserService {
-    String getPhoneById(Integer id);
+    User getUserById(Integer id);
 }

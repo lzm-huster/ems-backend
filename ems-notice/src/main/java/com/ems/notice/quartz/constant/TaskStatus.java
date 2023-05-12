@@ -3,7 +3,7 @@ package com.ems.notice.quartz.constant;
 
 public enum TaskStatus {
 
-    START(2, "开启"),
+    START(1, "开启"),
     STOP(0, "关闭");
 
     private Integer code;

@@ -35,7 +35,7 @@ public class AuthInterceptor {
      */
     @Around("@annotation(authCheck)")
     public Object doInterceptor(ProceedingJoinPoint joinPoint, AuthCheck authCheck) throws Throwable {
-        String mustAuth = authCheck.mustAuth();
+        String[] mustAuths = authCheck.mustAuth();
         RequestAttributes requestAttributes = RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
         // 获取请求头中的token
@@ -76,9 +76,14 @@ public class AuthInterceptor {
         }
         // 判断是否有权限
         List userPermissionList = (List)userPermission;
-        if (!userPermissionList.contains(mustAuth)){
-            throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"无权限访问");
+        for (String auth: mustAuths) {
+            if (!userPermissionList.contains(auth)){
+                throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"无权限访问");
+            }
         }
+//        if (!userPermissionList.contains(mustAuth)){
+//            throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"无权限访问");
+//        }
         // 放行
         return joinPoint.proceed();
     }

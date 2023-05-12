@@ -2,6 +2,7 @@ package com.ems.business.controller;
 
 
 
+import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
@@ -20,6 +21,7 @@ public class HelloController {
 
 //    @Autowired
 //    private Scheduler scheduler;
+//    @AuthCheck("")
     @GetMapping("/test")
     public int test() {
         System.out.println("test  test......");

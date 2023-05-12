@@ -2,7 +2,6 @@ package com.ems.notice.quartz.job;
 
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.quartz.QuartzJobBean;
 
 import java.time.LocalDateTime;

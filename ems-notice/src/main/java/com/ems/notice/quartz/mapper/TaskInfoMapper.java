@@ -2,10 +2,7 @@ package com.ems.notice.quartz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.notice.quartz.model.entity.TaskInfo;
-import com.ems.notice.quartz.model.vo.TaskInfoReq;
 import org.apache.ibatis.annotations.Mapper;
-
-import java.util.List;
 
 /**
 * @author 龙志明

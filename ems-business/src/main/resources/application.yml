@@ -88,3 +88,15 @@ jwt:
   expire: 3600
   # header 名称
   header: token
+email:
+  host: smtp.qq.com
+  port:
+  username:
+  password:
+  properties:
+    mail:
+      smtp:
+        auth: true
+        starttls:
+          enable: true
+          required: true

@@ -1,13 +1,11 @@
-package com.ems.notice.quartz.model.vo;
+package com.ems.notice.quartz.model.request;
 
 import lombok.Data;
 
+import java.util.Date;
+
 @Data
-public class TaskInfoReq {
-    /**
-     * 任务编号
-     */
-    private Integer taskId;
+public class TaskAddReq {
     /**
      * 任务名称
      */
@@ -15,12 +13,16 @@ public class TaskInfoReq {
     /**
      * 任务时间表达式
      */
-    private String taskCron;
+    private Date taskDate;
 
     /**
      * 任务状态
      */
-    private String taskStatus;
+    private Integer taskStatus;
+    /**
+     * 任务描述
+     */
+    private String taskDescription;
     /**
      * 通知创建人
      */
@@ -29,18 +31,12 @@ public class TaskInfoReq {
      * 通知接收人
      */
     private Integer noticeReceiverID;
-
     /**
      * 任务类型
      */
     private String taskType;
-
     /**
-     * 每页显示条数
+     * 通知内容
      */
-    private int pageSize=10;
-    /**
-     * 当前页数
-     */
-    private int pageCurrent=1;
+    private String noticeInfo;
 }

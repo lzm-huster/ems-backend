@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ems.usercenter.mapper.RoleMapper">
+
+    <resultMap id="BaseResultMap" type="com.ems.usercenter.model.entity.Role">
+            <id property="roleID" column="RoleID" jdbcType="INTEGER"/>
+            <result property="roleName" column="RoleName" jdbcType="VARCHAR"/>
+            <result property="roleDescription" column="RoleDescription" jdbcType="VARCHAR"/>
+            <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        RoleID,RoleName,RoleDescription,
+        IsDeleted,CreateTime,UpdateTime
+    </sql>
+</mapper>

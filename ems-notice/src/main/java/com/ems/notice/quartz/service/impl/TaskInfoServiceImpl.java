@@ -1,16 +1,23 @@
 package com.ems.notice.quartz.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
+import com.ems.notice.quartz.constant.DefaultName;
 import com.ems.notice.quartz.constant.TaskStatus;
-import com.ems.notice.quartz.model.entity.TaskInfo;
-import com.ems.notice.quartz.model.vo.TaskInfoReq;
+import com.ems.notice.quartz.constant.TaskUtil;
 import com.ems.notice.quartz.manager.TaskManager;
 import com.ems.notice.quartz.mapper.TaskInfoMapper;
+import com.ems.notice.quartz.model.entity.TaskInfo;
+import com.ems.notice.quartz.model.request.TaskAddReq;
+import com.ems.notice.quartz.model.request.TaskInfoReq;
+import com.ems.notice.quartz.model.response.TaskInfoRes;
 import com.ems.notice.quartz.service.TaskInfoService;
-import com.github.pagehelper.PageHelper;
-import com.github.pagehelper.PageInfo;
-import org.quartz.CronExpression;
+import com.ems.notice.quartz.strategy.NoticeHandlerFactory;
+import com.ems.usercenter.model.entity.User;
+import com.ems.usercenter.service.UserService;
+import com.ems.utils.CronUtil;
+import javafx.concurrent.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -18,8 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.annotation.Resource;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,8 +38,12 @@ public class TaskInfoServiceImpl implements TaskInfoService {
 
     @Autowired
     private TaskManager taskManager;
+    @Autowired
+    private TaskUtil taskUtil;
+    @Autowired
+    private UserService userService;
 
-//    @Override
+    //    @Override
 //    public PageInfo<TaskInfo> selectTaskListByPage(TaskInfoReq taskInfoReq) {
 //        PageHelper.startPage(taskInfoReq.getPageCurrent(), taskInfoReq.getPageSize());
 //        List<TaskInfo> list = taskInfoMapper.selectTaskInfos(taskInfoReq);
@@ -97,26 +106,30 @@ public class TaskInfoServiceImpl implements TaskInfoService {
 //        return true;
 //    }
 //
-//    @Override
-//    public boolean addJob(TaskInfoReq taskInfoReq) {
-//        if (!taskManager.addJob(taskInfoReq)) {
-//            throw new BusinessException(ErrorCode.OPERATION_ERROR,"增加任务失败，出现未知问题");
-//        }
-//        TaskInfo data = taskInfoMapper.selectByJobName(taskInfoReq.getTaskName());
-//        //当任务不存在，则返回成功插入
-//        if (Objects.isNull(data)) {
-//            data = new TaskInfo();
-//            BeanUtils.copyProperties(taskInfoReq, data);
-//            data.setCreateTime(new Date());
-//            taskInfoMapper.insertSelective(data);
-//            return true;
-//        } else {
-//            throw new BusinessException(ErrorCode.OPERATION_ERROR,"增加任务失败，该任务已存在");
-//        }
-//
-//    }
+    @Transactional
+    @Override
+    public TaskInfoRes addJob(TaskInfo taskInfo) {
+        QueryWrapper<TaskInfo> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("TaskName", taskInfo.getTaskName());
+        int res = 0;
+        //当任务不存在，则返回成功插入
+        if (!Objects.isNull(taskInfoMapper.selectOne(queryWrapper))) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "增加任务失败，该任务已存在");
+        }
+        res =taskInfoMapper.insert(taskInfo);
+        if (res == 0){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "数据库插入任务失败，请重新添加");
+        }
+        if (!taskManager.addJob(taskInfo)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "数据库增加成功，但任务调度增加失败，请刷新后重启任务");
+        }
+        User creator = userService.getUserById(taskInfo.getNoticeCreatorID());
+        User receiver = userService.getUserById(taskInfo.getNoticeReceiverID());
+        TaskInfoRes taskInfoRes = taskUtil.taskInfoRes(taskInfo, creator.getUserName(), receiver.getUserName());
+        return taskInfoRes;
+    }
 
-//    @Override
+    //    @Override
 //    public Result delete(TaskInfoReq reqVo) {
 //        try {
 //            //TODO 删除任务只是做了暂停，如果是 Quartz Jdbc 模式下添加重复任务可能加不进去，并没有真正删除(可自行调整)
@@ -133,8 +146,10 @@ public class TaskInfoServiceImpl implements TaskInfoService {
 //        }
 //    }
 //
-//    @Override
-//    public List<TaskInfo> selectTasks() {
-//        return taskInfoMapper.selectAll();
-//    }
+    @Override
+    public List<TaskInfo> selectTasks() {
+        return taskInfoMapper.selectList(new QueryWrapper<>());
+    }
+
+
 }

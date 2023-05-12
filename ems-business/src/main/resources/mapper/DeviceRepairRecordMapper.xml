@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ems.business.mapper.DeviceRepairRecordMapper">
+
+    <resultMap id="BaseResultMap" type="com.ems.business.model.entity.DeviceRepairRecord">
+            <result property="repairID" column="RepairID" jdbcType="INTEGER"/>
+            <result property="deviceID" column="DeviceID" jdbcType="INTEGER"/>
+            <result property="repairTime" column="RepairTime" jdbcType="TIMESTAMP"/>
+            <result property="repairContent" column="RepairContent" jdbcType="VARCHAR"/>
+            <result property="repairFee" column="RepairFee" jdbcType="DECIMAL"/>
+            <result property="remark" column="Remark" jdbcType="VARCHAR"/>
+            <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        RepairID,DeviceID,RepairTime,
+        RepairContent,RepairFee,Remark,
+        IsDeleted,CreateTime,UpdateTime
+    </sql>
+</mapper>

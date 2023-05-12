@@ -14,11 +14,11 @@ import java.lang.annotation.Target;
 public @interface AuthCheck {
 
     /**
-     * 必须有某个角色
+     * 必须有某个权限
      *
      * @return
      */
-    String mustAuth() default "";
+    String[] mustAuth() default {};
 
 }
 

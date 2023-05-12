@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ems.business.mapper.DeviceMapper">
+
+    <resultMap id="BaseResultMap" type="com.ems.business.model.entity.Device">
+            <id property="deviceID" column="DeviceID" jdbcType="INTEGER"/>
+            <result property="deviceName" column="DeviceName" jdbcType="VARCHAR"/>
+            <result property="deviceModel" column="DeviceModel" jdbcType="VARCHAR"/>
+            <result property="deviceType" column="DeviceType" jdbcType="VARCHAR"/>
+            <result property="deviceSpecification" column="DeviceSpecification" jdbcType="VARCHAR"/>
+            <result property="deviceImageList" column="DeviceImageList" jdbcType="VARCHAR"/>
+            <result property="deviceState" column="DeviceState" jdbcType="VARCHAR"/>
+            <result property="userID" column="UserID" jdbcType="INTEGER"/>
+            <result property="stockQuantity" column="StockQuantity" jdbcType="INTEGER"/>
+            <result property="unitPrice" column="UnitPrice" jdbcType="DECIMAL"/>
+            <result property="borrowRate" column="BorrowRate" jdbcType="DECIMAL"/>
+            <result property="purchaseDate" column="PurchaseDate" jdbcType="DATE"/>
+            <result property="assetNumber" column="AssetNumber" jdbcType="VARCHAR"/>
+            <result property="expectedScrapDate" column="ExpectedScrapDate" jdbcType="DATE"/>
+            <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        DeviceID,DeviceName,DeviceModel,
+        DeviceType,DeviceSpecification,DeviceImageList,
+        DeviceState,UserID,StockQuantity,
+        UnitPrice,BorrowRate,PurchaseDate,
+        AssetNumber,ExpectedScrapDate,IsDeleted,
+        CreateTime,UpdateTime
+    </sql>
+</mapper>

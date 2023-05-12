@@ -1,5 +1,6 @@
 package com.ems.cos;
 
+import com.ems.cos.config.MinioConfigProperties;
 import io.minio.*;
 import io.minio.http.Method;
 import io.minio.messages.DeleteError;
@@ -25,6 +26,8 @@ public class MinioUtil {
 
     @Autowired
     private MinioClient minioClient;
+    @Autowired
+    private MinioConfigProperties properties;
 
     /**
      * 查看存储bucket是否存在
@@ -36,6 +39,21 @@ public class MinioUtil {
         Boolean found;
         try {
             found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return found;
+    }
+    /**
+     * 查看存储bucket是否存在
+     *
+     * @return boolean
+     */
+    public Boolean bucketExists() {
+        Boolean found;
+        try {
+            found = minioClient.bucketExists(BucketExistsArgs.builder().bucket(properties.getBucketName()).build());
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -89,6 +107,25 @@ public class MinioUtil {
     public Boolean upload(MultipartFile file, String fileName, String bucketName) {
         try {
             PutObjectArgs objectArgs = PutObjectArgs.builder().bucket(bucketName).object(fileName)
+                    .stream(file.getInputStream(), file.getSize(), -1).contentType(file.getContentType()).build();
+            //文件名称相同会覆盖
+            minioClient.putObject(objectArgs);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+    /**
+     * 文件上传
+     *
+     * @param file       文件
+     * @param fileName   文件名
+     * @return Boolean
+     */
+    public Boolean upload(MultipartFile file, String fileName) {
+        try {
+            PutObjectArgs objectArgs = PutObjectArgs.builder().bucket(properties.getBucketName()).object(fileName)
                     .stream(file.getInputStream(), file.getSize(), -1).contentType(file.getContentType()).build();
             //文件名称相同会覆盖
             minioClient.putObject(objectArgs);

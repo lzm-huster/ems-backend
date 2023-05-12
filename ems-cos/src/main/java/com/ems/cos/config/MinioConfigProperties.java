@@ -1,4 +1,4 @@
-package com.ems.cos;
+package com.ems.cos.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

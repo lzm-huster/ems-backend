@@ -1,4 +1,4 @@
-package com.ems.cos;
+package com.ems.cos.config;
 
 import io.minio.MinioClient;
 import org.springframework.beans.factory.annotation.Autowired;

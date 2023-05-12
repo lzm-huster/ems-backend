@@ -21,6 +21,7 @@
         <module>ems-notice</module>
         <module>ems-redis</module>
         <module>ems-user-center</module>
+        <module>ems-message</module>
     </modules>
 
 
@@ -65,6 +66,11 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.5.3</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.jeffreyning</groupId>
+            <artifactId>mybatisplus-plus</artifactId>
+            <version>1.7.4-RELEASE</version>
+        </dependency>
         <!--   lombok     -->
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -101,6 +107,7 @@
             <artifactId>springfox-boot-starter</artifactId>
             <version>3.0.0</version>
         </dependency>
+
     </dependencies>
 
 </project>
