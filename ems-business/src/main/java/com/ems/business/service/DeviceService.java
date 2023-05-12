@@ -11,4 +11,6 @@ import com.ems.business.model.entity.Device;
 */
 public interface DeviceService extends IService<Device> {
 
+    void test();
+
 }

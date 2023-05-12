@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="seven-ems@localhost" uuid="975c038d-dbb6-400a-b76f-fcc94c028a55">
-      <driver-ref>mysql.8</driver-ref>
-      <synchronize>true</synchronize>
-      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
-      <jdbc-url>jdbc:mysql://localhost:3306/seven-ems</jdbc-url>
-      <working-dir>$ProjectFileDir$</working-dir>
-    </data-source>
     <data-source source="LOCAL" name="seven-ems@101.43.18.103" uuid="0521d2bb-a9b0-45cf-9462-39bab6fa8e21">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
