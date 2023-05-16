@@ -69,7 +69,7 @@ public class JwtUtil {
     public String getUserIdFormToken(String token) {
         String userId;
         try {
-            Claims claims = getClaimsFormToken(token);
+            Claims claims = getClaimsFromToken(token);
             userId = claims.get(CLAIM_KEY_ID,String.class);
         } catch (Exception e) {
             userId = null;
@@ -84,7 +84,7 @@ public class JwtUtil {
      * @param token
      * @return
      */
-    private Claims getClaimsFormToken(String token) {
+    public Claims getClaimsFromToken(String token) {
         Claims claims = null;
         try {
             claims = Jwts.parser()
@@ -134,7 +134,7 @@ public class JwtUtil {
      * @return
      */
     private Date getExpiredDateFormToken(String token) {
-        Claims claims = getClaimsFormToken(token);
+        Claims claims = getClaimsFromToken(token);
         return claims.getExpiration();
     }
 
@@ -156,7 +156,7 @@ public class JwtUtil {
      * @return
      */
     public String refreshToken(String token) {
-        Claims claims = getClaimsFormToken(token);
+        Claims claims = getClaimsFromToken(token);
         claims.put(CLAIM_KEY_CREATED, new Date());
         return generateToken(claims);
     }
