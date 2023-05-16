@@ -2,6 +2,7 @@ package com.ems.usercenter.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.usercenter.mapper.UserMapper;
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 import java.util.Objects;
 
 @Service
-public class UserServiceImpl implements UserService {
+public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Autowired
     private UserMapper userMapper;
     @Override
