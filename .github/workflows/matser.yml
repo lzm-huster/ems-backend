@@ -55,5 +55,5 @@ jobs:
           script: |
             docker pull lbaixiaofei/ems-backend:latest
             docker rm -f homework-back
-            docker run --name=ems-back -d -p 12001:12001 lbaixiaofei/ems-backend:latest
+            docker run --name=ems-back -d -p 8101:8101 lbaixiaofei/ems-backend:latest
             docker image prune -af
