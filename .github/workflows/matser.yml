@@ -54,6 +54,6 @@ jobs:
           key: ${{ secrets.HOST_TOKEN}}
           script: |
             docker pull lbaixiaofei/ems-backend:latest
-            docker rm -f homework-back
+            docker rm -f ems-back
             docker run --name=ems-back -d -p 8101:8101 lbaixiaofei/ems-backend:latest
             docker image prune -af
