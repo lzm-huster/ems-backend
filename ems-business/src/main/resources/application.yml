@@ -100,3 +100,6 @@ email:
         starttls:
           enable: true
           required: true
+crypto:
+  md5:
+    salt: 123456

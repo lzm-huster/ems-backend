@@ -30,5 +30,6 @@ public class MinioController {
         minioUtil.upload( multipartFile, fileName);
         String filePath = minioProperties.getEndpoint()+"/"+minioProperties.getBucketName()+"/"+fileName;
         return filePath;
+
     }
 }
