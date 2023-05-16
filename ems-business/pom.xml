@@ -71,7 +71,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <classifier>exec</classifier>
+<!--                    <classifier>exec</classifier>-->
                     <!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.ems.business.MesApplication</mainClass>
                     <layout>ZIP</layout>
