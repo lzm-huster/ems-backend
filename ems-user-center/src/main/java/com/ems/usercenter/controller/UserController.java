@@ -89,7 +89,7 @@ public class UserController {
         user.setPassword(md5.digestHex(userPassword));
         User queryRes = null;
         if (ObjectUtil.equal(loginType,1)){
-            user.setEmail(userNumber);
+            user.setIDNumber(userNumber);
             queryRes = userService.userLoginByIDNumber(user);
         }
         if (ObjectUtil.equal(loginType,2)){
