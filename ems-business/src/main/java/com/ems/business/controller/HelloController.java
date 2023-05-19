@@ -1,14 +1,10 @@
 package com.ems.business.controller;
 
 
-
 import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
-//import com.ems.notice.quartz.job.EmailNoticeJob;
-//import org.quartz.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +17,7 @@ public class HelloController {
 
 //    @Autowired
 //    private Scheduler scheduler;
+    @AuthCheck
 //    @AuthCheck("")
     @GetMapping("/test")
     public int test() {
