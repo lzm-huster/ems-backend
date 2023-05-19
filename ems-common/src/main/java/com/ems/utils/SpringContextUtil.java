@@ -1,16 +1,12 @@
 package com.ems.utils;
 
-
-
+import org.jetbrains.annotations.NotNull;
 import com.sun.istack.internal.NotNull;
-
 import org.apache.ibatis.javassist.bytecode.stackmap.BasicBlock;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Component;
-
-import javax.validation.constraints.NotNull;
 
 @Component
 public class SpringContextUtil implements ApplicationContextAware {

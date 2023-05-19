@@ -2,6 +2,9 @@ package com.ems.business.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.business.model.entity.PurchaseApplySheet;
+import com.ems.business.model.response.PurchaseApplySheetList;
+
+import java.util.List;
 
 /**
 * @author 龙志明
@@ -10,4 +13,7 @@ import com.ems.business.model.entity.PurchaseApplySheet;
 */
 public interface PurchaseApplySheetService extends IService<PurchaseApplySheet> {
 
+    public List<PurchaseApplySheetList> getPersonPurchaseApplySheetList(int PurchaseApplicantID);
+
+    public List<PurchaseApplySheetList> getAllPurchaseApplySheetList();
 }
