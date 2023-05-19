@@ -49,8 +49,6 @@ public class ResponseResultHandler implements ResponseBodyAdvice<Object> {
             return ResultUtil.error(error.getCode(), error.getMessage());
         } else if (body instanceof BaseResponse) {
             return (BaseResponse) body;
-        } else if  (body instanceof String) {
-            return body;
         }
         return ResultUtil.success(body);
     }

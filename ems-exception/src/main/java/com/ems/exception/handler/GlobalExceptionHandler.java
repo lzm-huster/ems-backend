@@ -20,13 +20,13 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     @ResponseBody
     public ErrorResult businessExceptionHandler(BusinessException e) {
-        log.error("exception.BusinessException", e);
+        log.error("exception.BusinessException", e.getMessage());
         return ErrorResult.fail(e.getCode(), e.getMessage());
     }
 
     @ExceptionHandler(RuntimeException.class)
     public ErrorResult runtimeExceptionHandler(RuntimeException e) {
-        log.error("RuntimeException", e.getCause());
+        log.error("RuntimeException", e);
         return ErrorResult.fail(ErrorCode.SYSTEM_ERROR, e);
     }
 }

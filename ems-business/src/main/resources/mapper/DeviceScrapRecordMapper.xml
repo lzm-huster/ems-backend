@@ -13,6 +13,7 @@
             <result property="scrapReason" column="ScrapReason" jdbcType="VARCHAR"/>
             <result property="deviceState" column="DeviceState" jdbcType="VARCHAR"/>
             <result property="remark" column="Remark" jdbcType="VARCHAR"/>
+            <result property="scrapState" column="ScrapState" jdbcType="VARCHAR"/>
             <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
             <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
@@ -20,7 +21,7 @@
 
     <sql id="Base_Column_List">
         ScrapID,DeviceID,ScrapPerson,
-        ScrapImages,ScrapTime,ScrapReason,
+        ScrapImages,ScrapTime,ScrapReason,ScrapState,
         DeviceState,Remark,IsDeleted,
         CreateTime,UpdateTime
     </sql>

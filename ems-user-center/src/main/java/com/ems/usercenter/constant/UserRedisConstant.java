@@ -7,6 +7,8 @@ import com.ems.exception.BusinessException;
 import com.ems.redis.RedisUtil;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.model.entity.User;
+import com.ems.usercenter.service.PermissionService;
+import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserService;
 import com.ems.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -27,6 +29,10 @@ public class UserRedisConstant {
     private RedisUtil redisUtil;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private PermissionService permissionService;
     public void storeUserInfoRedis(User user, String token) {
         // redis存token及信息
         String key = RedisConstant.UserPrefix + user.getUserID();
@@ -34,9 +40,8 @@ public class UserRedisConstant {
         Integer userId = user.getUserID();
         value.put(RedisConstant.UserToken, token);
         value.put(RedisConstant.UserInfo, user);
-//        List<UserMenuPermissionRes> menuPermissionList = userService.getMenuPermissionList(userId);
-//        value.put(RedisConstant.MenuPermission, menuPermissionList);
-//        value.put(RedisConstant.UserPermission, userService.getUserPermissionList(userId));
+        value.put(RedisConstant.UserRole, roleService.getRoleListByUserId(userId));
+        value.put(RedisConstant.UserPermission, permissionService.getPermissionListByUserId(userId));
         redisUtil.hmset(key, value);
     }
     public Map<Object,Object> getRedisMapFromToken(String token){

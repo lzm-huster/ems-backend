@@ -2,6 +2,9 @@ package com.ems.usercenter.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.usercenter.model.entity.Role;
+import org.w3c.dom.stylesheets.LinkStyle;
+
+import java.util.List;
 
 
 /**
@@ -10,5 +13,5 @@ import com.ems.usercenter.model.entity.Role;
 * @createDate 2023-04-24 09:03:00
 */
 public interface RoleService extends IService<Role> {
-
+    List<String> getRoleListByUserId(Integer userId);
 }

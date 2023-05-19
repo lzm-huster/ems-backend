@@ -56,6 +56,9 @@ public class DeviceScrapRecord implements Serializable {
     @TableField(value = "DeviceState")
     private String deviceState;
 
+    @TableField(value = "ScrapState")
+    private String scrapState;
+
     /**
      * 备注
      */

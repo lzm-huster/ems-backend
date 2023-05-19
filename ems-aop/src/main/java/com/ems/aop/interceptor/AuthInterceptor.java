@@ -1,5 +1,7 @@
 package com.ems.aop.interceptor;
 
+import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import com.ems.annotation.AuthCheck;
 import com.ems.common.ErrorCode;
 import com.ems.redis.constant.RedisConstant;
@@ -17,6 +19,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Map;
 
 @Aspect
 @Component
@@ -60,19 +63,22 @@ public class AuthInterceptor {
         String redisUserKey = RedisConstant.UserPrefix + userId;
         String redisUserPermissionKey = RedisConstant.UserPermission;
         // 判断redis中token是否存在
-        boolean isExist = redisUtil.hHasKey(redisUserKey,redisUserTokenKey);
-        if (!isExist){
-            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR,"用户未登录");
+        Map<Object, Object> userInfo = redisUtil.hmget(redisUserKey);
+        if (ObjectUtil.isNull(userInfo)){
+            throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR,"用户登录信息已丢失");
         }
         // 判断token是否一致
-        String redisUserToken = (String) redisUtil.hget(redisUserKey,redisUserTokenKey);
-        if (!redisUserToken.equals(token)){
+        Object tokenObj = userInfo.get(RedisConstant.UserToken);
+        if (ObjectUtil.isNull(tokenObj)){
             throw new BusinessException(ErrorCode.Header_Error,"token不正确");
         }
         // 从redis中获取权限列表
-        Object userPermission = redisUtil.hget(redisUserKey, redisUserPermissionKey);
+        Object userPermission = userInfo.get(RedisConstant.UserPermission);
         if (userPermission == null){
             throw new BusinessException(ErrorCode.NO_AUTH_ERROR,"无权限访问");
+        }
+        if (ArrayUtil.isEmpty(mustAuths)){
+            return joinPoint.proceed();
         }
         // 判断是否有权限
         List userPermissionList = (List)userPermission;
