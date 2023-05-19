@@ -3,6 +3,9 @@ package com.ems.usercenter.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.usercenter.model.entity.Role;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 
 /**
@@ -13,7 +16,11 @@ import org.apache.ibatis.annotations.Mapper;
 */
 @Mapper
 public interface RoleMapper extends BaseMapper<Role> {
-
+    @Select("select r.RoleName " +
+            "from Role r " +
+            "inner join UserRole ur on r.RoleID = ur.RoleID " +
+            "where ur.UserID = #{userId}")
+    List<String> getRoleListByUserId(Integer userId);
 }
 
 

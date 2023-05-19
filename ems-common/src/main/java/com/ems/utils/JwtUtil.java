@@ -45,7 +45,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setClaims(claims)//把荷载存储到里面
                 .setExpiration(generateExpirationDate())//设置失效时间
-                .signWith(SignatureAlgorithm.ES512, secret) //签名
+                .signWith(SignatureAlgorithm.HS512, secret) //签名
                 .compact();
     }
 

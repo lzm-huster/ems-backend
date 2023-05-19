@@ -4,13 +4,18 @@ import lombok.Data;
 
 @Data
 public class UserLoginReq {
+
     /**
-     * 用户学号
+     * 邮箱or手机号
      */
     private String userNumber;
 
-    /**
-     * 用户密码
+    /***
+     * 密码
      */
-    private String userPassword;
+    private String password;
+    /**
+     * 类型
+     */
+    private Integer loginType;
 }

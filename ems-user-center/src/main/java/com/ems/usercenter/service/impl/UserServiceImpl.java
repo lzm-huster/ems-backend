@@ -27,9 +27,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public User userLogin(User user) {
+    public User userLoginByIDNumber(User user) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("IDNumber",user.getIDNumber());
+        queryWrapper.eq("IDNumber",user.getEmail());
         User queryUser = userMapper.selectOne(queryWrapper);
         if (ObjectUtil.isNull(queryUser)){
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"无此用户");
@@ -40,4 +40,34 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //  int insert = userMapper.insert(user);
         return queryUser;
     }
+
+    @Override
+    public User userLoginByPhone(User user) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("PhoneNumber",user.getPhoneNumber());
+        User queryUser = userMapper.selectOne(queryWrapper);
+        if (ObjectUtil.isNull(queryUser)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"无此用户");
+        }
+        if (!queryUser.getPassword().equals(user.getPassword())){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"密码错误");
+        }
+        //  int insert = userMapper.insert(user);
+        return queryUser;
+    }
+
+//    @Override
+//    public User userLogin(User user) {
+//        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+//        queryWrapper.eq("IDNumber",user.getIDNumber());
+//        User queryUser = userMapper.selectOne(queryWrapper);
+//        if (ObjectUtil.isNull(queryUser)){
+//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"无此用户");
+//        }
+//        if (!queryUser.getPassword().equals(user.getPassword())){
+//            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"密码错误");
+//        }
+//        //  int insert = userMapper.insert(user);
+//        return queryUser;
+//    }
 }
