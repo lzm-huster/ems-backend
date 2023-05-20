@@ -59,7 +59,7 @@ public class DeviceController {
     public List<DeviceList> getPersonDeviceList(int UserID)
     {
         List<DeviceList> deviceLists=null;
-        deviceLists=deviceServiceImpl.getPersonDeviceList(UserID);
+        deviceLists=deviceMapper.getPersonDeviceList(UserID);
 
         return deviceLists;
     }
@@ -146,12 +146,6 @@ public class DeviceController {
     }
 
 
-    @GetMapping("/test")
-    public List<DeviceList> test(int ID)
-    {
-        List<DeviceList> device = deviceMapper.getPersonDeviceList(ID);
-        return device;
-    }
 
 
 }

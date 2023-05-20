@@ -24,14 +24,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
     @Autowired
     private DeviceMapper deviceMapper;
 
-    //获取个人设备列表
-    public List<DeviceList> getPersonDeviceList(int UserID)
-    {
-        List<DeviceList> deviceList=null;
-        deviceList=deviceMapper.getPersonDeviceList(UserID);
 
-        return deviceList;
-    }
     //获取所有设备列表
     public List<DeviceList> getAllDeviceList()
     {

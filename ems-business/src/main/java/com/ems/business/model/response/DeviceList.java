@@ -1,7 +1,6 @@
 package com.ems.business.model.response;
 
-
-
+import lombok.Data;
 
 import java.util.Date;
 
@@ -9,7 +8,7 @@ import java.util.Date;
  * 设备列表返回信息  来源于Device表和User表
  * 设备编号、设备名称、设备类型、设备型号、设备状态、设备负责人、购买时间
  */
-
+@Data
 public class DeviceList {
     /**
      * 设备编号

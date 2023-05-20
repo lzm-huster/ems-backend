@@ -13,8 +13,7 @@ import java.util.List;
 * @createDate 2023-04-24 09:03:00
 */
 public interface DeviceService extends IService<Device> {
-    //获取个人设备列表
-    public List<DeviceList> getPersonDeviceList(int UserID);
+
     //获取所有设备列表
     public List<DeviceList> getAllDeviceList();
     //获取公用设备列表
