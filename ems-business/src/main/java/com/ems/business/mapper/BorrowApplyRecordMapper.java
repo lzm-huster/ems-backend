@@ -69,6 +69,11 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
     @Select("select `ApplyDescription` from `BorrowApplyRecord` where `BorrowApplyID` = #{BorrowApplyID};")
     String getDescriptionByBorrowApplyID(int BorrowApplyID);
 
+
+    //根据借用申请单表的BorrowApplyID查询借用表数据详情
+    @Select("select * from `BorrowApplyRecord` where `BorrowApplyID` = #{BorrowApplyID};")
+    BorrowApplyRecord getBorrowApplyRecordByBorrowApplyID(int BorrowApplyID);
+
 }
 
 

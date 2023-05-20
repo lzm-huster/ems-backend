@@ -3,7 +3,7 @@ package com.ems.business.model.response;
 import java.util.Date;
 
 /**
- * 设备借用申请单列表 Response
+ * 设备借用申请单列表 Response   来源于PuchaseApplySheet表和User表
  *申请单编号、设备名称（多设备组合成一条字符串）、申请人、申请时间、申请状态、责任导师（学生)
  */
 

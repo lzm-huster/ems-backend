@@ -3,6 +3,7 @@ package com.ems.business.controller;
 
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.PurchaseApplySheetMapper;
+import com.ems.business.model.entity.PurchaseApplySheet;
 import com.ems.business.model.response.PurchaseApplySheetList;
 import com.ems.business.service.impl.PurchaseApplySheetServiceImpl;
 import com.ems.usercenter.mapper.UserMapper;
@@ -44,6 +45,14 @@ public class PurchaseApplySheetController {
         return purchaseApplySheetLists;
     }
 
+    @GetMapping("/etPurchaseApplySheetByID")
+    //  根据采购申请单查询申请单详情
+    public PurchaseApplySheet getPurchaseApplySheetByID(int PurchaseApplySheetID)
+    {
+        PurchaseApplySheet purchaseApplySheet=null;
+        purchaseApplySheet=purchaseApplySheetMapper.getPurchaseApplySheetByID(PurchaseApplySheetID);
 
+        return purchaseApplySheet;
+    }
 
 }

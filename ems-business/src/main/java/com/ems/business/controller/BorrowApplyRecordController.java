@@ -3,6 +3,7 @@ package com.ems.business.controller;
 
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.BorrowApplyRecordMapper;
+import com.ems.business.model.entity.BorrowApplyRecord;
 import com.ems.business.model.response.BorrowApplyRecordList;
 import com.ems.business.service.impl.BorrowApplyRecordServiceImpl;
 import com.ems.usercenter.mapper.UserMapper;
@@ -80,5 +81,14 @@ public class BorrowApplyRecordController {
         return returnNumber;
     }
 
+
+    //返回查看设备采购申请单对应设备详情数据
+    public BorrowApplyRecord getBorrowApplyRecord(int BorrowApplyID)
+    {
+        BorrowApplyRecord borrowApplyRecord=null;
+        borrowApplyRecord=borrowApplyRecordMapper.getBorrowApplyRecordByBorrowApplyID(BorrowApplyID);
+
+        return borrowApplyRecord;
+    }
 
 }

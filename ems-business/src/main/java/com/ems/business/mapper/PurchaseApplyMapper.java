@@ -17,9 +17,7 @@ import java.util.List;
 @Mapper
 public interface PurchaseApplyMapper extends BaseMapper<PurchaseApply> {
 
-    @Select("select DeviceName from PurchaseApply where PurchaseApplicantID=#{PurchaseApplicantID};")
-    List<String> getDeviceName(int PurchaseApplicantID);
-
+    //根据采购申请单查询对应的设备详情
     @Select("select * from PurchaseApply where PurchaseApplySheetID=#{PurchaseApplySheetID}")
     List<PurchaseApply> selectByApplySheetId(int PurchaseApplySheetID);
 

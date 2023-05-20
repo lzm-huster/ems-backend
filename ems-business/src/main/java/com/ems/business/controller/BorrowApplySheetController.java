@@ -24,7 +24,7 @@ public class BorrowApplySheetController {
 
 
     @GetMapping("/getBorrowApplySheets")
-    //返回查看设备采购申请单详情数据
+    //返回查看设备采购申请单对应设备详情数据
     public List<BorrowApplySheet> getBorrowApplySheets(int BorrowApplyID)
     {
         List<BorrowApplySheet> borrowApplySheets=null;
@@ -34,7 +34,8 @@ public class BorrowApplySheetController {
     }
 
     @GetMapping("/getBorrowDescription")
-    //返回查看设备采购申请单详情数据
+
+    //根据BorrowApplyID查看设备采购申请单详情数据(一条申请单数据)
     public String getBorrowDescription(int BorrowApplyID)
     {
         String description=null;
@@ -42,5 +43,7 @@ public class BorrowApplySheetController {
 
         return description;
     }
+
+
 
 }

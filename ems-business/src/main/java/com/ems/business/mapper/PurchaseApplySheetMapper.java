@@ -52,7 +52,9 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
     @Delete("delete from PurchaseApplySheet where PurchaseApplicantID =#{PurchaseApplicantID};")
     public int deleteBorrowApplySheet(int PurchaseApplySheetID);
 
-
+    //  根据采购申请单查询申请单详情
+    @Select("select * from `PurchaseApplySheet` where `PurchaseApplySheetID` = #{PurchaseApplySheetID};")
+    public PurchaseApplySheet getPurchaseApplySheetByID(int PurchaseApplySheet);
 
 }
 

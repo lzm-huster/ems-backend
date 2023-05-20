@@ -18,9 +18,9 @@ import java.util.List;
 @Mapper
 public interface DeviceMapper extends BaseMapper<Device> {
     //个人查询：根据UserID查询负责的所有设备
-    @Select("select d.DeviceID,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate\n" +
+    @Select("select d.DeviceID deviceID,d.DeviceName deviceName, d.DeviceType deviceType,d.DeviceModel deviceModel,d.DeviceState deviceState,u.UserName userName,d.PurchaseDate purchaseDate\n" +
             "from Device d inner join User u on d.UserID = u.UserID\n" +
-            "where d.UserID =#{UserID};")
+            "where d.UserID =#{UserID}")
     List<DeviceList> getPersonDeviceList(int UserID);
 
     //管理员查询：返回所有所有设备列表
@@ -33,6 +33,10 @@ public interface DeviceMapper extends BaseMapper<Device> {
             "from Device d inner join User u on d.UserID = u.UserID\n" +
             "where d.IsPublic=1;")
     List<DeviceList> getPublicDevice();
+
+    //根据DeviceID查询详细信息
+    @Select("select * from `Device` where `DeviceID` = #{DeviceID};")
+    Device getDeviceByDeviceID(int DeviceID);
 
 }
 
