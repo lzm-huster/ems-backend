@@ -6,18 +6,17 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
 /**
-* @author 龙志明
-* @description 针对表【User(用户表)】的数据库操作Mapper
-* @createDate 2023-04-24 09:03:00
-* @Entity generator.domain.User
-*/
+ * @author 龙志明
+ * @description 针对表【User(用户表)】的数据库操作Mapper
+ * @createDate 2023-04-24 09:03:00
+ * @Entity generator.domain.User
+ */
 @Mapper
 public interface UserMapper extends BaseMapper<User> {
     //根据UserID获取RoleName
-    @Select("\n" +
-            "SELECT  r.RoleName\n" +
-            "FROM UserRole ur\n" +
-            "JOIN Role r ON ur.RoleID = r.RoleID\n" +
+    @Select("SELECT  r.RoleName " +
+            "FROM UserRole ur " +
+            "JOIN Role r ON ur.RoleID = r.RoleID " +
             "WHERE ur.UserID = #{UserID};")
     String getRoleNameByUserID(int UserID);
 }

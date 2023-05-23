@@ -58,8 +58,7 @@ public class DeviceController {
     //个人信息列表：返回个人名下设备信息列表
     public List<DeviceList> getPersonDeviceList(int UserID)
     {
-        List<DeviceList> deviceLists=null;
-        deviceLists=deviceMapper.getPersonDeviceList(UserID);
+        List<DeviceList> deviceLists=deviceMapper.getPersonDeviceList(UserID);
 
         return deviceLists;
     }

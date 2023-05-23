@@ -53,7 +53,7 @@ public class UserRedisConstant {
         if (ObjectUtil.isNull(claimsFormToken)) {
             throw new BusinessException(ErrorCode.NOT_LOGIN_ERROR, "token已失效");
         }
-        String userId = claimsFormToken.get("UserId", String.class);
+        Integer userId = claimsFormToken.get("UserId", Integer.class);
         String key = RedisConstant.UserPrefix + userId;
         Map<Object, Object> redisUserInfo = redisUtil.hmget(key);
         if (ObjectUtil.isNull(redisUserInfo)) {

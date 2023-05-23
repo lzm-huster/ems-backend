@@ -17,7 +17,7 @@ import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.request.UserLoginReq;
 import com.ems.usercenter.model.request.UserRegisterReq;
 import com.ems.usercenter.model.request.UserAddReq;
-import com.ems.usercenter.model.response.PermissionSimpleRes;
+
 import com.ems.usercenter.model.response.UserCurrentRes;
 import com.ems.usercenter.model.response.UserDetailRes;
 import com.ems.usercenter.service.PermissionService;
@@ -64,11 +64,14 @@ public class UserController {
     private String salt;
 
 
-
-
+    /**
+     * 登录接口   loginType -1 学号/工号登录
+     *          loginType -2 手机号登录
+     * @param userLoginReq
+     * @return
+     */
     @PostMapping("/login")
     public String login(@RequestBody UserLoginReq userLoginReq) {
-
         String userNumber = userLoginReq.getUserNumber();
         String userPassword = userLoginReq.getPassword();
         Integer loginType = userLoginReq.getLoginType();
@@ -110,6 +113,11 @@ public class UserController {
         return token;
     }
 
+    /**
+     * 获取当前用户信息
+     * @param token
+     * @return
+     */
     @AuthCheck(mustAuth = {})
     @PostMapping("/currentUser")
     public UserCurrentRes getCurrentUser(@RequestHeader("token") String token) {
@@ -124,10 +132,11 @@ public class UserController {
         // 角色信息
         Object roleObj = redisUserInfo.get(RedisConstant.UserRole);
         List<String> roleList = (List<String>) roleObj;
+        userCurrentRes.setRoleList(roleList);
 
         Object permissionObj = redisUserInfo.get(RedisConstant.UserPermission);
-        List<PermissionSimpleRes> permissionList = (List<PermissionSimpleRes>) roleObj;
-
+        List<String> permissionList = (List<String>) permissionObj;
+        userCurrentRes.setUserPermissionList(permissionList);
 //        // 菜单权限信息
 //        Object menuObj = redisUserInfo.get(RedisConstant.MenuPermission);
 //        List<UserMenuPermissionRes> menuPermissionList = (List<UserMenuPermissionRes>) menuObj;
@@ -139,14 +148,29 @@ public class UserController {
         return userCurrentRes;
     }
 
+    /**
+     * 获取验证码
+     * @return
+     */
+    @PostMapping("/getCaptcha")
+    public String getCaptcha(){
+        // TODO 处理消息发送，验证码调用
+        return "1234";
+    }
 
+    /**
+     * 注册 1- 邮箱注册 2-手机号注册
+     * @param userRegisterReq
+     * @return
+     */
     @PostMapping("/register")
     public boolean register(@RequestBody UserRegisterReq userRegisterReq) {
-        String userNumber = userRegisterReq.getUserNumber();
-        String userPassword = userRegisterReq.getUserPassword();
+        String idNumber = userRegisterReq.getIDNumber();
+        String userPassword = userRegisterReq.getPassword();
+        String confirm = userRegisterReq.getConfirm();
         // 判空
-        if (StringUtils.isBlank(userNumber) || StringUtils.isBlank(userPassword)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名或者参数为空");
+        if (StringUtils.isBlank(userPassword) || StringUtils.isBlank(confirm)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码和确认密码不能为空");
         }
         // 判断正则
         String pattern = "^(?=.*\\d)(?=.*[a-zA-Z]).{6,20}$";
@@ -154,25 +178,44 @@ public class UserController {
         if (!matcher.matches()) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码不符合要求");
         }
-        // 检查是否存在
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("UserNumber", userNumber);
-        User selectOne = userService.getOne(queryWrapper);
-        if (!ObjectUtil.isNull(selectOne)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "该学号已存在");
-        }
         // 开始注册
         User user = new User();
         BeanUtils.copyProperties(userRegisterReq, user);
         MD5 md5 = new MD5(salt.getBytes());
         user.setPassword(md5.digestHex(userPassword));
-        boolean save = userService.save(user);
+        Integer registerType = userRegisterReq.getRegisterType();
+        boolean save = false;
+        if (ObjectUtil.equal(registerType,1)){
+            save = userService.registerByEmail(user);
+        } else if (ObjectUtil.equal(registerType,1)) {
+            save = userService.registerByPhone(user);
+        }else {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"注册类型有误");
+        }
         if (!save) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "注册失败");
         }
         return true;
     }
+    /**
+     * 获取当前用户详细信息
+     * @param token
+     * @return
+     */
+    @GetMapping("/info")
+    public UserDetailRes getUserInfo(@RequestHeader("token") String token){
+        Map<Object, Object> redisMapFromToken = userRedisConstant.getRedisMapFromToken(token);
+        User user = (User)redisMapFromToken.get(RedisConstant.UserInfo);
+        UserDetailRes userDetailRes = new UserDetailRes();
+        BeanUtils.copyProperties(user,userDetailRes);
+        return userDetailRes;
+    }
 
+    /**
+     * 获取用户详细信息 - 用户管理
+     * @param userId
+     * @return
+     */
     @AuthCheck(mustAuth = {"user:add"})
     @GetMapping("/query")
     public UserDetailRes queryUserDetail(@RequestParam("userId") Integer userId){
@@ -187,14 +230,11 @@ public class UserController {
         BeanUtils.copyProperties(userById,userDetailRes);
         return userDetailRes;
     }
-    @GetMapping("/info")
-    public UserDetailRes getUserInfo(@RequestHeader("token") String token){
-        Map<Object, Object> redisMapFromToken = userRedisConstant.getRedisMapFromToken(token);
-        User user = (User)redisMapFromToken.get(RedisConstant.UserInfo);
-        UserDetailRes userDetailRes = new UserDetailRes();
-        BeanUtils.copyProperties(user,userDetailRes);
-        return userDetailRes;
-    }
+    /**
+     * 用户添加 - 用户管理
+     * @param userAddReq
+     * @return
+     */
     @PostMapping("/add")
     public boolean addUser(@RequestBody UserAddReq userAddReq){
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -218,6 +258,10 @@ public class UserController {
         return true;
     }
 
+    /**
+     * 用户列表 - 用户管理
+     * @return
+     */
     @GetMapping("/list")
     public List<UserDetailRes> getUserList(){
         List<User> userList = userService.list();

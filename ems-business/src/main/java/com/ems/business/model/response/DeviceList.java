@@ -2,6 +2,7 @@ package com.ems.business.model.response;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -46,61 +47,4 @@ public class DeviceList {
      * 购买日期
      */
     private Date purchaseDate;
-
-    public void SetDeviceID(int DeviceID)
-    {
-        deviceID=DeviceID;
-    }
-    public Integer GetDeviceID()
-    {
-        return deviceID;
-    }
-    public void SetDeviceName(String DeviceName)
-    {
-        deviceName=DeviceName;
-    }
-    public String GetDeviceName()
-    {
-        return deviceName;
-    }
-    public void SetDeviceType(String DeviceType)
-    {
-        deviceType=DeviceType;
-    }
-    public String GetDeviceType()
-    {
-        return deviceType;
-    }
-    public void SetDeviceModel(String DeviceModel)
-    {
-        deviceModel=DeviceModel;
-    }
-    public String GetDeviceModel()
-    {
-        return deviceModel;
-    }
-    public void SetDeviceState(String DeviceState)
-    {
-        deviceState=DeviceState;
-    }
-    public String GetDeviceState()
-    {
-        return deviceState;
-    }
-    public void SetUserName(String UserName)
-    {
-        userName=UserName;
-    }
-    public String GetUserName()
-    {
-        return userName;
-    }
-    public void SetPurchaseDate(Date PurchaseDate)
-    {
-        purchaseDate=PurchaseDate;
-    }
-    public Date GetPurchaseDate()
-    {
-        return purchaseDate;
-    }
 }
