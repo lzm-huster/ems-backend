@@ -2,7 +2,6 @@ package com.ems.business.model.response;
 
 import lombok.Data;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -47,4 +46,6 @@ public class DeviceList {
      * 购买日期
      */
     private Date purchaseDate;
+
+
 }
