@@ -38,6 +38,10 @@ public interface DeviceMapper extends BaseMapper<Device> {
     @Select("select * from `Device` where `DeviceID` = #{DeviceID};")
     Device getDeviceByDeviceID(int DeviceID);
 
+    //返回用户最新添加的一条数据的主键DeviceID
+    @Select("select DeviceID from `Device` where UserID=#{UserID} order by UpdateTime desc limit 1;")
+    Integer getLatestDeviceID(int UserID);
+
 }
 
 

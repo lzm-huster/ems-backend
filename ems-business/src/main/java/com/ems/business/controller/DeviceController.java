@@ -87,17 +87,16 @@ public class DeviceController {
         String deviceImageList = device.getDeviceImageList();
         Double unitPrice = device.getUnitPrice();
         Integer isPublic = device.getIsPublic();
+
         //部分数据系统赋值
         device.setUserID(UserID);
         device.setDeviceState("申请中");
         device.setBorrowRate(0.05);
         Date date=new Date();
-        Date newDate = DateUtil.offset(date, DateField.DAY_OF_YEAR, 5);
         device.setPurchaseDate(date);
         //预计五年后报废
         device.setExpectedScrapDate(new Date());
-
-
+        Date newDate = DateUtil.offset(date, DateField.DAY_OF_YEAR, 5);
         //判断是否存在空值数据
 //        StringUtils.isBlank(deviceType);
 //        ObjectUtil.isNull();
@@ -120,31 +119,29 @@ public class DeviceController {
     {
         //提取前端传入实体的属性值
         Integer deviceID = device.getDeviceID();
-        String deviceName = device.getDeviceName();
-        String deviceType = device.getDeviceType();
-        String deviceModel = device.getDeviceModel();
-        String deviceSpecification = device.getDeviceSpecification();
-        String deviceImageList = device.getDeviceImageList();
-        Double unitPrice = device.getUnitPrice();
-        Integer isPublic = device.getIsPublic();
 
         if(ObjectUtil.isNull(deviceID))
         {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入实体主键DeviceID为空");
-        }else
-        // 判断空
-        if (StringUtils.isBlank(deviceName)|| StringUtils.isBlank(deviceType)||
-                StringUtils.isBlank(deviceSpecification)||ObjectUtil.isNull(deviceModel)
-                ||ObjectUtil.isNull(isPublic)||ObjectUtil.isNull(unitPrice)||
-                ObjectUtil.isNull(deviceImageList)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
+
+        device.setUpdateTime(new Date());
+
         int Number=0;
         Number=deviceMapper.updateById(device);
 
         return Number;
     }
 
+    @GetMapping("getLatestDeviceID")
+    //在添加记录时获取刚添加记录的DeviceID
+    public int getLatestDeviceID(int UserID)
+    {
+        int Number=0;
+        Number=deviceMapper.getLatestDeviceID(UserID);
+
+        return Number;
+    }
 
 
 

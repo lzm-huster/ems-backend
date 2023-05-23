@@ -1,6 +1,8 @@
 package com.ems.business.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
@@ -18,7 +20,7 @@ public class BorrowApplySheet implements Serializable {
     /**
      * 借用申请编号
      */
-    @TableField(value = "BorrowID")
+    @TableId(value = "BorrowID", type = IdType.AUTO)
     private Integer borrowID;
 
     /**
