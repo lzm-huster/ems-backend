@@ -1,6 +1,7 @@
 package com.ems.usercenter.model.response;
 
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -15,44 +16,46 @@ public class UserCurrentRes implements Serializable {
     private String userName;
 
     /**
-     * 用户学号
+     * 学号/工号
      */
 
-    private String userNumber;
-
+    private String IDNumber;
+    /**
+     * 性别
+     */
+    private String gender;
     /**
      * 用户手机号
      */
 
-    private String userPhone;
+    private String phoneNumber;
 
     /**
      * 用户头像
      */
 
-    private String userAvatar;
-
+    private String avatar;
     /**
-     * 用户QQ号
+     * 所属部门
      */
-
-    private String QQNumber;
-
+    private String department;
+    /***
+     * 邮箱
+     */
+    private String email;
     /**
-     * 班级
+     * 角色列表
      */
-
-    private String userClass;
-
+    private List<String> roleList;
 //    /**
 //     * 菜单权限列表
 //     */
-//    private List<UserMenuPermissionRes> menuPermissionList;
+//    private List<PermissionSimpleRes> menuPermissionList;
 
-//    /**
-//     * 权限列表
-//     */
-//    private List<String> userPermissionList;
+    /**
+     * 权限列表
+     */
+    private List<String> userPermissionList;
 
     private static final long serialVersionUID = 1L;
 }

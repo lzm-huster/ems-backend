@@ -69,6 +69,16 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
     @Select("select `ApplyDescription` from `BorrowApplyRecord` where `BorrowApplyID` = #{BorrowApplyID};")
     String getDescriptionByBorrowApplyID(int BorrowApplyID);
 
+
+    //根据借用申请单表的BorrowApplyID查询借用表数据详情
+    @Select("select * from `BorrowApplyRecord` where `BorrowApplyID` = #{BorrowApplyID};")
+    BorrowApplyRecord getBorrowApplyRecordByBorrowApplyID(int BorrowApplyID);
+
+    //返回最近添加的记录的BorrowApplyID
+    @Select("select BorrowApplyID from `BorrowApplyRecord` where BorrowerID=#{BorrowerID} order by UpdateTime desc limit 1;")
+    public Integer getLatestBorrowApplyID(int BorrowerID);
+
+
 }
 
 

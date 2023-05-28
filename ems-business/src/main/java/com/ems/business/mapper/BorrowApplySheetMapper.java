@@ -16,9 +16,11 @@ import java.util.List;
 */
 @Mapper
 public interface BorrowApplySheetMapper extends BaseMapper<BorrowApplySheet> {
-    //根据借用申请单表的BorrowApplyID查询借用列表的详情
+
+    //根据借用申请单表的BorrowApplyID查询借用单表数据详情
     @Select("select * from `BorrowApplySheet` where `BorrowApplyID` = #{BorrowApplyID};")
     List<BorrowApplySheet> getBorrowApplySheetByBorrowApplyID(int BorrowApplyID);
+
 
 }
 

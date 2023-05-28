@@ -1,7 +1,6 @@
 package com.ems.business.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import com.ems.business.mapper.DeviceMapper;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.response.DeviceList;
@@ -39,8 +38,6 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
         List<DeviceList> deviceList=null;
         deviceList=deviceMapper.getPersonDeviceList(UserID);
 
-        return deviceList;
-    }
     //获取所有设备列表
     public List<DeviceList> getAllDeviceList()
     {

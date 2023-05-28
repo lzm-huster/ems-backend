@@ -40,22 +40,27 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
 
 
     //更新一条采购申请单数据：申请单ID，申请时间，申请描述，申请人导师,申请单状态
-    @Update("update PurchaseApplySheet set PurchaseApplyDate =#{PurchaseApplyDate}, PurchaseApplyDescription = #{PurchaseApplyDescription}"+
+    @Update("update PurchaseApplySheet set PurchaseApplyDate =#{PurchaseApplyDate}, PurchaseApplyDescription = #{PurchaseApplyDescription}" +
             " where PurchaseApplySheetID = #{PurchaseApplySheetID};")
-    public int updateBorrowApplySheet(int PurchaseApplySheetID,DateTimeLiteralExpression.DateTime PurchaseApplyDate,String PurchaseApplyDescription,int ApproveTutorID,String PurchaseApplyState );
+    public int updateBorrowApplySheet(int PurchaseApplySheetID, DateTimeLiteralExpression.DateTime PurchaseApplyDate, String PurchaseApplyDescription, int ApproveTutorID, String PurchaseApplyState);
 
     //更新一条采购申请单的状态：申请单ID，申请单状态
     @Update("update PurchaseApplySheet set PurchaseApplyState = #{PurchaseApplyState} where PurchaseApplySheetID = #{PurchaseApplySheetID};")
-    public int updateBorrowApplySheet(int PurchaseApplySheetID,String PurchaseApplyState);
+    public int updateBorrowApplySheet(int PurchaseApplySheetID, String PurchaseApplyState);
 
     //删除一条采购申请记录：申请单ID
     @Delete("delete from PurchaseApplySheet where PurchaseApplicantID =#{PurchaseApplicantID};")
     public int deleteBorrowApplySheet(int PurchaseApplySheetID);
 
+    //  根据采购申请单查询申请单详情
+    @Select("select * from `PurchaseApplySheet` where `PurchaseApplySheetID` = #{PurchaseApplySheetID};")
+    public PurchaseApplySheet getPurchaseApplySheetByID(int PurchaseApplySheetID);
 
+    //获取最近添加的数据的PurchaseApplySheetID
+    @Select("select PurchaseApplySheetID from `PurchaseApplySheet` where PurchaseApplicantID=#{PurchaseApplicantID} order by UpdateTime desc limit 1;")
+    public Integer getLatestPurchaseApplySheetID(int PurchaseApplicantID);
 
 }
-
 
 
 

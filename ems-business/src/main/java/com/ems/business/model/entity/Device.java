@@ -7,7 +7,6 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -66,6 +65,13 @@ public class Device implements Serializable {
     private Integer userID;
 
     /**
+     * 是否公用
+     */
+    @TableField(value = "IsPublic")
+    private Integer isPublic;
+
+
+    /**
      * 库存数量
      */
     @TableField(value = "StockQuantity")
@@ -75,13 +81,13 @@ public class Device implements Serializable {
      * 单价
      */
     @TableField(value = "UnitPrice")
-    private BigDecimal unitPrice;
+    private Double unitPrice;
 
     /**
      * 借用费率
      */
     @TableField(value = "BorrowRate")
-    private BigDecimal borrowRate;
+    private Double borrowRate;
 
     /**
      * 购买日期

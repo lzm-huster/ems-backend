@@ -4,7 +4,6 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ems.usercenter.mapper.PermissionMapper;
 import com.ems.usercenter.model.entity.Permission;
-import com.ems.usercenter.model.response.PermissionSimpleRes;
 import com.ems.usercenter.service.PermissionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +21,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
     @Autowired
     private PermissionMapper permissionMapper;
     @Override
-    public List<PermissionSimpleRes> getPermissionListByUserId(Integer userID) {
+    public List<String> getPermissionListByUserId(Integer userID) {
         if (ObjectUtil.isNull(userID)){
             return null;
         }

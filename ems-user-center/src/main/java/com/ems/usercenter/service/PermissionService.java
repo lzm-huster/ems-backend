@@ -2,7 +2,6 @@ package com.ems.usercenter.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.usercenter.model.entity.Permission;
-import com.ems.usercenter.model.response.PermissionSimpleRes;
 
 import java.util.List;
 
@@ -12,5 +11,5 @@ import java.util.List;
 * @createDate 2023-04-24 09:03:00
 */
 public interface PermissionService extends IService<Permission> {
-    List<PermissionSimpleRes> getPermissionListByUserId(Integer userID);
+    List<String> getPermissionListByUserId(Integer userID);
 }
