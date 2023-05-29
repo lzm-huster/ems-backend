@@ -103,8 +103,3 @@ email:
 crypto:
   md5:
     salt: 123456
-tencent:
-  appId: 1400824218
-  appKey: 3e44c6508e20f57e6941f307f2d86db1
-  SecretId: AKIDEWnrhS2UkspfLn8JI5e1DJvOfhZH0mQy
-  SecretKey: RejZAmtpZ32nJafhYJwNdruwwiJh8Zw7
