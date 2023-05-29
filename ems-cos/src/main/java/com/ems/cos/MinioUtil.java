@@ -138,7 +138,6 @@ public class MinioUtil {
 
     /**
      * 文件下载
-     *![](../../../../../../../../../../../../文档/ShareX/Screenshots/2023-04/idea64_d4bhQAoQCV.png)
      * @param bucketName 存储bucket名称
      * @param fileName   文件名称
      * @param res        response
