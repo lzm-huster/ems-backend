@@ -103,3 +103,6 @@ email:
 crypto:
   md5:
     salt: 123456
+
+default:
+  avatar: http://101.43.18.103:9001/mes-bucket/Avatar/defaultAvatar.png

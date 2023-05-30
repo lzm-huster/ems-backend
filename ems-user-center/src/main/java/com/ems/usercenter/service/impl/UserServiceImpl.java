@@ -1,7 +1,10 @@
 package com.ems.usercenter.service.impl;
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
@@ -13,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.Objects;
 
 @Service
@@ -79,6 +83,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean registerByEmail(User user) {
         // TODO 还要处理验证码，此处暂时未处理
         String idNumber = user.getIDNumber();
+        if(StringUtils.isBlank(user.getUserName())){
+            String tempName = "用户"+ System.currentTimeMillis();
+            user.setUserName(tempName);
+        }
         // 检查是否存在
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("IDNumber", idNumber);
@@ -99,6 +107,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public boolean registerByPhone(User user) {
         // TODO 还要处理验证码，此处暂时未处理
         String phoneNumber = user.getPhoneNumber();
+        if(StringUtils.isBlank(user.getUserName())){
+            String tempName = "用户"+ System.currentTimeMillis();
+            user.setUserName(tempName);
+        }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("PhoneNumber",phoneNumber);
         User selectOne = userMapper.selectOne(queryWrapper);

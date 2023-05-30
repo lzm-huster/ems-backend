@@ -60,8 +60,10 @@ public class UserController {
 
     private static final String avatarPrefix = "Avatar/";
 
-    @Value("crypto.md5.salt")
+    @Value("${crypto.md5.salt}")
     private String salt;
+    @Value("${default.avatar}")
+    private String defaultAvatar;
 
 
     /**
@@ -118,9 +120,9 @@ public class UserController {
      * @param token
      * @return
      */
-    @AuthCheck(mustAuth = {})
-    @PostMapping("/currentUser")
-    public UserCurrentRes getCurrentUser(@RequestHeader("token") String token) {
+    @AuthCheck()
+    @GetMapping("/currentUser")
+    public UserCurrentRes getCurrentUser(@RequestHeader(value = "token",required = false) String token) {
         // redis取信息
         Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
         // 获取基础User信息
@@ -184,7 +186,9 @@ public class UserController {
         MD5 md5 = new MD5(salt.getBytes());
         user.setPassword(md5.digestHex(userPassword));
         Integer registerType = userRegisterReq.getRegisterType();
+        user.setAvatar(defaultAvatar);
         boolean save = false;
+        // 根据不同类型进行注册
         if (ObjectUtil.equal(registerType,1)){
             save = userService.registerByEmail(user);
         } else if (ObjectUtil.equal(registerType,1)) {
@@ -203,7 +207,7 @@ public class UserController {
      * @return
      */
     @GetMapping("/info")
-    public UserDetailRes getUserInfo(@RequestHeader("token") String token){
+    public UserDetailRes getUserInfo(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> redisMapFromToken = userRedisConstant.getRedisMapFromToken(token);
         User user = (User)redisMapFromToken.get(RedisConstant.UserInfo);
         UserDetailRes userDetailRes = new UserDetailRes();
@@ -216,7 +220,7 @@ public class UserController {
      * @param userId
      * @return
      */
-    @AuthCheck(mustAuth = {"user:add"})
+
     @GetMapping("/query")
     public UserDetailRes queryUserDetail(@RequestParam("userId") Integer userId){
         if (ObjectUtil.isNull(userId)){
@@ -235,6 +239,7 @@ public class UserController {
      * @param userAddReq
      * @return
      */
+    @AuthCheck(mustAuth = {"user:add"})
     @PostMapping("/add")
     public boolean addUser(@RequestBody UserAddReq userAddReq){
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
