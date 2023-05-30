@@ -11,16 +11,17 @@ import com.ems.business.model.response.DeviceList;
 import com.ems.business.service.impl.DeviceServiceImpl;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
+import com.ems.redis.constant.RedisConstant;
+import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.mapper.UserMapper;
+import com.ems.usercenter.model.entity.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @ResponseResult
 @RestController
@@ -33,11 +34,18 @@ public class DeviceController {
     private UserMapper userMapper;
     @Autowired
     private DeviceServiceImpl deviceServiceImpl;
+    @Autowired
+    private UserRedisConstant redisConstant;
+
 
     @GetMapping("/getDeviceList")
     //设备信息列表：管理员返回所有设备列表数据，其他用户返回公用设备数据
-    public List<DeviceList> getDeviceList(int UserID)
+    public List<DeviceList> getDeviceList(@RequestHeader("token") String token)
     {
+
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
 
         String RoleName=null;
         RoleName=userMapper.getRoleNameByUserID(UserID);
@@ -56,9 +64,14 @@ public class DeviceController {
 
     @GetMapping("/getPersonDeviceList")
     //个人信息列表：返回个人名下设备信息列表
-    public List<DeviceList> getPersonDeviceList(int UserID)
+    public List<DeviceList> getPersonDeviceList(@RequestHeader("token") String token)
     {
-        List<DeviceList> deviceLists=deviceMapper.getPersonDeviceList(UserID);
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
+        List<DeviceList> deviceLists=null;
+        deviceLists=deviceMapper.getPersonDeviceList(UserID);
 
         return deviceLists;
     }
@@ -75,7 +88,7 @@ public class DeviceController {
 
     @PutMapping ("insertDevice")
     //插入一条Device数据,返回受影响条数
-    public int insertDevice(@NotNull Device device, int UserID)
+    public int insertDevice(@NotNull Device device)
     {
 
         //提取前端传入实体的属性值
@@ -86,9 +99,8 @@ public class DeviceController {
         String deviceImageList = device.getDeviceImageList();
         Double unitPrice = device.getUnitPrice();
         Integer isPublic = device.getIsPublic();
-
+        Integer userID = device.getUserID();
         //部分数据系统赋值
-        device.setUserID(UserID);
         device.setDeviceState("申请中");
         device.setBorrowRate(0.05);
         Date date=new Date();
@@ -104,7 +116,8 @@ public class DeviceController {
         if (StringUtils.isBlank(deviceName)|| StringUtils.isBlank(deviceType)||
                 StringUtils.isBlank(deviceSpecification)||ObjectUtil.isNull(deviceModel)
                 ||ObjectUtil.isNull(isPublic)||ObjectUtil.isNull(unitPrice)||
-                ObjectUtil.isNull(deviceImageList)) {
+                ObjectUtil.isNull(deviceImageList)||
+                ObjectUtil.isNull(userID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
         int Number=0;
@@ -134,8 +147,12 @@ public class DeviceController {
 
     @GetMapping("getLatestDeviceID")
     //在添加记录时获取刚添加记录的DeviceID
-    public int getLatestDeviceID(int UserID)
+    public int getLatestDeviceID(@RequestHeader("token") String token)
     {
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
         int Number=0;
         Number=deviceMapper.getLatestDeviceID(UserID);
 

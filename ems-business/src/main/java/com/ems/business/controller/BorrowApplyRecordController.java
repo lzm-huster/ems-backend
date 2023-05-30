@@ -10,17 +10,17 @@ import com.ems.business.model.response.BorrowApplyRecordList;
 import com.ems.business.service.impl.BorrowApplyRecordServiceImpl;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
+import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.mapper.UserMapper;
+import com.ems.usercenter.model.entity.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @ResponseResult
 @RestController
@@ -33,13 +33,17 @@ public class BorrowApplyRecordController {
     private BorrowApplyRecordMapper borrowApplyRecordMapper;
     @Autowired
     private UserMapper userMapper;
+
     @Autowired
     private UserRedisConstant redisConstant;
-
     @GetMapping("/getBorrowApplyRecordList")
     //返回设备借用申请单列表数据
-    public List<BorrowApplyRecordList> getBorrowApplyRecordList(int UserID)
+    public List<BorrowApplyRecordList> getBorrowApplyRecordList(@RequestHeader("token") String token)
     {
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
 
         String RoleName=null;
         RoleName=userMapper.getRoleNameByUserID(UserID);
@@ -57,8 +61,11 @@ public class BorrowApplyRecordController {
 
     @GetMapping("/getBorrowDeviceNumber")
     //返回设备借用列表借用中的设备数量
-    public int getBorrowDeviceNumber(int UserID)
+    public int getBorrowDeviceNumber(@RequestHeader("token") String token)
     {
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
 
         String RoleName=null;
         RoleName=userMapper.getRoleNameByUserID(UserID);
@@ -76,8 +83,12 @@ public class BorrowApplyRecordController {
 
     @GetMapping("/getReturnDeviceNumber")
     //返回设备借用列表已归还设备数量
-    public int getReturnDeviceNumber(int UserID)
+    public int getReturnDeviceNumber(@RequestHeader("token") String token)
     {
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
 
         String RoleName=null;
         RoleName=userMapper.getRoleNameByUserID(UserID);
@@ -149,8 +160,14 @@ public class BorrowApplyRecordController {
 
     @GetMapping("getLatestBorrowApplyRecordID")
     //在添加记录时获取刚添加记录的DeviceID
-    public int getLatestBorrowApplyRecordID(int UserID)
+    public int getLatestBorrowApplyRecordID(@RequestHeader("token") String token)
     {
+
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
+
         int Number=0;
         Number=borrowApplyRecordMapper.getLatestBorrowApplyID(UserID);
         return Number;
