@@ -1,11 +1,13 @@
 package com.ems.usercenter.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.ems.exception.BusinessException;
 import com.ems.usercenter.mapper.RoleMapper;
 import com.ems.usercenter.model.entity.Role;
+import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role>
         }
         return roleMapper.getRoleListByUserId(userId);
     }
+
 }
 
 

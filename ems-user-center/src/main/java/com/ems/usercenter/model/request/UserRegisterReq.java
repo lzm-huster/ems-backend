@@ -9,30 +9,32 @@ public class UserRegisterReq {
      */
     private String userName;
     /**
-     * 用户学号
+     * 学号/工号
      */
-    private String userNumber;
+    private String IDNumber;
     /**
      * 用户密码
      */
-    private String userPassword;
+    private String password;
+    /**
+     * 确认密码
+     */
+    private String confirm;
+    /**
+     * 邮箱
+     */
+    private String email;
     /**
      * 用户手机号
      */
-    private String userPhone;
-
+    private String phoneNumber;
     /**
-     * 用户头像
+     * 验证码
      */
-    private String userAvatar;
-
+    private String captcha;
     /**
-     * 用户QQ号
+     * 注册类型 1-邮箱注册 2-手机号注册
      */
-    private String QQNumber;
+    private Integer registerType;
 
-    /**
-     * 班级
-     */
-    private Integer userClassId;
 }

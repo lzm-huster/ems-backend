@@ -20,7 +20,7 @@ public class BorrowApplySheet implements Serializable {
     /**
      * 借用申请编号
      */
-    @TableId(value = "BorrowID", type = IdType.AUTO)
+    @TableId(value = "BorrowID",type = IdType.AUTO)
     private Integer borrowID;
 
     /**

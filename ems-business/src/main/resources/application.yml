@@ -85,7 +85,7 @@ jwt:
   # 加密密钥
   secret: abcdefg1234567
   # token有效时长
-  expire: 3600
+  expire: 1800000
   # header 名称
   header: token
 email:
@@ -103,3 +103,6 @@ email:
 crypto:
   md5:
     salt: 123456
+
+default:
+  avatar: http://101.43.18.103:9001/mes-bucket/Avatar/defaultAvatar.png

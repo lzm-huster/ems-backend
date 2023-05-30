@@ -20,6 +20,7 @@ public class BorrowApplyRecord implements Serializable {
      * 借用申请单编号
      */
     @TableId(value = "BorrowApplyID", type = IdType.AUTO)
+
     private Integer borrowApplyID;
 
     /**

@@ -1,5 +1,6 @@
 package com.ems.notice.quartz.manager;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.notice.quartz.constant.TaskStatus;
 import com.ems.notice.quartz.model.entity.TaskInfo;
@@ -49,7 +50,7 @@ public class QuartzManager {
                 CronTriggerImpl triggerImpl = new CronTriggerImpl();
                 triggerImpl.setCronExpression(cron);
                 Date date = triggerImpl.computeFirstFireTime(null);
-                if (date != null && date.after(new Date())) {
+                if (ObjectUtil.isNotNull(date) && date.after(new Date())) {
                     taskManager.addJob(taskInfo);
                 }
             }

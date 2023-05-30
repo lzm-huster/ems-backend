@@ -9,5 +9,11 @@ import com.ems.usercenter.model.entity.UserRole;
 * @createDate 2023-04-24 09:03:00
 */
 public interface UserRoleService extends IService<UserRole> {
-
+    /**
+     * 注册时初始化用户角色
+     * @param userId
+     * @param roleId
+     * @return
+     */
+    boolean initUserRole(Integer userId,Integer roleId);
 }
