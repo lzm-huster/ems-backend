@@ -33,8 +33,6 @@ spring:
     username: seven-ems
     password: seven-ems
   # 将 Quartz 持久化方式修改为 jdbc
-  profiles:
-    default:
 #  quartz:
 #    jobStoreType: jdbc
 #    jdbc:
