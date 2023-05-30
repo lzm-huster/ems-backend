@@ -33,6 +33,8 @@ spring:
     username: seven-ems
     password: seven-ems
   # 将 Quartz 持久化方式修改为 jdbc
+  profiles:
+    default:
 #  quartz:
 #    jobStoreType: jdbc
 #    jdbc:
@@ -103,8 +105,6 @@ email:
 crypto:
   md5:
     salt: 123456
-tencent:
-  appId: 1400824218
-  appKey: 3e44c6508e20f57e6941f307f2d86db1
-  SecretId: AKIDEWnrhS2UkspfLn8JI5e1DJvOfhZH0mQy
-  SecretKey: RejZAmtpZ32nJafhYJwNdruwwiJh8Zw7
+
+default:
+  avatar: http://101.43.18.103:9001/mes-bucket/Avatar/defaultAvatar.png

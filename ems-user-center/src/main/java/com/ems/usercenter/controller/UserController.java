@@ -62,6 +62,8 @@ public class UserController {
 
     @Value("crypto.md5.salt")
     private String salt;
+    @Value("default.avatar")
+    private String defaultAvatar;
 
 
     /**
@@ -184,6 +186,7 @@ public class UserController {
         MD5 md5 = new MD5(salt.getBytes());
         user.setPassword(md5.digestHex(userPassword));
         Integer registerType = userRegisterReq.getRegisterType();
+        user.setAvatar(defaultAvatar);
         boolean save = false;
         // 根据不同类型进行注册
         if (ObjectUtil.equal(registerType,1)){
