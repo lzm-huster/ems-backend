@@ -1,7 +1,15 @@
 package com.ems.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.ems.business.model.entity.BorrowApplyRecord;
+import com.ems.business.model.entity.PurchaseApply;
 import com.ems.business.model.entity.PurchaseApplySheet;
+import com.ems.business.model.response.PurchaseApplySheetApprovalResponse;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 import com.ems.business.model.response.PurchaseApplySheetList;
 import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 import org.apache.ibatis.annotations.*;
@@ -59,6 +67,33 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
     //获取最近添加的数据的PurchaseApplySheetID
     @Select("select PurchaseApplySheetID from `PurchaseApplySheet` where PurchaseApplicantID=#{PurchaseApplicantID} order by UpdateTime desc limit 1;")
     public Integer getLatestPurchaseApplySheetID(int PurchaseApplicantID);
+
+//    @Select("select p.PurchaseApplicantID from PurchaseApplySheet where p.PurchaseApplyState='未审批'")
+//    List<String> getIdByState(String State);
+
+    @Select("select p.PurchaseApplicantID, p.PurchaseApplyDate, p.PurchaseApplyDescription, p.ApproveTutorID, p.PurchaseApplyState"+
+            "from PurchaseApplySheet p "+
+            "inner join User u on u.UserID = p.PurchaseApplicantID "+
+            ""+
+            "where mp.PurchaseApplyState=#{state} and mp.IsDeleted=FALSE ")
+    List<PurchaseApplySheet> getInfoByState(String state);
+
+    @Select("select UserName from User u where u.UserID=#{state}")
+    List<String> getNameById(int Id);
+
+
+//    //按照价格区间，筛选采购申请单 PurchaseApply 的列表 （联表：PurchaseApply、Device、PurchaseApplySheet）(没写完)
+//    @Select("select p from PurchaseApplySheet p"+
+//            ""+
+//            "where p.PurchaseBudget<#{maxprize} and p.PurchaseBudget>#{minprize}"+
+//            ""
+//    )
+//    List<PurchaseApply> getPAByPrice(double minprize, double maxprize);
+
+
+
+    // 单表操作(只需要id的话)不需要在Mapper这里写，直接在Controller里面写就可以了。这里用于多表查询（Mapper-Service-ServiceImpl-Controller）
+
 
 }
 

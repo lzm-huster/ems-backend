@@ -79,6 +79,22 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
     public Integer getLatestBorrowApplyID(int BorrowerID);
 
 
+    //按照用户类型筛选借用申请单的列表——教师（联表：BorrowApplyRecord、UserRole）
+    @Select("select p from BorrowApplyRecord p"+
+            "inner join UserRole ur on p.BorrowerID = ur.UserID"+
+            "where ur.RoleID = #{rid} and p.ApproveTutorID = #{tid}"+
+            ""
+    )
+    List<BorrowApplyRecord> getTeBARByUType(Integer tid, Integer rid);
+
+    //按照用户类型筛选借用申请单的列表——设备管理员（联表：BorrowApplyRecord、UserRole）
+    @Select("select p from BorrowApplyRecord p"+
+            "inner join UserRole ur on p.BorrowerID = ur.UserID"+
+            "where ur.RoleID = #{rid}"+
+            ""
+    )
+    List<BorrowApplyRecord> getAllBARByUType(Integer rid);
+
 }
 
 

@@ -2,14 +2,19 @@ package com.ems.business.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ems.business.mapper.PurchaseApplyMapper;
+
+import com.ems.business.mapper.DeviceMapper;
 import com.ems.business.mapper.PurchaseApplySheetMapper;
 import com.ems.business.model.entity.PurchaseApplySheet;
 import com.ems.business.model.response.PurchaseApplySheetList;
 import com.ems.business.service.PurchaseApplySheetService;
 import com.ems.usercenter.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 import java.util.List;
 
@@ -32,6 +37,7 @@ public class PurchaseApplySheetServiceImpl extends ServiceImpl<PurchaseApplyShee
 
 
     //个人：获取采购申请列表页面需要的数据
+    @Override
     public List<PurchaseApplySheetList> getPersonPurchaseApplySheetList(int PurchaseApplicantID) {
         List<PurchaseApplySheetList> purchaseApplySheetLists = null;
         purchaseApplySheetLists = purchaseApplySheetMapper.getPersonPurchaseApplySheetList(PurchaseApplicantID);
@@ -40,7 +46,13 @@ public class PurchaseApplySheetServiceImpl extends ServiceImpl<PurchaseApplyShee
 
     }
 
+    @Override
+    public List<PurchaseApplySheet> getPASByState(String state) {
+        return null;
+    }
+
     //管理员：获取所有采购申请页面需要数据
+    @Override
     public List<PurchaseApplySheetList> getAllPurchaseApplySheetList()
     {
         List<PurchaseApplySheetList> purchaseApplySheetLists = null;
@@ -48,6 +60,9 @@ public class PurchaseApplySheetServiceImpl extends ServiceImpl<PurchaseApplyShee
 
         return purchaseApplySheetLists;
     }
+
+
+
 
 }
 

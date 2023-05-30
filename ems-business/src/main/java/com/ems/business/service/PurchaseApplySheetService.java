@@ -6,6 +6,8 @@ import com.ems.business.model.response.PurchaseApplySheetList;
 
 import java.util.List;
 
+import java.util.List;
+
 /**
 * @author 龙志明
 * @description 针对表【PurchaseApplySheet(采购申请单表)】的数据库操作Service
@@ -14,6 +16,9 @@ import java.util.List;
 public interface PurchaseApplySheetService extends IService<PurchaseApplySheet> {
 
     public List<PurchaseApplySheetList> getPersonPurchaseApplySheetList(int PurchaseApplicantID);
+    public List<PurchaseApplySheet> getPASByState(String state);
+
+
 
     public List<PurchaseApplySheetList> getAllPurchaseApplySheetList();
 }

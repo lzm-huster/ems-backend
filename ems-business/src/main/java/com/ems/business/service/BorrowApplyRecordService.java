@@ -2,6 +2,7 @@ package com.ems.business.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.business.model.entity.BorrowApplyRecord;
+import com.ems.business.model.entity.PurchaseApplySheet;
 import com.ems.business.model.response.BorrowApplyRecordList;
 
 import java.util.List;
@@ -17,5 +18,9 @@ public interface BorrowApplyRecordService extends IService<BorrowApplyRecord> {
     public List<BorrowApplyRecordList> getPersonBorrowApplyRecordList(int UserID);
     //获取所有借用记录
     public List<BorrowApplyRecordList> getAllBorrowApplyRecordList();
+
+
+    public List<BorrowApplyRecord> getTeBARByUType(Integer tid, Integer rid);
+    public List<BorrowApplyRecord> getAllBARByUType(Integer rid);
 
 }

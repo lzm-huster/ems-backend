@@ -40,6 +40,20 @@ public class BorrowApplyRecordServiceImpl extends ServiceImpl<BorrowApplyRecordM
         return borrowApplyRecordLists;
     }
 
+    @Override
+    public List<BorrowApplyRecord> getTeBARByUType(Integer tid, Integer rid) {
+        List<BorrowApplyRecord> List1=null;
+        List1 = borrowApplyRecordMapper.getTeBARByUType(tid,rid);
+        return List1;
+    }
+
+    @Override
+    public List<BorrowApplyRecord> getAllBARByUType(Integer rid) {
+        List<BorrowApplyRecord> List1=null;
+        List1 = borrowApplyRecordMapper.getAllBARByUType(rid);
+        return List1;
+    }
+
 }
 
 

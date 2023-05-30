@@ -28,6 +28,7 @@ public class PurchaseApplySheet implements Serializable {
     @TableField(value = "PurchaseApplicantID")
     private Integer purchaseApplicantID;
 
+
     /**
      * 采购申请时间
      */
@@ -72,4 +73,15 @@ public class PurchaseApplySheet implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+
+    public Integer getPurchaseApplicantID() {
+        return purchaseApplicantID;
+    }
+
+    public Integer getApproveTutorID() {
+        return approveTutorID;
+    }
+
 }
+

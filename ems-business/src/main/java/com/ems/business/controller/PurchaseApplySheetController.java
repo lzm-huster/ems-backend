@@ -34,7 +34,7 @@ public class PurchaseApplySheetController {
     private UserMapper userMapper;
 
     @GetMapping("/getPurchaseApplySheetList")
-    //返回设备采购申请单列表数据
+    /* 返回设备采购申请单列表数据 */
     public List<PurchaseApplySheetList> getPurchaseApplySheetList(int UserID)
     {
 

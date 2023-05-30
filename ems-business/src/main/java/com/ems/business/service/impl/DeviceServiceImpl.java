@@ -26,19 +26,21 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
 
     @Override
     public void test() {
-        deviceMapper.selectById(1)
+        deviceMapper.selectById(1);
 
     }
-    @Autowired
-    private DeviceMapper deviceMapper;
+//    @Autowired
+//    private DeviceMapper deviceMapper;
 
     //获取个人设备列表
     public List<DeviceList> getPersonDeviceList(int UserID)
     {
         List<DeviceList> deviceList=null;
         deviceList=deviceMapper.getPersonDeviceList(UserID);
-
+        return deviceList;
+    }
     //获取所有设备列表
+    @Override
     public List<DeviceList> getAllDeviceList()
     {
         List<DeviceList> deviceList=null;
@@ -47,6 +49,7 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
         return deviceList;
     }
     //获取公用设备列表
+    @Override
     public List<DeviceList> getPublicDeviceList()
     {
         List<DeviceList> deviceList=null;
