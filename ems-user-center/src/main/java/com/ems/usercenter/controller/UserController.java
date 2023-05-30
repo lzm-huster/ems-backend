@@ -60,9 +60,9 @@ public class UserController {
 
     private static final String avatarPrefix = "Avatar/";
 
-    @Value("crypto.md5.salt")
+    @Value("${crypto.md5.salt}")
     private String salt;
-    @Value("default.avatar")
+    @Value("${default.avatar}")
     private String defaultAvatar;
 
 
