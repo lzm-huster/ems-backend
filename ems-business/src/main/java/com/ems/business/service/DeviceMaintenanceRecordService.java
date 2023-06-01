@@ -2,6 +2,10 @@ package com.ems.business.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.business.model.entity.DeviceMaintenanceRecord;
+import com.ems.business.model.request.DeviceMaintenanceRecordRequest;
+import com.ems.business.model.response.DeviceMaintenanceRecordList;
+
+import java.util.List;
 
 
 /**
@@ -10,5 +14,8 @@ import com.ems.business.model.entity.DeviceMaintenanceRecord;
 * @createDate 2023-04-24 09:03:00
 */
 public interface DeviceMaintenanceRecordService extends IService<DeviceMaintenanceRecord> {
+    DeviceMaintenanceRecord getDeviceMaintenanceRecord(Integer maintenanceid);
+    List<DeviceMaintenanceRecordList> getDeviceMaintenanceRecordList(Integer UserID);
 
 }
+

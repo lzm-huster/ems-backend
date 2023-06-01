@@ -3,6 +3,9 @@ package com.ems.business.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.business.model.entity.DeviceInventoryLossRecord;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 
 /**
