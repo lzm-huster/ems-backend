@@ -3,6 +3,7 @@ package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.PurchaseApplySheetMapper;
 import com.ems.business.model.entity.PurchaseApplySheet;
@@ -36,9 +37,11 @@ public class PurchaseApplySheetController {
     @Autowired
     private UserRedisConstant redisConstant;
 
+
+    @AuthCheck
     @GetMapping("/getPurchaseApplySheetList")
     //返回设备采购申请单列表数据
-    public List<PurchaseApplySheetList> getPurchaseApplySheetList(@RequestHeader("token") String token)
+    public List<PurchaseApplySheetList> getPurchaseApplySheetList(@RequestHeader(value = "token",required = false) String token)
     {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -62,6 +65,10 @@ public class PurchaseApplySheetController {
     //  根据采购申请单查询申请单详情
     public PurchaseApplySheet getPurchaseApplySheetByID(int PurchaseApplySheetID)
     {
+        if (ObjectUtil.isNull(PurchaseApplySheetID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
         PurchaseApplySheet purchaseApplySheet=null;
         purchaseApplySheet=purchaseApplySheetMapper.getPurchaseApplySheetByID(PurchaseApplySheetID);
 
@@ -110,9 +117,10 @@ public class PurchaseApplySheetController {
         return Number;
     }
 
+    @AuthCheck
     @GetMapping("getLatestPurchaseApplySheetID")
     //在添加记录时获取刚添加记录的DeviceID
-    public int getLatestPurchaseApplySheetID(@RequestHeader("token") String token)
+    public int getLatestPurchaseApplySheetID(@RequestHeader(value = "token",required = false) String token)
     {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);

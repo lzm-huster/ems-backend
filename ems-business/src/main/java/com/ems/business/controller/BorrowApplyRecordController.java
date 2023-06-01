@@ -3,6 +3,7 @@ package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.BorrowApplyRecordMapper;
 import com.ems.business.model.entity.BorrowApplyRecord;
@@ -36,10 +37,13 @@ public class BorrowApplyRecordController {
 
     @Autowired
     private UserRedisConstant redisConstant;
+
+    @AuthCheck
     @GetMapping("/getBorrowApplyRecordList")
     //返回设备借用申请单列表数据
-    public List<BorrowApplyRecordList> getBorrowApplyRecordList(@RequestHeader("token") String token)
+    public List<BorrowApplyRecordList> getBorrowApplyRecordList(@RequestHeader(value = "token",required = false) String token)
     {
+
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         Integer UserID =user.getUserID();
@@ -59,9 +63,10 @@ public class BorrowApplyRecordController {
         return borrowApplyRecordLists;
     }
 
+    @AuthCheck
     @GetMapping("/getBorrowDeviceNumber")
     //返回设备借用列表借用中的设备数量
-    public int getBorrowDeviceNumber(@RequestHeader("token") String token)
+    public int getBorrowDeviceNumber(@RequestHeader(value = "token",required = false) String token)
     {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -81,10 +86,13 @@ public class BorrowApplyRecordController {
         return borrowNumber;
     }
 
+    @AuthCheck
     @GetMapping("/getReturnDeviceNumber")
     //返回设备借用列表已归还设备数量
-    public int getReturnDeviceNumber(@RequestHeader("token") String token)
+    public int getReturnDeviceNumber(@RequestHeader(value = "token",required = false) String token)
     {
+
+
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         Integer UserID =user.getUserID();
@@ -109,6 +117,10 @@ public class BorrowApplyRecordController {
     //返回查看设备借用申请单对应设备详情数据
     public BorrowApplyRecord getBorrowApplyRecord(int BorrowApplyID)
     {
+        if (ObjectUtil.isNull(BorrowApplyID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
         BorrowApplyRecord borrowApplyRecord=null;
         borrowApplyRecord=borrowApplyRecordMapper.getBorrowApplyRecordByBorrowApplyID(BorrowApplyID);
 
@@ -158,9 +170,10 @@ public class BorrowApplyRecordController {
         return Number;
     }
 
+    @AuthCheck
     @GetMapping("getLatestBorrowApplyRecordID")
     //在添加记录时获取刚添加记录的DeviceID
-    public int getLatestBorrowApplyRecordID(@RequestHeader("token") String token)
+    public int getLatestBorrowApplyRecordID(@RequestHeader(value = "token",required = false) String token)
     {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
