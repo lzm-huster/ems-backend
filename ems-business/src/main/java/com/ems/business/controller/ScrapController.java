@@ -45,7 +45,7 @@ public class ScrapController {
     private int usertype;
 
 
-    @GetMapping("/getscraplist")
+    @GetMapping("/getScrapList")
     //查询当前报废记录
     public List<DeviceScrapListRes> getScraplist(@RequestHeader("token") String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
@@ -68,13 +68,13 @@ public class ScrapController {
 
         return DeviceScrapList;
     }
-    @GetMapping("/num_current_scarp")
+    @GetMapping("/numCurrentScarp")
     //获取“当前用户”报废设备记录的数量
     public int num_current_scarp(){
         return DeviceScrapList.size();
     }
 
-    @GetMapping("/num_expectedly_scrap")
+    @GetMapping("/numExpectedlyScrap")
     //待报废设备计数
     public int num_expectedly_scrap(@RequestHeader("token") String token) {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);

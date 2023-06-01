@@ -37,7 +37,7 @@ public class RepairController {
     private UserRedisConstant redisConstant;
     static Integer num_repair;
 
-    @GetMapping("/num_repair")
+    @GetMapping("/numRepair")
     //获取“所有”正在维修的设备的数量
     public int num_repair(){
         //获取正在维修的设备的列表
@@ -48,7 +48,7 @@ public class RepairController {
         num_repair=deviceList.size();
         return num_repair;
     }
-    @GetMapping("/getRepairlist")
+    @GetMapping("/getRepairList")
     //查询当前设备维修记录
     public List<DeviceRepairListRes> getRepairlist(@RequestHeader("token") String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
@@ -62,7 +62,7 @@ public class RepairController {
         return DeviceRepairList;
     }
 
-    @GetMapping("/num_current_repair")
+    @GetMapping("/numCurrentRepair")
     //获取“当前用户”维修记录的数量
     public int num_current_repair(){
         return DeviceRepairList.size();

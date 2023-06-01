@@ -43,7 +43,7 @@ public class CheckController {
     private int num_checking;
     private int num_checked;
 
-    @GetMapping("/get_check_list/")
+    @GetMapping("/getCheckList/")
     public List<DeviceCheckListRes> get_check_list(@RequestHeader("token") String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -66,7 +66,7 @@ public class CheckController {
         return DeviceCheckList;
     }
 
-    @GetMapping("/num_checking")
+    @GetMapping("/numChecking")
     //获取“当前用户”按计划，待核查设备的数量
     public int num_checking(){
         num_checking = 0;
@@ -75,7 +75,7 @@ public class CheckController {
         return num_checking;
     }
 
-    @GetMapping("/num_checked")
+    @GetMapping("/numChecked")
     //获取“当前用户”按计划，待核查设备的数量
     public int num_checked(){
         num_checked = DeviceCheckList.size()-num_checking;
