@@ -2,6 +2,8 @@ package com.ems.usercenter.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.usercenter.model.entity.Role;
+import com.ems.usercenter.model.request.RoleAddReq;
+import com.ems.usercenter.model.response.RoleSimpleRes;
 
 import java.util.List;
 
@@ -14,5 +16,8 @@ import java.util.List;
 public interface RoleService extends IService<Role> {
     List<String> getRoleListByUserId(Integer userId);
 
+    List<RoleSimpleRes> getRoleList();
+
+    Role addRole(RoleAddReq roleAddReq);
 
 }

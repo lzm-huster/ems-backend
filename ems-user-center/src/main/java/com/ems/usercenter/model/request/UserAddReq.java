@@ -21,11 +21,6 @@ public class UserAddReq {
     private String gender;
 
     /**
-     * 头像
-     */
-    private String avatar;
-
-    /**
      * 学号/工号
      */
 
