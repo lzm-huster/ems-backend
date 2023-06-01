@@ -1,12 +1,13 @@
 package com.ems.business.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import com.ems.business.mapper.DeviceMaintenanceRecordMapper;
 import com.ems.business.model.entity.DeviceMaintenanceRecord;
-import com.ems.business.model.request.DeviceMaintenanceRecordRequest;
 import com.ems.business.model.response.DeviceMaintenanceRecordList;
 import com.ems.business.service.DeviceMaintenanceRecordService;
+import com.ems.common.ErrorCode;
+import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,8 +25,11 @@ public class DeviceMaintenanceRecordServiceImpl extends ServiceImpl<DeviceMainte
     private DeviceMaintenanceRecordMapper deviceMaintenanceRecordMapper;
     //根据保养编号返回设备保养数据
     @Override
-    public DeviceMaintenanceRecord getDeviceMaintenanceRecord(Integer maintenanceid) {
-        DeviceMaintenanceRecord deviceMaintenanceRecordService =deviceMaintenanceRecordMapper.selectById(maintenanceid);
+    public DeviceMaintenanceRecord getDeviceMaintenanceRecord(Integer maintenanceId) {
+        if (ObjectUtil.isNull(maintenanceId)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"设备保养记录Id参数为空");
+        }
+        DeviceMaintenanceRecord deviceMaintenanceRecordService =deviceMaintenanceRecordMapper.selectById(maintenanceId);
         return deviceMaintenanceRecordService;
     }
     //根据UserID返回设备保养数据
