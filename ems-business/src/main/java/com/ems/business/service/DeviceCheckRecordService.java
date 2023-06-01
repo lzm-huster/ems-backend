@@ -2,6 +2,9 @@ package com.ems.business.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.business.model.entity.DeviceCheckRecord;
+import com.ems.business.model.response.DeviceCheckListRes;
+
+import java.util.List;
 
 
 /**
@@ -11,4 +14,7 @@ import com.ems.business.model.entity.DeviceCheckRecord;
 */
 public interface DeviceCheckRecordService extends IService<DeviceCheckRecord> {
 
+    List<DeviceCheckListRes> getCheckList(int userID);
+
+    List<DeviceCheckListRes> getCheckListAll();
 }

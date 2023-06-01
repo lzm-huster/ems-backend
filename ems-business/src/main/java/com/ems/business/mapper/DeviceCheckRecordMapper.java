@@ -2,7 +2,11 @@ package com.ems.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.business.model.entity.DeviceCheckRecord;
+import com.ems.business.model.response.DeviceCheckListRes;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 
 /**
@@ -13,6 +17,16 @@ import org.apache.ibatis.annotations.Mapper;
 */
 @Mapper
 public interface DeviceCheckRecordMapper extends BaseMapper<DeviceCheckRecord> {
+    @Select("select q."+
+            "from Device q"+
+            "inner join DeviceCheckRecord p on q.DeviceID==p,Device"+
+            "where q.UserID= #{userID}")
+    List<DeviceCheckListRes> getCheckList(int userID);
+
+    @Select("select q."+
+            "from Device q"+
+            "inner join DeviceCheckRecord p on q.DeviceID==p,Device")
+    List<DeviceCheckListRes> getCheckListAll();
 
 }
 
