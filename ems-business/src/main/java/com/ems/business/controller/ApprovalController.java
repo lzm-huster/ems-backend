@@ -4,21 +4,20 @@ import com.auth0.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.model.entity.*;
-import com.ems.business.model.response.ApprovalRecordResponse;
-import com.ems.business.model.response.BorrowApplyRecordResponse;
-import com.ems.business.model.response.DeviceScrapRecordResponse;
-import com.ems.business.model.response.PurchaseApplySheetApprovalResponse;
+import com.ems.business.model.response.*;
 import com.ems.business.service.PurchaseApplyService;
 import com.ems.business.service.impl.*;
 //import jdk.nashorn.internal.parser.Token;
+import com.ems.redis.constant.RedisConstant;
+import com.ems.usercenter.constant.UserRedisConstant;
+import com.ems.usercenter.model.entity.User;
+import com.ems.usercenter.model.entity.UserRole;
+import com.ems.usercenter.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author zhangwy
@@ -43,6 +42,10 @@ public class ApprovalController {
     @Autowired
     private PurchaseApplyServiceImpl purchaseApplyService;
 
+    @Autowired
+    private UserRedisConstant redisConstant;
+    @Autowired
+    private UserRoleService userRoleService;
 
     @GetMapping("/test")
     public void test() {
@@ -57,81 +60,63 @@ public class ApprovalController {
     */
 
     @GetMapping("/purchaseApprovalList")
-    public List<PurchaseApplySheetApprovalResponse> purchaseApprovalList(String state, @RequestHeader(value = "token",required = false) String token) {
+    public List<PurchaseApplySheetList> purchaseApprovalList(String state, @RequestHeader(value = "token", required = false) String token) {
 
-        int userId = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        //List<PurchaseApplySheet> selectList = purchaseApplySheetService.getPASByState(state);
-        QueryWrapper<PurchaseApplySheet> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("PurchaseApplyState", state);
-        List<PurchaseApplySheet> selectList = purchaseApplySheetService.list(queryWrapper);
+        Integer userId = user.getUserID();
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID", userId);
+        UserRole userRole = userRoleService.getOne(queryWrapper);
+        Integer roleId = userRole.getRoleID();
 
-        //利用selectList中的PurchaseApplySheetID和ApproveTutorID，返回学生和导师的名字
-        //QueryWrapper<PurchaseApplySheet> queryWrapper2 = new QueryWrapper<>();
-        List<Integer> ApplicantIdList = null;
-        List<Integer> TutorIdList = null;
-        List<String> ApplicantNameList = null;
-        List<String> TutorNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApplicantNameList.set(i, String.valueOf(purchaseApplySheetService.getById(ApplicantIdList.get(i))));
-            TutorNameList.set(i, String.valueOf(purchaseApplySheetService.getById(TutorIdList.get(i))));
+        //要分老师、设备管理员、院领导
+        List<PurchaseApplySheetList> List1 = null;
+        if(roleId == 1 ){
+            List1 = approvalRecordService.purchaseApprovalListTe(userId, state);
+        }else{
+            List1 = approvalRecordService.purchaseApprovalList(state);
         }
-        //返回一个对象，其中包含PurchaseApplySheet信息和两个NameList信息
-        List<PurchaseApplySheetApprovalResponse> pasarList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            PurchaseApplySheetApprovalResponse pasar = new PurchaseApplySheetApprovalResponse(selectList.get(i), ApplicantNameList.get(i), TutorNameList.get(i));
-            pasarList.add(pasar);
-        }
-        return pasarList;
+        return List1;
     }
 
     @GetMapping("/borrowApprovalList")
-    public List<BorrowApplyRecordResponse> borrowApprovalList(String state, @RequestHeader(value = "token",required = false) String token) {
+    public List<BorrowApplyRecordList> borrowApprovalList(String state, @RequestHeader(value = "token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        QueryWrapper<BorrowApplyRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("BorrowApplyState", state);
-        List<BorrowApplyRecord> selectList = borrowApplyRecordService.list(queryWrapper);
+        Integer userId = user.getUserID();
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID", userId);
+        UserRole userRole = userRoleService.getOne(queryWrapper);
+        Integer roleId = userRole.getRoleID();
 
-        List<Integer> ApplicantIdList = null;
-        List<Integer> TutorIdList = null;
-        List<String> ApplicantNameList = null;
-        List<String> TutorNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApplicantNameList.set(i, String.valueOf(borrowApplyRecordService.getById(ApplicantIdList.get(i))));
-            TutorNameList.set(i, String.valueOf(borrowApplyRecordService.getById(TutorIdList.get(i))));
+        //要分老师、设备管理员
+        List<BorrowApplyRecordList> List1 = null;
+        if(roleId == 1 ){
+            List1 = approvalRecordService.borrowApprovalListTe(userId, state);
+        }else{
+            List1 = approvalRecordService.borrowApprovalList(state);
         }
-        //返回一个对象，其中包含BorrowApplyRecord信息和两个NameList信息
-        List<BorrowApplyRecordResponse> barrList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            BorrowApplyRecordResponse barr = new BorrowApplyRecordResponse(selectList.get(i), ApplicantNameList.get(i), TutorNameList.get(i));
-            barrList.add(barr);
-        }
-        return barrList;
+        return List1;
+
+
     }
 
     @GetMapping("/scrapApprovalList")    //报废只能由负责人申请，学生不能申请
-    public List<DeviceScrapRecordResponse> scrapApprovalList(String state, @RequestHeader(value = "token",required = false) String token) {
+    public List<DeviceScrapList> scrapApprovalList(String state, @RequestHeader(value = "token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        QueryWrapper<DeviceScrapRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("ScrapState", state);
-        List<DeviceScrapRecord> selectList = deviceScrapRecordService.list(queryWrapper);
+        Integer userId = user.getUserID();
 
-        List<Integer> ApplicantIdList = null;
-        List<String> ApplicantNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApplicantNameList.set(i, String.valueOf(deviceScrapRecordService.getById(ApplicantIdList.get(i))));
-        }
-        //返回一个对象，其中包含DeviceScrapRecord信息和一个NameList信息
-        List<DeviceScrapRecordResponse> dsrrList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            DeviceScrapRecordResponse dsrr = new DeviceScrapRecordResponse(selectList.get(i), ApplicantNameList.get(i));
-            dsrrList.add(dsrr);
-        }
-        return dsrrList;
+        //只有设备管理员能审批报废
+        List<DeviceScrapList> List1 = null;
+        List1 = approvalRecordService.scrapApprovalList(state);
+        return List1;
     }
 
 
@@ -219,60 +204,39 @@ public class ApprovalController {
     */
     //所有：
     @GetMapping("/allApprovalRecord")
-    public List<ApprovalRecordResponse> allApprovalRecord(@RequestHeader(value = "token",required = false) String token) {
+    public List<ApprovalRecordResponse> allApprovalRecord(@RequestHeader(value = "token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        QueryWrapper<ApprovalRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("ApproverID", id);
-        List<ApprovalRecord> selectList = approvalRecordService.list(queryWrapper);
+        Integer userId = user.getUserID();
 
-        List<Integer> ApproverIdList = null;
-        List<String> ApproverNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApproverNameList.set(i, String.valueOf(approvalRecordService.getById(ApproverIdList.get(i))));
-        }
-        //返回一个对象，其中包含DeviceScrapRecord信息和一个NameList信息
-        List<ApprovalRecordResponse> dsrrList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            ApprovalRecordResponse arr = new ApprovalRecordResponse(selectList.get(i), ApproverNameList.get(i));
-            dsrrList.add(arr);
-        }
-        return dsrrList;
+        List<ApprovalRecordResponse> List1 = null;
+        List1 = approvalRecordService.allApprovalRecord(userId);
+        return List1;
+
 
     }
 
     //查询已审批/未审批的:
     @GetMapping("/someApprovalRecord")
-    public List<ApprovalRecordResponse> allApprovalRecord(String state, @RequestHeader(value = "token",required = false) String token) {
+    public List<ApprovalRecordResponse> allApprovalRecord(String state, @RequestHeader(value = "token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        QueryWrapper<ApprovalRecord> queryWrapper = new QueryWrapper<>();
-        List<ApprovalRecord> selectList;
+        Integer userId = user.getUserID();
+
+        List<ApprovalRecordResponse> List1 = null;
         if(state.equals('y')){
-            queryWrapper.isNotNull("ApprovalDate").eq("ApproverID", id);
-            selectList = approvalRecordService.list(queryWrapper);
+            List1 = approvalRecordService.allApprovalRecordNotNull(userId);
         }
         if(state.equals('n')){
-            queryWrapper.isNull("ApprovalDate").eq("ApproverID", id);
-            selectList = approvalRecordService.list(queryWrapper);
+            List1 = approvalRecordService.allApprovalRecordNull(userId);
         }else{
-            selectList = null;
+            List1 = null;
         }
-
-        List<Integer> ApproverIdList = null;
-        List<String> ApproverNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApproverNameList.set(i, String.valueOf(approvalRecordService.getById(ApproverIdList.get(i))));
-        }
-        //返回一个对象，其中包含DeviceScrapRecord信息和一个NameList信息
-        List<ApprovalRecordResponse> dsrrList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            ApprovalRecordResponse arr = new ApprovalRecordResponse(selectList.get(i), ApproverNameList.get(i));
-            dsrrList.add(arr);
-        }
-        return dsrrList;
+        return List1;
     }
 
 
@@ -284,145 +248,109 @@ public class ApprovalController {
 */
 
     @GetMapping("/getPSheetByTime")
-    public List<PurchaseApplySheetApprovalResponse> getPSheetByTime(Date mindate, Date maxdate, @RequestHeader(value = "token",required = false) String token) {
+    public List<PurchaseApplySheetList> getPSheetByTime(Date mindate, Date maxdate, @RequestHeader(value="token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        QueryWrapper<PurchaseApplySheet> queryWrapper = new QueryWrapper<>();
-        queryWrapper.ge("PurchaseApplyDate", mindate).le("PurchaseApplyDate", mindate);
-        List<PurchaseApplySheet> selectList = purchaseApplySheetService.list(queryWrapper);
+        Integer userId = user.getUserID();
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID", userId);
+        UserRole userRole = userRoleService.getOne(queryWrapper);
+        Integer roleId = userRole.getRoleID();
 
-        List<Integer> ApplicantIdList = null;
-        List<Integer> TutorIdList = null;
-        List<String> ApplicantNameList = null;
-        List<String> TutorNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApplicantNameList.set(i, String.valueOf(purchaseApplySheetService.getById(ApplicantIdList.get(i))));
-            TutorNameList.set(i, String.valueOf(purchaseApplySheetService.getById(TutorIdList.get(i))));
+
+        //要分老师、设备管理员、院领导
+        List<PurchaseApplySheetList> List1 = null;
+        if(roleId == 1 ){
+            List1 = approvalRecordService.getPSheetByTimeTe(mindate, maxdate,userId);
+        }else{
+            List1 = approvalRecordService.getPSheetByTime(mindate, maxdate);
         }
-        //返回一个对象，其中包含PurchaseApplySheet信息和两个NameList信息
-        List<PurchaseApplySheetApprovalResponse> pasarList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            PurchaseApplySheetApprovalResponse pasar = new PurchaseApplySheetApprovalResponse(selectList.get(i), ApplicantNameList.get(i), TutorNameList.get(i));
-            pasarList.add(pasar);
-        }
-        return pasarList;
+        return List1;
     }
 
+
     @GetMapping("/getBSheetByTime")
-    public List<BorrowApplyRecordResponse> getBSheetByTime(Date mindate, Date maxdate, @RequestHeader(value = "token",required = false) String token) {
+    public List<BorrowApplyRecordList> getBSheetByTime(Date mindate, Date maxdate, @RequestHeader(value="token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        QueryWrapper<BorrowApplyRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.ge("BorrowApplyDate",mindate).le("BorrowApplyDate", mindate);
-        List<BorrowApplyRecord> selectList = borrowApplyRecordService.list(queryWrapper);
+        Integer userId = user.getUserID();
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID", userId);
+        UserRole userRole = userRoleService.getOne(queryWrapper);
+        Integer roleId = userRole.getRoleID();
 
-        List<Integer> ApplicantIdList = null;
-        List<Integer> TutorIdList = null;
-        List<String> ApplicantNameList = null;
-        List<String> TutorNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApplicantNameList.set(i, String.valueOf(borrowApplyRecordService.getById(ApplicantIdList.get(i))));
-            TutorNameList.set(i, String.valueOf(borrowApplyRecordService.getById(TutorIdList.get(i))));
+        //要分老师、设备管理员、院领导
+
+
+        //要分老师、设备管理员、院领导
+        List<BorrowApplyRecordList> List1 = null;
+        if(roleId == 1 ){
+            List1 = approvalRecordService.getBSheetByTimeTe(mindate, maxdate,userId);
+        }else{
+            List1 = approvalRecordService.getBSheetByTime(mindate, maxdate);
         }
-        //返回一个对象，其中包含BorrowApplyRecord信息和两个NameList信息
-        List<BorrowApplyRecordResponse> barrList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            BorrowApplyRecordResponse barr = new BorrowApplyRecordResponse(selectList.get(i), ApplicantNameList.get(i), TutorNameList.get(i));
-            barrList.add(barr);
-        }
-        return barrList;
+        return List1;
     }
 
     @GetMapping("/getSSheetByTime")
-    public List<DeviceScrapRecordResponse> getSSheetByTime(Date mindate, Date maxdate, @RequestHeader(value = "token",required = false) String token) {
+    public List<DeviceScrapList> getSSheetByTime(Date mindate, Date maxdate, @RequestHeader(value="token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        QueryWrapper<DeviceScrapRecord> queryWrapper = new QueryWrapper<>();
-        queryWrapper.ge("ScrapTime",mindate).le("ScrapTime", mindate);
-        List<DeviceScrapRecord> selectList = deviceScrapRecordService.list(queryWrapper);
+        Integer userId = user.getUserID();
 
-        List<Integer> ApplicantIdList = null;
-        List<String> ApplicantNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApplicantNameList.set(i, String.valueOf(deviceScrapRecordService.getById(ApplicantIdList.get(i))));
-        }
-        //返回一个对象，其中包含DeviceScrapRecord信息和一个NameList信息
-        List<DeviceScrapRecordResponse> dsrrList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            DeviceScrapRecordResponse dsrr = new DeviceScrapRecordResponse(selectList.get(i), ApplicantNameList.get(i));
-            dsrrList.add(dsrr);
-        }
-        return dsrrList;
+        List<DeviceScrapList> List1 = null;
+        List1 = approvalRecordService.getSSheetByTime(mindate, maxdate);
+        return List1;
     }
 
     /**
      * 按照价格区间筛选采购申请单
      */
     @GetMapping("/getPSheetByPrize")
-    public List<PurchaseApply> getPSheetByPrize(double minprize, double maxprize, @RequestHeader(value = "token",required = false) String token) {
+    public List<PurchaseApplySheetList> getPSheetByPrize(double minprize, double maxprize, @RequestHeader(value="token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        QueryWrapper<PurchaseApply> queryWrapper = new QueryWrapper<>();
-        queryWrapper.gt("PurchaseBudget", minprize).lt("PurchaseBudget", maxprize);
-        /* boolean updateOne = purchaseApplyService.update(queryWrapper); */
-        List<PurchaseApply> selectList = purchaseApplyService.list(queryWrapper);
-        return selectList;
+        Integer userId = user.getUserID();
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID", userId);
+        UserRole userRole = userRoleService.getOne(queryWrapper);
+        Integer roleId = userRole.getRoleID();
+
+        //要分老师、设备管理员、院领导
+        List<PurchaseApplySheetList> List1 = null;
+        if(roleId == 1 ){
+            List1 = approvalRecordService.getPSheetByPrizeTe(minprize, maxprize,userId);
+        }else{
+            List1 = approvalRecordService.getPSheetByPrize(minprize, maxprize);
+        }
+        return List1;
     }
 
-    /**
-     * 按照用户类型筛选借用申请单_导师
-     */
-    @GetMapping("/getTeBSheetByUserType")
-    public List<BorrowApplyRecordResponse> getTeBSheetByUserType(Integer tid, Integer rid){
-
-        List<BorrowApplyRecord> selectList = borrowApplyRecordService.getTeBARByUType(tid,rid);
-
-        List<Integer> ApplicantIdList = null;
-        List<Integer> TutorIdList = null;
-        List<String> ApplicantNameList = null;
-        List<String> TutorNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApplicantNameList.set(i, String.valueOf(borrowApplyRecordService.getById(ApplicantIdList.get(i))));
-            TutorNameList.set(i, String.valueOf(borrowApplyRecordService.getById(TutorIdList.get(i))));
-        }
-        //返回一个对象，其中包含BorrowApplyRecord信息和两个NameList信息
-        List<BorrowApplyRecordResponse> barrList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            BorrowApplyRecordResponse barr = new BorrowApplyRecordResponse(selectList.get(i), ApplicantNameList.get(i), TutorNameList.get(i));
-            barrList.add(barr);
-        }
-        return barrList;
-    }
 
     /**
      * 按照用户类型筛选借用申请单_设备管理员
      */
     @GetMapping("/getAllBSheetByUserType")
-    public List<BorrowApplyRecordResponse> getAllBSheetByUserType(Integer rid, @RequestHeader(value = "token",required = false) String token) {
+    public List<BorrowApplyRecordList> getAllBSheetByUserType(Integer rid, @RequestHeader(value="token", required = false) String token) {
 
-        int id = JWT.decode(token).getClaim("UserId").asInt();
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
 
-        List<BorrowApplyRecord> selectList = borrowApplyRecordService.getAllBARByUType(rid);
+        Integer userId = user.getUserID();
 
-        List<Integer> ApplicantIdList = null;
-        List<Integer> TutorIdList = null;
-        List<String> ApplicantNameList = null;
-        List<String> TutorNameList = null;
-        for (int i = 0; i < selectList.toArray().length; i++) {
-            ApplicantNameList.set(i, String.valueOf(borrowApplyRecordService.getById(ApplicantIdList.get(i))));
-            TutorNameList.set(i, String.valueOf(borrowApplyRecordService.getById(TutorIdList.get(i))));
-        }
-        //返回一个对象，其中包含BorrowApplyRecord信息和两个NameList信息
-        List<BorrowApplyRecordResponse> barrList = new ArrayList<>();
-        for (int i = 0; i < selectList.size(); i++) {
-            BorrowApplyRecordResponse barr = new BorrowApplyRecordResponse(selectList.get(i), ApplicantNameList.get(i), TutorNameList.get(i));
-            barrList.add(barr);
-        }
-        return barrList;
+        List<BorrowApplyRecordList> List1 = null;
+        List1 = approvalRecordService.getAllBSheetByUserType(rid);
+        return List1;
+
+
     }
 
 
