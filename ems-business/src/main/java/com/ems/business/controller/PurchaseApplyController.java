@@ -31,6 +31,10 @@ public class PurchaseApplyController {
     //返回查看设备采购申请单对应设备详情数据
     public List<PurchaseApply> getPurchaseApplies(int PurchaseApplySheetID)
     {
+        if (ObjectUtil.isNull(PurchaseApplySheetID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
         List<PurchaseApply> purchaseApplies=null;
         purchaseApplies=purchaseApplyMapper.selectByApplySheetId(PurchaseApplySheetID);
 
