@@ -2,6 +2,9 @@ package com.ems.usercenter.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.usercenter.model.entity.User;
+import com.ems.usercenter.model.response.UserDetailRes;
+
+import java.util.List;
 
 public interface UserService extends IService<User> {
     /**
@@ -35,4 +38,7 @@ public interface UserService extends IService<User> {
      * @return
      */
     boolean registerByPhone(User user);
+
+    UserDetailRes getUserDetail(int userId);
+    List<UserDetailRes> getAllDetail();
 }

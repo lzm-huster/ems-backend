@@ -14,19 +14,21 @@ import com.ems.redis.RedisUtil;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.model.entity.User;
+import com.ems.usercenter.model.entity.UserRole;
+import com.ems.usercenter.model.request.UserAddReq;
 import com.ems.usercenter.model.request.UserLoginReq;
 import com.ems.usercenter.model.request.UserRegisterReq;
-import com.ems.usercenter.model.request.UserAddReq;
-
 import com.ems.usercenter.model.response.UserCurrentRes;
 import com.ems.usercenter.model.response.UserDetailRes;
 import com.ems.usercenter.service.PermissionService;
 import com.ems.usercenter.service.RoleService;
+import com.ems.usercenter.service.UserRoleService;
 import com.ems.usercenter.service.UserService;
 import com.ems.utils.JwtUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -34,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 @ResponseResult
 @RestController
@@ -52,6 +53,8 @@ public class UserController {
     @Autowired
     private UserRedisConstant userRedisConstant;
     @Autowired
+    private UserRoleService userRoleService;
+    @Autowired
     private MinioConfigProperties minioProperties;
     @Autowired
     private RoleService roleService;
@@ -68,7 +71,8 @@ public class UserController {
 
     /**
      * 登录接口   loginType -1 学号/工号登录
-     *          loginType -2 手机号登录
+     * loginType -2 手机号登录
+     *
      * @param userLoginReq
      * @return
      */
@@ -93,11 +97,11 @@ public class UserController {
         MD5 md5 = new MD5(salt.getBytes());
         user.setPassword(md5.digestHex(userPassword));
         User queryRes = null;
-        if (ObjectUtil.equal(loginType,1)){
+        if (ObjectUtil.equal(loginType, 1)) {
             user.setIDNumber(userNumber);
             queryRes = userService.userLoginByIDNumber(user);
         }
-        if (ObjectUtil.equal(loginType,2)){
+        if (ObjectUtil.equal(loginType, 2)) {
             user.setPhoneNumber(userNumber);
             queryRes = userService.userLoginByPhone(user);
         }
@@ -106,7 +110,7 @@ public class UserController {
         }
         // 生成token
         Map<String, Object> claims = new HashMap<>();
-        claims.put("UserId",queryRes.getUserID());
+        claims.put("UserId", queryRes.getUserID());
         claims.put("UserName", queryRes.getUserName());
         claims.put("IDNumber", queryRes.getIDNumber());
         String token = jwtUtil.generateToken(queryRes.getUserID().toString(), claims);
@@ -117,12 +121,13 @@ public class UserController {
 
     /**
      * 获取当前用户信息
+     *
      * @param token
      * @return
      */
     @AuthCheck()
     @GetMapping("/currentUser")
-    public UserCurrentRes getCurrentUser(@RequestHeader(value = "token",required = false) String token) {
+    public UserCurrentRes getCurrentUser(@RequestHeader(value = "token", required = false) String token) {
         // redis取信息
         Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
         // 获取基础User信息
@@ -152,16 +157,18 @@ public class UserController {
 
     /**
      * 获取验证码
+     *
      * @return
      */
     @PostMapping("/getCaptcha")
-    public String getCaptcha(){
+    public String getCaptcha() {
         // TODO 处理消息发送，验证码调用
         return "1234";
     }
 
     /**
      * 注册 1- 邮箱注册 2-手机号注册
+     *
      * @param userRegisterReq
      * @return
      */
@@ -189,91 +196,107 @@ public class UserController {
         user.setAvatar(defaultAvatar);
         boolean save = false;
         // 根据不同类型进行注册
-        if (ObjectUtil.equal(registerType,1)){
+        if (ObjectUtil.equal(registerType, 1)) {
             save = userService.registerByEmail(user);
-        } else if (ObjectUtil.equal(registerType,1)) {
+        } else if (ObjectUtil.equal(registerType, 1)) {
             save = userService.registerByPhone(user);
-        }else {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"注册类型有误");
+        } else {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "注册类型有误");
         }
         if (!save) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "注册失败");
         }
         return true;
     }
+
     /**
      * 获取当前用户详细信息
+     *
      * @param token
      * @return
      */
     @GetMapping("/info")
-    public UserDetailRes getUserInfo(@RequestHeader(value = "token",required = false) String token){
+    public UserDetailRes getUserInfo(@RequestHeader(value = "token", required = false) String token) {
         Map<Object, Object> redisMapFromToken = userRedisConstant.getRedisMapFromToken(token);
-        User user = (User)redisMapFromToken.get(RedisConstant.UserInfo);
+        User user = (User) redisMapFromToken.get(RedisConstant.UserInfo);
         UserDetailRes userDetailRes = new UserDetailRes();
-        BeanUtils.copyProperties(user,userDetailRes);
+        BeanUtils.copyProperties(user, userDetailRes);
         return userDetailRes;
     }
 
     /**
      * 获取用户详细信息 - 用户管理
+     *
      * @param userId
      * @return
      */
 
     @GetMapping("/query")
-    public UserDetailRes queryUserDetail(@RequestParam("userId") Integer userId){
-        if (ObjectUtil.isNull(userId)){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"userId参数为空");
+    public UserDetailRes queryUserDetail(@RequestParam("userId") Integer userId) {
+        if (ObjectUtil.isNull(userId)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "userId参数为空");
         }
         User userById = userService.getUserById(userId);
-        if (ObjectUtil.isNull(userById)){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"用户信息查询失败");
+        if (ObjectUtil.isNull(userById)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "用户信息查询失败");
         }
-        UserDetailRes userDetailRes = new UserDetailRes();
-        BeanUtils.copyProperties(userById,userDetailRes);
-        return userDetailRes;
+        return userService.getUserDetail(userId);
     }
+
     /**
      * 用户添加 - 用户管理
+     *
      * @param userAddReq
      * @return
      */
+    @Transactional
     @AuthCheck(mustAuth = {"user:add"})
     @PostMapping("/add")
-    public boolean addUser(@RequestBody UserAddReq userAddReq){
+    public UserDetailRes addUser(@RequestBody UserAddReq userAddReq) {
+        Integer roleId = userAddReq.getRoleId();
+        if (ObjectUtil.isNull(roleId)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户角色不能为空");
+        }
+        String phoneNumber = userAddReq.getPhoneNumber();
+        if (ObjectUtil.isNull(phoneNumber)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户联系方式不能为空");
+        }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("IDNumber",userAddReq.getIDNumber()).or()
-                .eq("Email",userAddReq.getEmail()).or()
-                .eq("PhoneNumber",userAddReq.getPhoneNumber());
+        queryWrapper.eq("IDNumber", userAddReq.getIDNumber()).or()
+                .eq("Email", userAddReq.getEmail()).or()
+                .eq("PhoneNumber", userAddReq.getPhoneNumber());
         List<User> users = userService.list(queryWrapper);
-        if (!users.isEmpty()){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"已存在相同的学号/工号，邮箱，手机号的用户记录");
+        if (!users.isEmpty()) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "已存在相同的学号/工号或邮箱或手机号的用户记录");
         }
         User user = new User();
-        BeanUtils.copyProperties(userAddReq,user);
-        if (StringUtils.isBlank(user.getPassword())){
+        BeanUtils.copyProperties(userAddReq, user);
+        if (StringUtils.isBlank(user.getPassword())) {
             MD5 md5 = new MD5(salt.getBytes());
             user.setPassword(md5.digestHex("ems123456"));
         }
         boolean save = userService.save(user);
-        if (!save){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"增加用户失败");
+        if (!save) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "增加用户失败");
         }
-        return true;
+        Integer userID = user.getUserID();
+        UserRole userRole = new UserRole();
+        userRole.setUserID(userID);
+        userRole.setRoleID(userAddReq.getRoleId());
+        boolean save1 = userRoleService.save(userRole);
+        if (!save1) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "增加用户失败");
+        }
+        return userService.getUserDetail(userID);
     }
 
     /**
      * 用户列表 - 用户管理
+     *
      * @return
      */
     @GetMapping("/list")
-    public List<UserDetailRes> getUserList(){
-        List<User> userList = userService.list();
-        return userList.stream().map(user -> {
-            UserDetailRes userDetailRes = new UserDetailRes();
-            BeanUtils.copyProperties(user, userDetailRes);
-            return userDetailRes;
-        }).collect(Collectors.toList());
+    public List<UserDetailRes> getUserList() {
+        return userService.getAllDetail();
     }
 }

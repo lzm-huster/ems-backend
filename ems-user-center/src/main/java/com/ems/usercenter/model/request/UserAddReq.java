@@ -5,6 +5,10 @@ import lombok.Data;
 @Data
 public class UserAddReq {
     /**
+     * 用户角色Id
+     */
+    private Integer roleId;
+    /**
      * 用户名
      */
     private String userName;
