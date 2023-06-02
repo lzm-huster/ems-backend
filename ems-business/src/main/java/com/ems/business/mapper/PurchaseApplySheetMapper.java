@@ -92,7 +92,11 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
 
 
 
-    // 单表操作(只需要id的话)不需要在Mapper这里写，直接在Controller里面写就可以了。这里用于多表查询（Mapper-Service-ServiceImpl-Controller）
+    ////// 单表操作(只需要id的话)不需要在Mapper这里写，直接在Controller里面写就可以了。这里用于多表查询（Mapper-Service-ServiceImpl-Controller）
+
+
+
+
 
 
 }

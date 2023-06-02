@@ -26,12 +26,12 @@ public class BorrowApplyRecordList {
     private String userName;
 
     /**
-     * 采购申请时间
+     * 借用申请时间
      */
     private Date borrowApplyDate;
 
     /**
-     * 采购申请状态
+     * 借用申请状态
      */
     private String borrowApplyState;
 

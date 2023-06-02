@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -33,6 +34,7 @@ public class BorrowApplyRecord implements Serializable {
      * 借用申请时间
      */
     @TableField(value = "BorrowApplyDate")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date borrowApplyDate;
 
     /**
@@ -63,12 +65,14 @@ public class BorrowApplyRecord implements Serializable {
      * 创建时间
      */
     @TableField(value = "CreateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
      * 更新时间
      */
     @TableField(value = "UpdateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     @TableField(exist = false)
