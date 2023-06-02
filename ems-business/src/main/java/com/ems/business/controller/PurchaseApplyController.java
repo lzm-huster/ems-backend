@@ -8,14 +8,12 @@ import com.ems.business.model.entity.PurchaseApply;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 @ResponseResult
 @RestController
@@ -24,22 +22,6 @@ public class PurchaseApplyController {
 
     @Autowired
     private PurchaseApplyMapper purchaseApplyMapper;
-
-
-
-    @GetMapping("/getPurchaseApplies")
-    //返回查看设备采购申请单对应设备详情数据
-    public List<PurchaseApply> getPurchaseApplies(int PurchaseApplySheetID)
-    {
-        if (ObjectUtil.isNull(PurchaseApplySheetID)) {
-            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
-        }
-
-        List<PurchaseApply> purchaseApplies=null;
-        purchaseApplies=purchaseApplyMapper.selectByApplySheetId(PurchaseApplySheetID);
-
-        return purchaseApplies;
-    }
 
 
     @PutMapping("/insertPurchaseApply")

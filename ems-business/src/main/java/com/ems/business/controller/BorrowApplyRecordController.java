@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.BorrowApplyRecordMapper;
+import com.ems.business.mapper.BorrowApplySheetMapper;
 import com.ems.business.model.entity.BorrowApplyRecord;
 import com.ems.business.model.response.BorrowApplyRecordList;
 import com.ems.business.service.impl.BorrowApplyRecordServiceImpl;
@@ -34,6 +35,8 @@ public class BorrowApplyRecordController {
     private BorrowApplyRecordMapper borrowApplyRecordMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private BorrowApplySheetMapper borrowApplySheetMapper;
 
     @Autowired
     private UserRedisConstant redisConstant;
@@ -184,6 +187,26 @@ public class BorrowApplyRecordController {
         int Number=0;
         Number=borrowApplyRecordMapper.getLatestBorrowApplyID(UserID);
         return Number;
+    }
+
+    @PutMapping("deleteBorrowApplyRecordByBorrowApplyID")
+    //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
+    public int deleteBorrowApplyRecordByBorrowApplyRecordID(int BorrowApplyID)
+    {
+        if (ObjectUtil.isNull(BorrowApplyID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
+        //删除借用申请表数据
+        borrowApplySheetMapper.deleteBorrowApplySheetByBorrowApplyID(BorrowApplyID);
+
+        //删除借用申请单表数据
+        int Number=0;
+        Number=borrowApplyRecordMapper.deleteBorrowApplyRecordByBorrowApplyID(BorrowApplyID);
+
+        return Number;
+
+
     }
 
 }

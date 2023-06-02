@@ -21,6 +21,9 @@ public interface BorrowApplySheetMapper extends BaseMapper<BorrowApplySheet> {
     @Select("select * from `BorrowApplySheet` where `BorrowApplyID` = #{BorrowApplyID};")
     List<BorrowApplySheet> getBorrowApplySheetByBorrowApplyID(int BorrowApplyID);
 
+    //根据借用申请单表的BorrowApplyID删除借用单表数据
+    @Select("update `BorrowApplySheet` set `IsDeleted`=1 where `BorrowApplyID`=#{BorrowApplyID};")
+    public Integer deleteBorrowApplySheetByBorrowApplyID(int BorrowApplyID);
 
 }
 
