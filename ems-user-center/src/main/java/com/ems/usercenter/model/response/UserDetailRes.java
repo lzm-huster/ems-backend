@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import org.springframework.boot.convert.DataSizeUnit;
 
+import java.util.Date;
+
 @Data
 public class UserDetailRes {
 
@@ -22,6 +24,14 @@ public class UserDetailRes {
      * 头像
      */
     private String avatar;
+    /**
+     * 角色
+     */
+    private String roleName;
+    /**
+     * 角色描述
+     */
+    private String roleDescription;
 
     /**
      * 学号/工号
@@ -46,4 +56,8 @@ public class UserDetailRes {
      */
 
     private String phoneNumber;
+    /**
+     * 创建时间
+     */
+    private Date createTime;
 }

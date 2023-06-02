@@ -4,6 +4,7 @@ import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.DeviceMapper;
 import com.ems.business.model.entity.Device;
@@ -37,10 +38,10 @@ public class DeviceController {
     @Autowired
     private UserRedisConstant redisConstant;
 
-
+    @AuthCheck
     @GetMapping("/getDeviceList")
     //设备信息列表：管理员返回所有设备列表数据，其他用户返回公用设备数据
-    public List<DeviceList> getDeviceList(@RequestHeader("token") String token)
+    public List<DeviceList> getDeviceList(@RequestHeader(value = "token",required = false) String token)
     {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
@@ -61,10 +62,10 @@ public class DeviceController {
         return deviceLists;
     }
 
-
+    @AuthCheck
     @GetMapping("/getPersonDeviceList")
     //个人信息列表：返回个人名下设备信息列表
-    public List<DeviceList> getPersonDeviceList(@RequestHeader("token") String token)
+    public List<DeviceList> getPersonDeviceList(@RequestHeader(value = "token",required = false) String token)
     {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -80,6 +81,10 @@ public class DeviceController {
     //根据DeviceID查询详细信息
     public Device getDeviceDetail(int DeviceID)
     {
+        if (ObjectUtil.isNull(DeviceID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
         Device device=null;
         device=deviceMapper.getDeviceByDeviceID(DeviceID);
 
@@ -145,9 +150,10 @@ public class DeviceController {
         return Number;
     }
 
+    @AuthCheck
     @GetMapping("getLatestDeviceID")
     //在添加记录时获取刚添加记录的DeviceID
-    public int getLatestDeviceID(@RequestHeader("token") String token)
+    public int getLatestDeviceID(@RequestHeader(value = "token",required = false) String token)
     {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);

@@ -34,6 +34,10 @@ public class BorrowApplySheetController {
     //返回查看设备采购申请单对应设备详情数据
     public List<BorrowApplySheet> getBorrowApplySheets(int BorrowApplyID)
     {
+        if (ObjectUtil.isNull(BorrowApplyID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
         List<BorrowApplySheet> borrowApplySheets=null;
         borrowApplySheets=borrowApplySheetMapper.getBorrowApplySheetByBorrowApplyID(BorrowApplyID);
 
@@ -45,6 +49,10 @@ public class BorrowApplySheetController {
     //根据BorrowApplyID查看设备采购申请单详情数据(一条申请单数据)
     public String getBorrowDescription(int BorrowApplyID)
     {
+        if (ObjectUtil.isNull(BorrowApplyID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
         String description=null;
         description=borrowApplyRecordMapper.getDescriptionByBorrowApplyID(BorrowApplyID);
 
