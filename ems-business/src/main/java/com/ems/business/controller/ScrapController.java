@@ -2,6 +2,7 @@ package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceRepairRecord;
 import com.ems.business.model.entity.DeviceScrapRecord;
@@ -10,6 +11,7 @@ import com.ems.business.model.request.DeviceScrapListreq;
 import com.ems.business.service.DeviceService;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
+import com.ems.usercenter.model.entity.Role;
 import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.annotation.ResponseResult;
@@ -17,7 +19,10 @@ import com.ems.business.model.response.DeviceScrapListRes;
 import com.ems.business.service.DeviceScrapRecordService;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
+import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 //import org.testng.annotations.Test;
@@ -39,78 +44,88 @@ public class ScrapController {
     @Autowired
     private DeviceService deviceService;
     @Autowired
-    private List<DeviceScrapListRes> DeviceScrapList;
-    @Autowired
     private UserRedisConstant redisConstant;
-    private int usertype;
+    @Autowired
+    private RoleService roleService;
+
+
+    //获取当前用户的角色名称以判断查询范围
+    public String getRoleName(int userID){
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID", userID);
+        int roleID = userRoleService.getOne(queryWrapper).getRoleID();
+
+        QueryWrapper<Role> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("RoleID", roleID);
+        String rolename = roleService.getOne(queryWrapper1).getRoleName();
+        return rolename;
+    }
 
 
     @GetMapping("/getScrapList")
     //查询当前报废记录
-    public List<DeviceScrapListRes> getScraplist(@RequestHeader("token") String token){
+    public List<DeviceScrapListRes> getScraplist(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
-        Integer userID =user.getUserID();
+        int userID =user.getUserID();
+
+        List<DeviceScrapListRes> DeviceScrapList;
 
         if(!ObjectUtil.isEmpty(userID)){
-            usertype = 0 ;  //默认普通用户账号
-            QueryWrapper<UserRole> queryWrapper=new QueryWrapper<>();
-            queryWrapper.eq("UserID",userID);
-            List<UserRole> userRoleslst =userRoleService.list(queryWrapper);
-            for(UserRole s: userRoleslst){
-                if(s.getRoleID()==1||s.getRoleID()==0) {usertype = 1; break;} //管理员账号
-            }
-            if(usertype == 0) DeviceScrapList=deviceScrapRecordService.getScrapList(userID);
-            else DeviceScrapList=deviceScrapRecordService.getScrapListAll();
-
+            if(getRoleName(userID).equals("deviceAdmin"))
+                DeviceScrapList = deviceScrapRecordService.getScrapListAll();
+            else DeviceScrapList = deviceScrapRecordService.getScrapList(userID);
+            return DeviceScrapList;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
 
-        return DeviceScrapList;
     }
+
+
     @GetMapping("/numCurrentScarp")
     //获取“当前用户”报废设备记录的数量
-    public int num_current_scarp(){
-        return DeviceScrapList.size();
+    public int num_current_scarp(@RequestHeader(value = "token",required = false) String token){
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        int userID =user.getUserID();
+
+        List<DeviceScrapListRes> DeviceScrapList;
+
+        if(!ObjectUtil.isEmpty(userID)){
+            if(getRoleName(userID).equals("deviceAdmin"))
+                DeviceScrapList = deviceScrapRecordService.getScrapListAll();
+            else DeviceScrapList = deviceScrapRecordService.getScrapList(userID);
+            return DeviceScrapList.size();
+        }
+        else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
+
     }
 
     @GetMapping("/numExpectedlyScrap")
     //待报废设备计数
-    public int num_expectedly_scrap(@RequestHeader("token") String token) {
+    public int num_expectedly_scrap(@RequestHeader(value = "token",required = false) String token) {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         Integer userID =user.getUserID();
+        if(!ObjectUtil.isEmpty(userID)) {
+            if (!getRoleName(userID).equals("deviceAdmin")) {
+                //获取当前时间
+                Date date = new Date();
+                //SimpleDateFormat sdFormat=new SimpleDateFormat("yyyy-MM-dd");
+                date.setTime(System.currentTimeMillis());
+                return deviceService.getNumScarpingAll(date);
+            } else {
+                Date date = new Date();
+                date.setTime(System.currentTimeMillis());
+                return deviceService.getNumScarping(date, userID);
 
-        int num;
-        if (usertype == 0) {
-            int currentUserID = userID;
-            num = 0;
-            QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("UserID", currentUserID);
-            List<Device> deviceList = deviceService.list(queryWrapper);
-            Date date = new Date();
-            //SimpleDateFormat sdFormat=new SimpleDateFormat("yyyy-MM-dd");
-            date.setTime(System.currentTimeMillis());
-            for (Device s : deviceList) {
-                if (date.compareTo(s.getExpectedScrapDate()) >= 0) num += 1;
             }
-            return num;
-        } else if (usertype == 1) {
-            num = 0;
-            QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
-            List<Device> deviceList = deviceService.list(queryWrapper);
-            Date date = new Date();
-            date.setTime(System.currentTimeMillis());
-            for (Device s : deviceList) {
-                if (date.compareTo(s.getExpectedScrapDate()) >= 0) num += 1;
-            }
-            return num;
-        }
-        return 0;
+        } else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
+
     }
 
-    @GetMapping("/scrapDetill")
-    public Map<String,String> scrapDetill(@RequestHeader("token") String token){
+    @GetMapping("/getScrapDetill")
+    public Map<String,String> scrapDetill(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         Integer scrapID =user.getUserID();
@@ -129,79 +144,63 @@ public class ScrapController {
 
     @PostMapping("/insertDeviceScarpRecord")
     //插入报废记录
-    public int insertDeviceScarpRecord(DeviceScrapListreq deviceScrapListreq){
+    public int insertDeviceScarpRecord(@NotNull DeviceScrapListreq deviceScrapListreq){
         DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
-
-        deviceScrapRecord.setDeviceID(deviceScrapListreq.getDeviceID());
-        deviceScrapRecord.setScrapID(deviceScrapListreq.getScrapID());
-        deviceScrapRecord.setScrapImages(deviceScrapListreq.getScrapImages());
-        deviceScrapRecord.setScrapTime(deviceScrapListreq.getScrapTime());
-        deviceScrapRecord.setScrapReason(deviceScrapListreq.getScrapReason());
-        deviceScrapRecord.setScrapPerson(deviceScrapListreq.getScrapPerson());
-        deviceScrapRecord.setRemark(deviceScrapListreq.getRemark());
+        BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
+        deviceScrapRecord.setDeviceState("已报废");
 
         if(ObjectUtil.isEmpty(deviceScrapListreq.getScrapID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
             //将数据插入表中
-            boolean t=deviceScrapRecordService.save(deviceScrapRecord);
+            boolean state=deviceScrapRecordService.save(deviceScrapRecord);
 
-            if(t)
+            if(state)
             {
                 Device device=new Device();
                 device.setDeviceID(deviceScrapListreq.getDeviceID());
                 device.setDeviceState("已报废");
                 deviceService.updateById(device);
 
-                DeviceScrapRecord deviceScrapRecord1=new DeviceScrapRecord();
-                deviceScrapRecord1.setDeviceID(deviceScrapListreq.getDeviceID());
-                deviceScrapRecord1.setDeviceState("已报废");
-                deviceScrapRecordService.updateById(deviceScrapRecord1);
                 return 1;
             }
             else
-                return 0;
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
         }
     }
 
     @PostMapping("/updateDeviceScarpRecord")
     //更新报废记录
-    public int updateScarpRecord(DeviceScrapListreq deviceScrapListreq){
+    public int updateScarpRecord(@NotNull DeviceScrapListreq deviceScrapListreq){
         DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
-
-        deviceScrapRecord.setDeviceID(deviceScrapListreq.getDeviceID());
-        deviceScrapRecord.setScrapID(deviceScrapListreq.getScrapID());
-        deviceScrapRecord.setScrapImages(deviceScrapListreq.getScrapImages());
-        deviceScrapRecord.setScrapTime(deviceScrapListreq.getScrapTime());
-        deviceScrapRecord.setScrapReason(deviceScrapListreq.getScrapReason());
-        deviceScrapRecord.setScrapPerson(deviceScrapListreq.getScrapPerson());
-        deviceScrapRecord.setRemark(deviceScrapListreq.getRemark());
+        BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
 
         if(ObjectUtil.isEmpty(deviceScrapRecord.getScrapID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
             //将数据更新进表中
-            boolean t = deviceScrapRecordService.updateById(deviceScrapRecord);
-            if (t)
+
+            UpdateWrapper<DeviceScrapRecord> userUpdateWrapper = new UpdateWrapper<>();
+            userUpdateWrapper.eq("ScrapID", deviceScrapRecord.getScrapID());
+
+            boolean state = deviceScrapRecordService.update(deviceScrapRecord, userUpdateWrapper);
+
+            if (state)
             {
                 Device device=new Device();
                 device.setDeviceID(deviceScrapListreq.getDeviceID());
                 device.setDeviceState("已报废");
                 deviceService.updateById(device);
 
-                DeviceScrapRecord deviceScrapRecord1=new DeviceScrapRecord();
-                deviceScrapRecord1.setDeviceID(deviceScrapListreq.getDeviceID());
-                deviceScrapRecord1.setDeviceState("已报废");
-                deviceScrapRecordService.updateById(deviceScrapRecord1);
-
                 return 1;
             }
             else
-                return 0;
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
         }
     }
 
 
 }
-   /* @Test
+
+/* @Test
     public void test()
     {
         Date date=new Date();
@@ -209,4 +208,5 @@ public class ScrapController {
         date.setTime(System.currentTimeMillis());
         System.out.println(date);
     }
-}*/
+*/
+

@@ -2,7 +2,9 @@ package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ems.annotation.ResponseResult;
+import com.ems.business.mapper.DeviceCheckRecordMapper;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceCheckRecord;
 import com.ems.business.model.entity.DeviceScrapRecord;
@@ -15,9 +17,13 @@ import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
+import com.ems.usercenter.model.entity.Role;
 import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
+import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,64 +40,103 @@ public class CheckController {
     @Autowired
     DeviceService deviceService;
     @Autowired
-    private List<DeviceCheckListRes> DeviceCheckList;
-    private int usertype;
-    @Autowired
     private UserRoleService userRoleService;
     @Autowired
     private UserRedisConstant redisConstant;
-    private int num_checking;
-    private int num_checked;
+    @Autowired
+    private RoleService roleService;
+    @Autowired
+    private DeviceCheckRecordMapper deviceCheckRecordMapper;
 
-    @GetMapping("/getCheckList/")
-    public List<DeviceCheckListRes> get_check_list(@RequestHeader("token") String token){
+
+
+    //获取当前用户的角色名称以判断查询范围
+    public String getRoleName(int userID){
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID", userID);
+        int roleID = userRoleService.getOne(queryWrapper).getRoleID();
+
+        QueryWrapper<Role> queryWrapper1 = new QueryWrapper<>();
+        queryWrapper1.eq("RoleID", roleID);
+        String rolename = roleService.getOne(queryWrapper1).getRoleName();
+        return rolename;
+    }
+
+    @GetMapping("/getCheckList")
+    //查询获得设备核查的记录列表
+    public List<DeviceCheckListRes> get_check_list(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         Integer userID =user.getUserID();
 
-        if(!ObjectUtil.isEmpty(userID)){
-            usertype = 0 ;  //默认普通用户账号
-            QueryWrapper<UserRole> queryWrapper=new QueryWrapper<>();
-            queryWrapper.eq("UserID",userID);
-            List<UserRole> userRoleslst =userRoleService.list(queryWrapper);
-            for(UserRole s: userRoleslst){
-                if(s.getRoleID()==1||s.getRoleID()==0) {usertype = 1; break;} //管理员账号
-            }
-            if(usertype == 0) DeviceCheckList=deviceCheckRecordService.getCheckList(userID);
-            else DeviceCheckList=deviceCheckRecordService.getCheckListAll();
+        List<DeviceCheckListRes> DeviceCheckList;
 
+        if(!ObjectUtil.isEmpty(userID)){
+
+            if(getRoleName(userID).equals("deviceAdmin"))
+                DeviceCheckList=deviceCheckRecordService.getCheckListAll();
+            else DeviceCheckList=deviceCheckRecordService.getCheckList(userID);
+            return DeviceCheckList;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
 
-        return DeviceCheckList;
     }
 
-    @GetMapping("/numChecking")
+    @GetMapping("/getNumChecking")
     //获取“当前用户”按计划，待核查设备的数量
-    public int num_checking(){
-        num_checking = 0;
-        for(DeviceCheckListRes s:DeviceCheckList)
-            if(s.getDeviceState().equals("待核查")) num_checking += 1;
+    public int num_checking(@RequestHeader(value = "token",required = false) String token){
+
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer userID =user.getUserID();
+
+        int num_checking ;
+
+        if(!ObjectUtil.isEmpty(userID)){
+
+            if(getRoleName(userID).equals("deviceAdmin"))
+                num_checking = deviceCheckRecordService.getCheckList_CheckingNum_All();
+            else num_checking = deviceCheckRecordService.getCheckList_CheckingNum(userID);
+        }
+        else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
+
         return num_checking;
     }
 
-    @GetMapping("/numChecked")
-    //获取“当前用户”按计划，待核查设备的数量
-    public int num_checked(){
-        num_checked = DeviceCheckList.size()-num_checking;
-        return num_checked;
-    }
-
-    @GetMapping("/checkDetill")
-    public Map<String,String> checkDetill(@RequestHeader("token") String token){
+    @GetMapping("/getNumChecked")
+    //获取“当前用户”按计划，已核查设备的数量
+    public int num_checked(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
-        Integer checkID =user.getUserID();
+        Integer userID =user.getUserID();
 
+        int num_checking ;
+        int num_checked ;
+
+        List<DeviceCheckListRes> DeviceCheckList;
+
+        if(!ObjectUtil.isEmpty(userID)){
+
+            if(getRoleName(userID).equals("deviceAdmin"))
+                num_checking = deviceCheckRecordService.getCheckList_CheckingNum_All();
+            else num_checking = deviceCheckRecordService.getCheckList_CheckingNum(userID);
+
+            if(getRoleName(userID).equals("deviceAdmin"))
+                DeviceCheckList=deviceCheckRecordService.getCheckListAll();
+            else DeviceCheckList=deviceCheckRecordService.getCheckList(userID);
+            num_checked = DeviceCheckList.size()-num_checking;
+            return num_checked;
+        }
+        else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
+    }
+
+    @GetMapping("/getCheckDetill")
+    public Map<String,String> checkDetill(int checkID){
         if(!ObjectUtil.isEmpty(checkID)){
             QueryWrapper<DeviceCheckRecord> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("CheckID", checkID);
             DeviceCheckRecord deviceCheckRecord = deviceCheckRecordService.getOne(queryWrapper);
+
             Map<String,String> map=new HashMap<>();
             map.put("ScrapImages",deviceCheckRecord.getCheckImages());
             map.put("Remark",deviceCheckRecord.getRemark());
@@ -102,54 +147,42 @@ public class CheckController {
 
     @PostMapping("/insertDeviceCheckRecord")
     //插入报废记录
-    public int insertDeviceCheckRecord(DeviceCheckListreq deviceCheckListreq){
-        DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
+    public int insertDeviceCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
 
-        deviceCheckRecord.setDeviceID(deviceCheckListreq.getDeviceID());
-        deviceCheckRecord.setCheckID(deviceCheckListreq.getCheckID());
-        deviceCheckRecord.setChecker(deviceCheckListreq.getChecker());
-        deviceCheckRecord.setCheckTime(deviceCheckListreq.getCheckTime());
-        deviceCheckRecord.setDeviceState(deviceCheckListreq.getDeviceState());
-        deviceCheckRecord.setCheckImages(deviceCheckListreq.getCheckImages());
-        deviceCheckRecord.setRemark(deviceCheckListreq.getRemark());
+        DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
+        BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
 
         if(ObjectUtil.isEmpty(deviceCheckListreq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
             //将数据插入表中
-            boolean t=deviceCheckRecordService.save(deviceCheckRecord);
-            if(t)
+            boolean state=deviceCheckRecordService.save(deviceCheckRecord);
+            if(state)
                 return 1;
             else
-                return 0;
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
         }
     }
 
     @PostMapping("/updateDeviceCheckRecord")
     //更新报废记录
-    public int updateCheckRecord(DeviceCheckListreq deviceCheckListreq){
+    public int updateCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
         DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
-
-        deviceCheckRecord.setDeviceID(deviceCheckListreq.getDeviceID());
-        deviceCheckRecord.setCheckID(deviceCheckListreq.getCheckID());
-        deviceCheckRecord.setChecker(deviceCheckListreq.getChecker());
-        deviceCheckRecord.setCheckTime(deviceCheckListreq.getCheckTime());
-        deviceCheckRecord.setDeviceState(deviceCheckListreq.getDeviceState());
-        deviceCheckRecord.setCheckImages(deviceCheckListreq.getCheckImages());
-        deviceCheckRecord.setRemark(deviceCheckListreq.getRemark());
+        BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
 
         if(ObjectUtil.isEmpty(deviceCheckListreq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
             //将数据更新进表中
-            boolean t = deviceCheckRecordService.updateById(deviceCheckRecord);
-            if (t)
-                return 1;
+            UpdateWrapper<DeviceCheckRecord> userUpdateWrapper = new UpdateWrapper<>();
+            userUpdateWrapper.eq("CheckID", deviceCheckRecord.getCheckID());
 
+            int state = deviceCheckRecordMapper.update(deviceCheckRecord, userUpdateWrapper);
+
+            if (state == 1 )
+                return 1;
             else
-                return 0;
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
         }
     }
 
-
-
-
 }
+

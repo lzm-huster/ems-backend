@@ -1,12 +1,14 @@
 package com.ems.business.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
-import com.ems.business.mapper.DeviceMapper;
 import com.ems.business.mapper.DeviceRepairRecordMapper;
 import com.ems.business.model.entity.DeviceRepairRecord;
 import com.ems.business.model.response.DeviceRepairListRes;
 import com.ems.business.service.DeviceRepairRecordService;
+import com.ems.common.ErrorCode;
+import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +24,17 @@ public class DeviceRepairRecordServiceImpl extends ServiceImpl<DeviceRepairRecor
     implements DeviceRepairRecordService {
     @Autowired
     private DeviceRepairRecordMapper deviceRepairRecordMapper;
-    private DeviceMapper deviceMapper;
+
     @Override
     public List<DeviceRepairListRes> getRepairlist(int userID) {
-        return deviceRepairRecordMapper.getRepairlist(userID);
+        if(ObjectUtil.isEmpty(userID)) throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
+        else return deviceRepairRecordMapper.getRepairlist(userID);
+    }
+
+    @Override
+    public List<DeviceRepairListRes> getAllRepairlist()
+    {
+        return deviceRepairRecordMapper.getAllRepairlist();
     }
 
 

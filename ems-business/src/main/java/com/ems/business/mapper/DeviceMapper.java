@@ -6,6 +6,7 @@ import com.ems.business.model.response.DeviceList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -41,6 +42,16 @@ public interface DeviceMapper extends BaseMapper<Device> {
     //返回用户最新添加的一条数据的主键DeviceID
     @Select("select DeviceID from `Device` where UserID=#{UserID} order by UpdateTime desc limit 1;")
     Integer getLatestDeviceID(int UserID);
+
+    @Select("select count(*) "+
+            "from Device "+
+            "where ExpectedScrapDate < #{date} and UserID = #{userID}")
+    int getNumScarping(Date date,int userID);
+
+    @Select("select count(*) "+
+            "from Device "+
+            "where ExpectedScrapDate < #{date} ")
+    int getNumScarpingAll(Date date);
 
 }
 
