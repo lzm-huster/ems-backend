@@ -23,13 +23,13 @@ public interface UserMapper extends BaseMapper<User> {
             "WHERE ur.UserID = #{UserID};")
     String getRoleNameByUserID(int UserID);
 
-    @Select("select u.*, r.RoleName " +
+    @Select("select u.*, r.RoleName,r.RoleDescription " +
             "from User u " +
             "join UserRole ur on u.UserID = ur.UserID " +
             "join Role r on ur.RoleID = r.RoleID " +
             "where u.UserID = #{userId};")
     UserDetailRes getUserDetail(int userId);
-    @Select("select u.*, r.RoleName " +
+    @Select("select u.*, r.RoleName,r.RoleDescription " +
             "from User u " +
             "join UserRole ur on u.UserID = ur.UserID " +
             "join Role r on ur.RoleID = r.RoleID ")

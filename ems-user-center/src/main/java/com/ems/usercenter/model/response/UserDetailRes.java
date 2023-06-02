@@ -27,7 +27,11 @@ public class UserDetailRes {
     /**
      * 角色
      */
-    private String RoleName;
+    private String roleName;
+    /**
+     * 角色描述
+     */
+    private String roleDescription;
 
     /**
      * 学号/工号
