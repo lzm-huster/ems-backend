@@ -9,6 +9,7 @@ import com.ems.annotation.ResponseResult;
 import com.ems.common.ErrorCode;
 import com.ems.cos.MinioUtil;
 import com.ems.cos.config.MinioConfigProperties;
+import com.ems.cos.service.CosService;
 import com.ems.exception.BusinessException;
 import com.ems.redis.RedisUtil;
 import com.ems.redis.constant.RedisConstant;
@@ -18,6 +19,7 @@ import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.model.request.UserAddReq;
 import com.ems.usercenter.model.request.UserLoginReq;
 import com.ems.usercenter.model.request.UserRegisterReq;
+import com.ems.usercenter.model.request.UserUpdateReq;
 import com.ems.usercenter.model.response.UserCurrentRes;
 import com.ems.usercenter.model.response.UserDetailRes;
 import com.ems.usercenter.service.PermissionService;
@@ -30,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +63,8 @@ public class UserController {
     private RoleService roleService;
     @Autowired
     private PermissionService permissionService;
+    @Autowired
+    private CosService cosService;
 
     private static final String avatarPrefix = "Avatar/";
 
@@ -298,5 +303,57 @@ public class UserController {
     @GetMapping("/list")
     public List<UserDetailRes> getUserList() {
         return userService.getAllDetail();
+    }
+
+    @PostMapping("/updateAvatar")
+    public String updateAvatar(@RequestPart("file") MultipartFile file,@RequestHeader("token") String token){
+        String path = cosService.uploadFile(file, avatarPrefix);
+        if (StringUtils.isBlank(path)){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"文件上传失败");
+        }
+        // redis取信息
+        Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
+        // 获取基础User信息
+        User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
+        user.setAvatar(path);
+        boolean update = userService.updateById(user);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"头像更新失败");
+        }
+        userRedisConstant.storeUserInfoRedis(user,token);
+        return path;
+    }
+    @Transactional
+    @PostMapping("/updateInfo")
+    public boolean updateInfo(@RequestBody UserUpdateReq userUpdateReq,@RequestHeader("token") String token){
+        Integer roleId = userUpdateReq.getRoleId();
+        String userName = userUpdateReq.getUserName();
+        String phoneNumber = userUpdateReq.getPhoneNumber();
+        if (ObjectUtil.isNull(roleId)||ObjectUtil.isNull(userName)||ObjectUtil.isNull(phoneNumber)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分必需参数为空");
+        }
+        // redis取信息
+        Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
+        // 获取基础User信息
+        User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
+        BeanUtils.copyProperties(userUpdateReq,user);
+        userService.save(user);
+        userRedisConstant.storeUserInfoRedis(user,token);
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID",user.getUserID());
+        UserRole one = userRoleService.getOne(queryWrapper);
+        if (ObjectUtil.isNotNull(one)){
+            boolean b = userRoleService.removeById(one);
+            if (!b){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新失败");
+            }
+        }
+        one.setUserID(user.getUserID());
+        one.setRoleID(roleId);
+        boolean save = userRoleService.save(one);
+        if (!save){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新信息失败");
+        }
+        return true;
     }
 }
