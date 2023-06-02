@@ -1,8 +1,11 @@
 package com.ems.business.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -17,7 +20,7 @@ public class DeviceScrapRecord implements Serializable {
     /**
      * 报废编号
      */
-    @TableField(value = "ScrapID")
+    @TableId(value = "ScrapID",type = IdType.AUTO)
     private Integer scrapID;
 
     /**
@@ -42,6 +45,7 @@ public class DeviceScrapRecord implements Serializable {
      * 报废时间
      */
     @TableField(value = "ScrapTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date scrapTime;
 
     /**
@@ -55,9 +59,6 @@ public class DeviceScrapRecord implements Serializable {
      */
     @TableField(value = "DeviceState")
     private String deviceState;
-
-    @TableField(value = "ScrapState")
-    private String scrapState;
 
     /**
      * 备注
@@ -75,13 +76,21 @@ public class DeviceScrapRecord implements Serializable {
      * 创建时间
      */
     @TableField(value = "CreateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
      * 更新时间
      */
     @TableField(value = "UpdateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
+
+    /**
+     * 设备报废状态
+     */
+    @TableField(value = "ScrapState")
+    private String scrapState;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
