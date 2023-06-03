@@ -83,7 +83,7 @@ public class ScrapController {
     }
 
 
-    @GetMapping("/numCurrentScarp")
+    @GetMapping("/getNumCurrentScarp")
     //获取“当前用户”报废设备记录的数量
     public int num_current_scarp(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
@@ -102,7 +102,7 @@ public class ScrapController {
 
     }
 
-    @GetMapping("/numExpectedlyScrap")
+    @GetMapping("/getNumExpectedlyScrap")
     //待报废设备计数
     public int num_expectedly_scrap(@RequestHeader(value = "token",required = false) String token) {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
