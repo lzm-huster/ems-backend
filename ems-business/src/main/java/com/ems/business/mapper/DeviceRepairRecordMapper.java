@@ -20,12 +20,18 @@ import java.util.List;
 @Mapper
 public interface DeviceRepairRecordMapper extends BaseMapper<DeviceRepairRecord> {
 
-    @Select("select p.RepairID,p.DeviceID,p.RepairTime,q.DeviceName,p.RepairContent,p.RepairFee"+
-            "from User t"+
-            "inner join Device q on t.UserID==q.UserID"+
-            "inner join DeviceRepairRecord p on p.DeviceID==q.DeviceID"+
+    @Select("select p.RepairID,p.DeviceID,p.RepairTime,q.DeviceName,p.RepairContent,p.RepairFee "+
+            "from User t "+
+            "inner join Device q on t.UserID = q.UserID "+
+            "inner join DeviceRepairRecord p on p.DeviceID = q.DeviceID "+
             "where t.UserID = #{userid}")
-    List<DeviceRepairListRes> getRepairlist(Integer userid);
+    List<DeviceRepairListRes> getRepairlist(int userid);
+
+    @Select("select p.RepairID,p.DeviceID,p.RepairTime,q.DeviceName,p.RepairContent,p.RepairFee "+
+            "from User t "+
+            "inner join Device q on t.UserID = q.UserID "+
+            "inner join DeviceRepairRecord p on p.DeviceID = q.DeviceID ")
+    List<DeviceRepairListRes> getAllRepairlist();
 
 
 }

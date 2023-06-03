@@ -15,4 +15,7 @@ public interface DeviceRepairRecordService extends IService<DeviceRepairRecord> 
     List<DeviceRepairListRes> getRepairlist(int userID);
 
 
+    List<DeviceRepairListRes> getAllRepairlist();
+
+
 }

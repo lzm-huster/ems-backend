@@ -10,6 +10,7 @@ import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
+import com.ems.usercenter.model.response.UserDetailRes;
 import com.ems.usercenter.service.UserRoleService;
 import com.ems.usercenter.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -120,6 +122,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         int insert = userMapper.insert(user);
         userRoleService.initUserRole(user.getUserID(),7);
         return insert > 0;
+    }
+
+    @Override
+    public UserDetailRes getUserDetail(int userId) {
+        if (ObjectUtil.isNull(userId)){
+            return null;
+        }
+        return userMapper.getUserDetail(userId);
+    }
+
+    @Override
+    public List<UserDetailRes> getAllDetail() {
+        return userMapper.getAllDetail();
     }
 
 }

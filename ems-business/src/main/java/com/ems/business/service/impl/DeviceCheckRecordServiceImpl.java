@@ -1,11 +1,14 @@
 package com.ems.business.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.ems.business.mapper.DeviceCheckRecordMapper;
 import com.ems.business.model.entity.DeviceCheckRecord;
 import com.ems.business.model.response.DeviceCheckListRes;
 import com.ems.business.service.DeviceCheckRecordService;
+import com.ems.common.ErrorCode;
+import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,13 +25,27 @@ public class DeviceCheckRecordServiceImpl extends ServiceImpl<DeviceCheckRecordM
     @Autowired
     DeviceCheckRecordMapper deviceCheckRecordMapper;
     @Override
-    public List<DeviceCheckListRes> getCheckList(int userID) {
-        return deviceCheckRecordMapper.getCheckList(userID);
+    public List<DeviceCheckListRes> getCheckList(int userID)
+    {
+        if(ObjectUtil.isEmpty(userID)) throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
+        else return deviceCheckRecordMapper.getCheckList(userID);
     }
     @Override
     public List<DeviceCheckListRes> getCheckListAll() {
         return deviceCheckRecordMapper.getCheckListAll();
     }
+    @Override
+    public int getCheckList_CheckingNum_All()
+    {
+        return deviceCheckRecordMapper.getCheckList_CheckingNum_All();
+    };
+    @Override
+    public int getCheckList_CheckingNum(int userID)
+    {
+        if(ObjectUtil.isEmpty(userID)) throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
+        else return deviceCheckRecordMapper.getCheckList_CheckingNum(userID);
+    };
+
 
 }
 

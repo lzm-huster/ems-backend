@@ -25,7 +25,7 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
-            "where u2.UserID =#{UserID};")
+            "where u2.UserID =#{UserID} and br.IsDeleted=0 ;")
     List<BorrowApplyRecordList> getPersonBorrowApplyRecordList(int UserID);
 
     //管理员查询：返回所有设备借用列表需要数据
@@ -34,35 +34,36 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
-            "inner join User u2 on br.BorrowerID = u2.UserID \n;")
+            "inner join User u2 on br.BorrowerID = u2.UserID \n"+
+            "where br.IsDeleted=0;")
     List<BorrowApplyRecordList> getAllBorrowApplyRecordList();
 
     //个人查询：根据UserID查询返回个人正在借出设备数量
     @Select("select count(*) from `BorrowApplySheet` "+
             "where `BorrowApplyID` in "+
             "(select `BorrowApplyID` from `BorrowApplyRecord` "+
-            "where `BorrowerID` = #{UserID} and `BorrowApplyState` like '%借用%');")
+            "where `BorrowerID` = #{UserID} and `BorrowApplyState` like '%借用%') and IsDeleted=0 ;")
     int getPersonBorrowDeviceNumber(int UserID );
 
     //个人查询：根据UserID查询返回个人已归还设备数量
     @Select("select count(*) from `BorrowApplySheet` "+
             "where `BorrowApplyID` in "+
             "(select `BorrowApplyID` from `BorrowApplyRecord` "+
-            "where `BorrowerID` = #{UserID} and `BorrowApplyState` like '%归还%');")
+            "where `BorrowerID` = #{UserID} and `BorrowApplyState` like '%归还%') and IsDeleted=0 ;")
     int getPersonReturnDeviceNumber(int UserID );
 
     //管理员查询：查询返回所有正在借出设备数量
     @Select("select count(*) from `BorrowApplySheet` "+
             "where `BorrowApplyID` in "+
             "(select `BorrowApplyID` from `BorrowApplyRecord` "+
-            "where `BorrowApplyState` like '%借用%');")
+            "where `BorrowApplyState` like '%借用%') and IsDeleted=0 ;")
     int getAllBorrowDeviceNumber();
 
     //管理员查询：根查询返回所有已归还设备数量
     @Select("select count(*) from `BorrowApplySheet` "+
             "where `BorrowApplyID` in "+
             "(select `BorrowApplyID` from `BorrowApplyRecord` "+
-            "where `BorrowApplyState` like '%归还%');")
+            "where `BorrowApplyState` like '%归还%') and IsDeleted=0 ;")
     int getAllReturnDeviceNumber();
 
     //根据借用申请单ID：BorrowApplyID查询借用申请说明
@@ -75,9 +76,12 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
     BorrowApplyRecord getBorrowApplyRecordByBorrowApplyID(int BorrowApplyID);
 
     //返回最近添加的记录的BorrowApplyID
-    @Select("select BorrowApplyID from `BorrowApplyRecord` where BorrowerID=#{BorrowerID} order by UpdateTime desc limit 1;")
+    @Select("select BorrowApplyID from `BorrowApplyRecord` where BorrowerID=#{BorrowerID} order by UpdateTime desc limit 1 ;")
     public Integer getLatestBorrowApplyID(int BorrowerID);
 
+    //删除传入BorrowApplyID删除借用申请单记录：BorrowApplyID
+    @Select("update `BorrowApplyRecord` set `IsDeleted`=1 where `BorrowApplyID`=#{BorrowApplyID};")
+    public Integer deleteBorrowApplyRecordByBorrowApplyID(int BorrowApplyID);
 
     //按照用户类型筛选借用申请单的列表——教师（联表：BorrowApplyRecord、UserRole）
     @Select("select p from BorrowApplyRecord p"+

@@ -7,6 +7,7 @@ import com.ems.cos.MinioUtil;
 import com.ems.cos.config.MinioConfigProperties;
 import com.ems.cos.service.CosService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
-
+@Service
 public class CosServiceImpl implements CosService {
     @Autowired
     private MinioUtil minioUtil;

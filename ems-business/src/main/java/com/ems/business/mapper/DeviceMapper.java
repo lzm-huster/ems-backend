@@ -6,6 +6,7 @@ import com.ems.business.model.response.DeviceList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -20,18 +21,18 @@ public interface DeviceMapper extends BaseMapper<Device> {
     //个人查询：根据UserID查询负责的所有设备
     @Select("select d.DeviceID,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
             "from Device d inner join User u on d.UserID = u.UserID " +
-            "where d.UserID = #{UserID};")
+            "where d.UserID = #{UserID} and d.IsDeleted=0;")
     List<DeviceList> getPersonDeviceList(int UserID);
 
     //管理员查询：返回所有所有设备列表
     @Select("select d.DeviceID,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
-            "from Device d inner join User u on d.UserID = u.UserID ;")
+            "from Device d inner join User u on d.UserID = u.UserID and d.IsDeleted=0;")
     List<DeviceList> getAllDeviceList();
 
     //普通用户查询：返回所有公用设备列表
     @Select("select d.DeviceID,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
             "from Device d inner join User u on d.UserID = u.UserID " +
-            "where d.IsPublic=1;")
+            "where d.IsPublic=1 and d.IsDeleted=0;")
     List<DeviceList> getPublicDevice();
 
     //根据DeviceID查询详细信息
@@ -41,6 +42,20 @@ public interface DeviceMapper extends BaseMapper<Device> {
     //返回用户最新添加的一条数据的主键DeviceID
     @Select("select DeviceID from `Device` where UserID=#{UserID} order by UpdateTime desc limit 1;")
     Integer getLatestDeviceID(int UserID);
+
+    //根据DeviceID删除一条数据
+    @Select("update `Device` set `IsDeleted`=1 where `DeviceID`=#{DeviceID};")
+    Integer deleteDeviceByDeviceID(int DeviceID);
+
+    @Select("select count(*) "+
+            "from Device "+
+            "where ExpectedScrapDate < #{date} and UserID = #{userID}")
+    int getNumScarping(Date date,int userID);
+
+    @Select("select count(*) "+
+            "from Device "+
+            "where ExpectedScrapDate < #{date} ")
+    int getNumScarpingAll(Date date);
 
 }
 

@@ -5,6 +5,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
+import com.ems.business.mapper.PurchaseApplyMapper;
 import com.ems.business.mapper.PurchaseApplySheetMapper;
 import com.ems.business.model.entity.PurchaseApplySheet;
 import com.ems.business.model.response.PurchaseApplySheetList;
@@ -34,6 +35,8 @@ public class PurchaseApplySheetController {
     private PurchaseApplySheetMapper purchaseApplySheetMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private PurchaseApplyMapper purchaseApplyMapper;
     @Autowired
     private UserRedisConstant redisConstant;
 
@@ -132,5 +135,22 @@ public class PurchaseApplySheetController {
         return Number;
     }
 
+    @PutMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
+    //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
+    public int deletePurchaseApplySheetByPurchaseApplySheetID(int PurchaseApplySheetID)
+    {
+        if (ObjectUtil.isNull(PurchaseApplySheetID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
+        //删除借用申请表数据
+        purchaseApplyMapper.deletePurchaseApplyByPurchaseApplyID(PurchaseApplySheetID);
+
+        //删除借用申请单表数据
+        int Number=0;
+        Number= purchaseApplySheetMapper.deletePurchaseApplySheetByPurchaseApplySheetID(PurchaseApplySheetID);
+        return Number;
+
+    }
 
 }

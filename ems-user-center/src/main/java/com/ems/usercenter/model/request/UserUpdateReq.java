@@ -3,7 +3,7 @@ package com.ems.usercenter.model.request;
 import lombok.Data;
 
 @Data
-public class UserAddReq {
+public class UserUpdateReq {
     /**
      * 用户角色Id
      */
@@ -13,10 +13,6 @@ public class UserAddReq {
      */
     private String userName;
 
-    /**
-     * 密码
-     */
-    private String password;
 
     /**
      * 性别
