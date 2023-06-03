@@ -24,14 +24,15 @@ public interface DeviceRepairRecordMapper extends BaseMapper<DeviceRepairRecord>
             "from User t "+
             "inner join Device q on t.UserID = q.UserID "+
             "inner join DeviceRepairRecord p on p.DeviceID = q.DeviceID "+
-            "where t.UserID = #{userid}")
-    List<DeviceRepairListRes> getRepairlist(int userid);
+            "where t.UserID = #{userid} and q.IsDeleted = 0 and p.IsDeleted = 0 ")
+    List<DeviceRepairListRes> getRepairlist(int userid); //普通用户查询：查询当前用户所有维修记录
 
     @Select("select p.RepairID,p.DeviceID,p.RepairTime,q.DeviceName,p.RepairContent,p.RepairFee "+
             "from User t "+
             "inner join Device q on t.UserID = q.UserID "+
-            "inner join DeviceRepairRecord p on p.DeviceID = q.DeviceID ")
-    List<DeviceRepairListRes> getAllRepairlist();
+            "inner join DeviceRepairRecord p on p.DeviceID = q.DeviceID " +
+            "where q.IsDeleted = 0 and p.IsDeleted = 0 ")
+    List<DeviceRepairListRes> getAllRepairlist();  //管理员查询：查询所有维修记录
 
 
 }

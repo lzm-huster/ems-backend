@@ -7,6 +7,7 @@ import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.DeviceCheckRecordMapper;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceCheckRecord;
+import com.ems.business.model.entity.DeviceRepairRecord;
 import com.ems.business.model.entity.DeviceScrapRecord;
 import com.ems.business.model.request.DeviceCheckListreq;
 import com.ems.business.model.request.DeviceScrapListreq;
@@ -95,8 +96,8 @@ public class CheckController {
         if(!ObjectUtil.isEmpty(userID)){
 
             if(getRoleName(userID).equals("deviceAdmin"))
-                num_checking = deviceCheckRecordService.getCheckList_CheckingNum_All();
-            else num_checking = deviceCheckRecordService.getCheckList_CheckingNum(userID);
+                num_checking = deviceCheckRecordService.getCheckList_CheckingNum_All();  //管理员查询
+            else num_checking = deviceCheckRecordService.getCheckList_CheckingNum(userID); //普通用户查询
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
 
@@ -118,12 +119,12 @@ public class CheckController {
         if(!ObjectUtil.isEmpty(userID)){
 
             if(getRoleName(userID).equals("deviceAdmin"))
-                num_checking = deviceCheckRecordService.getCheckList_CheckingNum_All();
-            else num_checking = deviceCheckRecordService.getCheckList_CheckingNum(userID);
+                num_checking = deviceCheckRecordService.getCheckList_CheckingNum_All(); //管理员查询
+            else num_checking = deviceCheckRecordService.getCheckList_CheckingNum(userID); //普通用户查询
 
             if(getRoleName(userID).equals("deviceAdmin"))
-                DeviceCheckList=deviceCheckRecordService.getCheckListAll();
-            else DeviceCheckList=deviceCheckRecordService.getCheckList(userID);
+                DeviceCheckList=deviceCheckRecordService.getCheckListAll();  //管理员查询
+            else DeviceCheckList=deviceCheckRecordService.getCheckList(userID); //普通用户查询
             num_checked = DeviceCheckList.size()-num_checking;
             return num_checked;
         }
@@ -136,7 +137,7 @@ public class CheckController {
             QueryWrapper<DeviceCheckRecord> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("CheckID", checkID);
             DeviceCheckRecord deviceCheckRecord = deviceCheckRecordService.getOne(queryWrapper);
-
+            //把详细信息（图片，备注）放入Map中返回
             Map<String,String> map=new HashMap<>();
             map.put("ScrapImages",deviceCheckRecord.getCheckImages());
             map.put("Remark",deviceCheckRecord.getRemark());
@@ -148,7 +149,7 @@ public class CheckController {
     @PostMapping("/insertDeviceCheckRecord")
     //插入报废记录
     public int insertDeviceCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
-
+        //将request的数据转换为数据表中的格式
         DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
         BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
 
@@ -166,6 +167,7 @@ public class CheckController {
     @PostMapping("/updateDeviceCheckRecord")
     //更新报废记录
     public int updateCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
+        //将request的数据转换为数据表中的格式
         DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
         BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
 
@@ -174,7 +176,6 @@ public class CheckController {
             //将数据更新进表中
             UpdateWrapper<DeviceCheckRecord> userUpdateWrapper = new UpdateWrapper<>();
             userUpdateWrapper.eq("CheckID", deviceCheckRecord.getCheckID());
-
             int state = deviceCheckRecordMapper.update(deviceCheckRecord, userUpdateWrapper);
 
             if (state == 1 )
@@ -184,5 +185,29 @@ public class CheckController {
         }
     }
 
+
+
+    @PostMapping("/deleteDeviceCheckRecord")
+    //更新维修记录
+    public int deleteCheckRecord(int checkID){
+        if(!ObjectUtil.isEmpty(checkID)) {
+            DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
+            deviceCheckRecord.setCheckID(checkID);
+            deviceCheckRecord.setIsDeleted(1);
+            //更改IsDelete属性，删除记录
+            UpdateWrapper<DeviceCheckRecord> userUpdateWrapper = new UpdateWrapper<>();
+            userUpdateWrapper.eq("CheckID", checkID);
+            boolean state = deviceCheckRecordService.update(deviceCheckRecord, userUpdateWrapper);
+            if (state)
+            {
+                return 1;
+            }
+            else
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"删除操作失败");
+
+
+        }
+        else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
+    }
 }
 
