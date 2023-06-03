@@ -1,14 +1,19 @@
 package com.ems.business.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ems.business.mapper.DeviceMapper;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.response.DeviceList;
 import com.ems.business.service.DeviceService;
+import com.ems.common.ErrorCode;
+import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.ObjectUtils;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,6 +61,15 @@ public class DeviceServiceImpl extends ServiceImpl<DeviceMapper, Device>
         deviceList=deviceMapper.getPublicDevice();
 
         return deviceList;
+    }
+
+    public int getNumScarping(Date date,int userID){
+        if(ObjectUtils.isEmpty(date)) throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
+        else return deviceMapper.getNumScarping(date,userID);
+    };
+
+    public int getNumScarpingAll(Date date){
+        return deviceMapper.getNumScarpingAll(date);
     }
 }
 

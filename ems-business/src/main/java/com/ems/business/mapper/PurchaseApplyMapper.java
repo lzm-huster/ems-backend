@@ -17,13 +17,15 @@ import java.util.List;
 @Mapper
 public interface PurchaseApplyMapper extends BaseMapper<PurchaseApply> {
 
-    //根据采购申请单查询对应的设备详情
+    //根据采购申请单PurchaseApplySheetID查询对应的设备详情
     @Select("select * from PurchaseApply where PurchaseApplySheetID=#{PurchaseApplySheetID}")
-    List<PurchaseApply> selectByApplySheetId(int PurchaseApplySheetID);
+    List<PurchaseApply> selectByApplySheetID(int PurchaseApplySheetID);
+
+    //根据采购申请单PurchaseApplySheetID删除对应的设备详情
+  @Select("update `PurchaseApply` set `IsDeleted`=1 where `PurchaseApplySheetID`=#{PurchaseApplySheetID};")
+    Integer deletePurchaseApplyByPurchaseApplyID(int PurchaseApplySheetID);
 
 }
-
-
 
 
 

@@ -1,18 +1,13 @@
 package com.ems.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.ems.business.model.entity.BorrowApplyRecord;
-import com.ems.business.model.entity.PurchaseApply;
 import com.ems.business.model.entity.PurchaseApplySheet;
-import com.ems.business.model.response.PurchaseApplySheetApprovalResponse;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
-
-import java.util.List;
 import com.ems.business.model.response.PurchaseApplySheetList;
 import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
-import org.apache.ibatis.annotations.*;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -33,7 +28,7 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on ps.PurchaseApplicantID = u2.UserID \n" +
-            "where u2.UserID = #{UserID};")
+            "where u2.UserID = #{UserID} and p.IsDeleted=0;")
     public List<PurchaseApplySheetList> getPersonPurchaseApplySheetList(int UserID);
 
 
@@ -43,22 +38,23 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
-            "inner join User u2 on ps.PurchaseApplicantID = u2.UserID ;\n")
+            "inner join User u2 on ps.PurchaseApplicantID = u2.UserID"+
+            "where ps.IsDeleted=0;\n")
     public List<PurchaseApplySheetList> getAllPurchaseApplySheetList();
 
 
     //更新一条采购申请单数据：申请单ID，申请时间，申请描述，申请人导师,申请单状态
     @Update("update PurchaseApplySheet set PurchaseApplyDate =#{PurchaseApplyDate}, PurchaseApplyDescription = #{PurchaseApplyDescription}" +
-            " where PurchaseApplySheetID = #{PurchaseApplySheetID};")
-    public int updateBorrowApplySheet(int PurchaseApplySheetID, DateTimeLiteralExpression.DateTime PurchaseApplyDate, String PurchaseApplyDescription, int ApproveTutorID, String PurchaseApplyState);
+            " where PurchaseApplySheetID = #{PurchaseApplySheetID} ;")
+    public Integer updatePurchaseApplySheet(int PurchaseApplySheetID, DateTimeLiteralExpression.DateTime PurchaseApplyDate, String PurchaseApplyDescription, int ApproveTutorID, String PurchaseApplyState);
 
     //更新一条采购申请单的状态：申请单ID，申请单状态
     @Update("update PurchaseApplySheet set PurchaseApplyState = #{PurchaseApplyState} where PurchaseApplySheetID = #{PurchaseApplySheetID};")
-    public int updateBorrowApplySheet(int PurchaseApplySheetID, String PurchaseApplyState);
+    public Integer updatePurchaseApplySheet(int PurchaseApplySheetID, String PurchaseApplyState);
 
     //删除一条采购申请记录：申请单ID
-    @Delete("delete from PurchaseApplySheet where PurchaseApplicantID =#{PurchaseApplicantID};")
-    public int deleteBorrowApplySheet(int PurchaseApplySheetID);
+    @Delete("update `PurchaseApplySheet` set `IsDeleted`=1 where `PurchaseApplySheetID`=#{PurchaseApplySheetID};")
+    public Integer deletePurchaseApplySheetByPurchaseApplySheetID(int PurchaseApplySheetID);
 
     //  根据采购申请单查询申请单详情
     @Select("select * from `PurchaseApplySheet` where `PurchaseApplySheetID` = #{PurchaseApplySheetID};")

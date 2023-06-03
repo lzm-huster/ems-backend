@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.response.DeviceList;
 
+import java.util.Date;
 import java.util.List;
 
 
@@ -20,5 +21,8 @@ public interface DeviceService extends IService<Device> {
     public List<DeviceList> getPublicDeviceList();
 
     void test();
+    public int getNumScarping(Date date,int userID);
+
+    public int getNumScarpingAll(Date date);
 
 }

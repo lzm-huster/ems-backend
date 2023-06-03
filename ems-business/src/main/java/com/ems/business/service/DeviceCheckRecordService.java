@@ -17,4 +17,8 @@ public interface DeviceCheckRecordService extends IService<DeviceCheckRecord> {
     List<DeviceCheckListRes> getCheckList(int userID);
 
     List<DeviceCheckListRes> getCheckListAll();
+
+    int getCheckList_CheckingNum_All();
+
+    int getCheckList_CheckingNum(int userID);
 }

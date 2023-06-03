@@ -283,7 +283,7 @@ public class ApprovalController {
 
     //查询已审批/未审批的:
     @GetMapping("/someApprovalRecord")
-    public List<ApprovalRecordResponse> allApprovalRecord(String state, @RequestHeader(value = "token", required = false) String token) {
+    public List<ApprovalRecordResponse> someApprovalRecord(String state, @RequestHeader(value = "token", required = false) String token) {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -350,7 +350,6 @@ public class ApprovalController {
         UserRole userRole = userRoleService.getOne(queryWrapper);
         Integer roleId = userRole.getRoleID();
 
-        //要分老师、设备管理员、院领导
 
 
         //要分老师、设备管理员、院领导
