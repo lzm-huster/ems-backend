@@ -8,7 +8,7 @@ import com.ems.business.model.entity.PurchaseApply;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -24,7 +24,7 @@ public class PurchaseApplyController {
     private PurchaseApplyMapper purchaseApplyMapper;
 
 
-    @PutMapping("/insertPurchaseApply")
+    @PostMapping("/insertPurchaseApply")
     //插入一条采购设备数据,返回受影响行数，0表示不成功，1表示成功
     public int insertPurchaseApply(PurchaseApply purchaseApply)
     {
@@ -49,7 +49,7 @@ public class PurchaseApplyController {
 
     }
 
-    @PutMapping("/updatePurchaseApply")
+    @PostMapping("/updatePurchaseApply")
     //更新一条采购设备数据，返回受影响函数，0表示不成功，1表示成功
     public int updatePurchaseApply(PurchaseApply purchaseApply)
     {

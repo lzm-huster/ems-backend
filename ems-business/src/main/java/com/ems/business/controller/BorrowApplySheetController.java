@@ -10,10 +10,7 @@ import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 import java.util.List;
@@ -59,7 +56,7 @@ public class BorrowApplySheetController {
         return description;
     }
 
-    @PutMapping("/insertBorrowApplySheet")
+    @PostMapping("/insertBorrowApplySheet")
     //插入一条借用设备信息返回受影响条数，成功返回1，失败返回0
     public int insertBorrowApplySheet(@NotNull BorrowApplySheet borrowApplySheet)
     {
@@ -81,7 +78,7 @@ public class BorrowApplySheetController {
 
     }
 
-    @PutMapping("/updateBorrowApplySheet")
+    @PostMapping("/updateBorrowApplySheet")
     //更新一条借用设备信息返回受影响条数，成功返回1，失败返回0
     public int updateBorrowApplySheet(@NotNull BorrowApplySheet borrowApplySheet)
     {

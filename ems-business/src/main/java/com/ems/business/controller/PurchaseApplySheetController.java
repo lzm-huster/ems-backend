@@ -78,7 +78,7 @@ public class PurchaseApplySheetController {
         return purchaseApplySheet;
     }
 
-    @PutMapping("/insertPurchaseApplySheet")
+    @PostMapping("/insertPurchaseApplySheet")
     //插入一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
     public int insertPurchaseApplySheet(@NotNull PurchaseApplySheet purchaseApplySheet)
     {
@@ -100,7 +100,7 @@ public class PurchaseApplySheetController {
     }
 
 
-    @PutMapping("/updatePurchaseApplySheet")
+    @PostMapping("/updatePurchaseApplySheet")
     //更新一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
     public int updatePurchaseApplySheet(@NotNull PurchaseApplySheet purchaseApplySheet)
     {
@@ -135,7 +135,7 @@ public class PurchaseApplySheetController {
         return Number;
     }
 
-    @PutMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
+    @PostMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
     //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
     public int deletePurchaseApplySheetByPurchaseApplySheetID(int PurchaseApplySheetID)
     {

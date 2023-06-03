@@ -18,8 +18,6 @@ import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -93,7 +91,7 @@ public class DeviceController {
         return device;
     }
 
-    @PutMapping ("insertDevice")
+    @PostMapping ("insertDevice")
     //插入一条Device数据,返回受影响条数
     public int insertDevice(@NotNull Device device)
     {
@@ -132,7 +130,7 @@ public class DeviceController {
         return Number;
     }
 
-    @PutMapping ("UpdateDevice")
+    @PostMapping ("UpdateDevice")
     //更新一条Device数据,返回受影响条数
     public int UpdateDevice(@NotNull Device device)
     {
@@ -167,8 +165,8 @@ public class DeviceController {
         return Number;
     }
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    @PutMapping("deleteDeviceByDeviceID")
+
+    @PostMapping("deleteDeviceByDeviceID")
     //根据DeviceID删除一条Device数据，成功返回1，失败返回0
     public int deleteDeviceByDeviceID(int DeviceID)
     {

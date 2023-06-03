@@ -130,7 +130,7 @@ public class BorrowApplyRecordController {
         return borrowApplyRecord;
     }
 
-    @PutMapping("/insertBorrowApplyRecord")
+    @PostMapping("/insertBorrowApplyRecord")
     //插入一条设备借用申请单数据，成功返回1，失败返回0
     public int insertBorrowApplyRecord(@NotNull BorrowApplyRecord borrowApplyRecord)
     {
@@ -153,7 +153,7 @@ public class BorrowApplyRecordController {
     }
 
 
-    @PutMapping("/updateBorrowApplyRecord")
+    @PostMapping("/updateBorrowApplyRecord")
     //更新一条设备借用申请单数据，成功返回1，失败返回0
     public int updateBorrowApplyRecord(BorrowApplyRecord borrowApplyRecord)
     {
@@ -189,7 +189,7 @@ public class BorrowApplyRecordController {
         return Number;
     }
 
-    @PutMapping("deleteBorrowApplyRecordByBorrowApplyID")
+    @PostMapping("deleteBorrowApplyRecordByBorrowApplyID")
     //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
     public int deleteBorrowApplyRecordByBorrowApplyRecordID(int BorrowApplyID)
     {
