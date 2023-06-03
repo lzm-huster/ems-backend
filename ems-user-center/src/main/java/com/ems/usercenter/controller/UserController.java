@@ -337,22 +337,27 @@ public class UserController {
         // 获取基础User信息
         User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
         BeanUtils.copyProperties(userUpdateReq,user);
-        userService.save(user);
+        boolean update = userService.updateById(user);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新用户信息失败");
+        }
         userRedisConstant.storeUserInfoRedis(user,token);
         QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("UserID",user.getUserID());
         UserRole one = userRoleService.getOne(queryWrapper);
         if (ObjectUtil.isNotNull(one)){
-            boolean b = userRoleService.removeById(one);
-            if (!b){
-                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新失败");
+            if (ObjectUtil.notEqual(one.getRoleID(),roleId)){
+                boolean b = userRoleService.deleteByMultiId(one);
+                if (!b){
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新失败");
+                }
+                one.setUserID(user.getUserID());
+                one.setRoleID(roleId);
+                boolean save = userRoleService.saveOrUpdateByMultiId(one);
+                if (!save){
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新信息失败");
+                }
             }
-        }
-        one.setUserID(user.getUserID());
-        one.setRoleID(roleId);
-        boolean save = userRoleService.save(one);
-        if (!save){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新信息失败");
         }
         return true;
     }

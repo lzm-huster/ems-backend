@@ -2,6 +2,7 @@ package com.ems.usercenter.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.usercenter.model.entity.UserRole;
+import com.github.jeffreyning.mybatisplus.base.MppBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 
@@ -12,7 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @Entity generator.domain.UserRole
 */
 @Mapper
-public interface UserRoleMapper extends BaseMapper<UserRole> {
+public interface UserRoleMapper extends MppBaseMapper<UserRole> {
 
 }
 

@@ -7,8 +7,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ems.usercenter.mapper.UserRoleMapper;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.UserRoleService;
+import com.github.jeffreyning.mybatisplus.service.MppServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Collection;
 
 /**
 * @author 龙志明
@@ -16,7 +19,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-04-24 09:03:00
 */
 @Service
-public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole>
+public class UserRoleServiceImpl extends MppServiceImpl<UserRoleMapper, UserRole>
     implements UserRoleService {
 
     @Autowired
