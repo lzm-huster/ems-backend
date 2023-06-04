@@ -363,14 +363,15 @@ public class UserController {
         }
         return true;
     }
+    @Transactional
     @PostMapping("/password/reset")
-    public boolean reset(@RequestHeader(value = "token",required = false) String token){
-        // redis取信息
-        Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
-        // 获取基础User信息
-        User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
+    public boolean reset(Integer userId){
+        if (ObjectUtil.isNull(userId)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
+        }
+        User user = userService.getUserById(userId);
         if (ObjectUtil.isEmpty(user)){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"操作失败");
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该用户不存在");
         }
         MD5 md5 = new MD5(salt.getBytes());
         user.setPassword(md5.digestHex(defaultPassword));
@@ -378,7 +379,6 @@ public class UserController {
         if (update){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"操作失败");
         }
-        userRedisConstant.storeUserInfoRedis(user,token);
         return true;
     }
 }
