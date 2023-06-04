@@ -372,7 +372,8 @@ public class UserController {
         if (ObjectUtil.isEmpty(user)){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"操作失败");
         }
-        user.setPassword(defaultPassword);
+        MD5 md5 = new MD5(salt.getBytes());
+        user.setPassword(md5.digestHex(defaultPassword));
         boolean update = userService.updateById(user);
         if (update){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"操作失败");
