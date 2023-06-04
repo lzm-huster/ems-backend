@@ -18,6 +18,7 @@ import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -189,6 +190,7 @@ public class BorrowApplyRecordController {
         return Number;
     }
 
+    @Transactional
     @PostMapping("deleteBorrowApplyRecordByBorrowApplyID")
     //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
     public int deleteBorrowApplyRecordByBorrowApplyRecordID(int BorrowApplyID)

@@ -68,18 +68,14 @@ public class CheckController {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         Integer userID =user.getUserID();
-
         List<DeviceCheckListRes> DeviceCheckList;
-
         if(!ObjectUtil.isEmpty(userID)){
-
             if(getRoleName(userID).equals("deviceAdmin"))
                 DeviceCheckList=deviceCheckRecordService.getCheckListAll();
             else DeviceCheckList=deviceCheckRecordService.getCheckList(userID);
             return DeviceCheckList;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
-
     }
 
     @GetMapping("/getNumChecking")

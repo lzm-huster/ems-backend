@@ -93,9 +93,11 @@ jwt:
   header: token
 email:
   host: smtp.qq.com
-  port:
-  username:
-  password:
+  protocol: smtp
+  # 编码集
+  default-encoding: UTF-8
+  username: zhiming-lo@qq.com
+  password: eozqzdunqjwbbacc
   properties:
     mail:
       smtp:
@@ -109,3 +111,4 @@ crypto:
 
 default:
   avatar: http://101.43.18.103:9001/mes-bucket/Avatar/defaultAvatar.png
+  password: ems123456

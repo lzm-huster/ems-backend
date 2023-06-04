@@ -5,6 +5,7 @@ import com.ems.business.model.entity.Device;
 import com.ems.business.model.response.DeviceList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.Date;
 import java.util.List;
@@ -44,7 +45,7 @@ public interface DeviceMapper extends BaseMapper<Device> {
     Integer getLatestDeviceID(int UserID);
 
     //根据DeviceID删除一条数据
-    @Select("update `Device` set `IsDeleted`=1 where `DeviceID`=#{DeviceID};")
+    @Update("update `Device` set `IsDeleted`=1 where `DeviceID`=#{DeviceID};")
     Integer deleteDeviceByDeviceID(int DeviceID);
 
     @Select("select count(*) "+

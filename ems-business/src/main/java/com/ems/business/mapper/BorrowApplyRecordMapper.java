@@ -5,6 +5,7 @@ import com.ems.business.model.entity.BorrowApplyRecord;
 import com.ems.business.model.response.BorrowApplyRecordList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -80,7 +81,7 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
     public Integer getLatestBorrowApplyID(int BorrowerID);
 
     //删除传入BorrowApplyID删除借用申请单记录：BorrowApplyID
-    @Select("update `BorrowApplyRecord` set `IsDeleted`=1 where `BorrowApplyID`=#{BorrowApplyID};")
+    @Update("update `BorrowApplyRecord` set `IsDeleted`=1 where `BorrowApplyID`=#{BorrowApplyID};")
     public Integer deleteBorrowApplyRecordByBorrowApplyID(int BorrowApplyID);
 
     //按照用户类型筛选借用申请单的列表——教师（联表：BorrowApplyRecord、UserRole）
