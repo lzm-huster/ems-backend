@@ -77,7 +77,21 @@ public class DeviceMaintenanceRecordController {
         }
         return number;
     }
+    //根据MaintenanceID删除设备保养记录，成功返回1，失败返回0
+    @PostMapping("/deleteDeviceMaintenanceRecordByMaintenanceID")
+    public int deleteDeviceMaintenanceRecordByMaintenanceID(int maintenanceID){
+        if(ObjectUtil.isNull(maintenanceID))
+        {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "设备保养记录Id参数为空");
+        }
 
+        int number = 0;
+        number = deviceMaintenanceRecordMapper.deleteDeviceMaintenanceRecordByMaintenanceID(maintenanceID);
+        if (ObjectUtil.equal(number,0)){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR);
+        }
+        return number;
+    }
     //根据用户编号返回设备保养数据
     @GetMapping("/getDeviceMaintenanceRecordList")
     public List<DeviceMaintenanceRecordList> getDeviceMaintenanceRecordList(@RequestHeader(value = "token",required = false) String token){
@@ -105,6 +119,7 @@ public class DeviceMaintenanceRecordController {
         }
         return number;
     }
+
 };
 
 

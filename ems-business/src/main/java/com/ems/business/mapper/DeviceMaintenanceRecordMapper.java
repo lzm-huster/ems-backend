@@ -32,7 +32,10 @@ public interface DeviceMaintenanceRecordMapper extends BaseMapper<DeviceMaintena
     //根据MaintenanceID查询设备保养表
     @Select("select * from `DeviceMaintenanceRecord` where `MaintenanceID` = #{MaintenanceID};")
     DeviceMaintenanceRecord selectById(Integer MaintenanceID);
-
+    //根据MaintenanceID删除设备保养记录，成功返回1，失败返回0
+    @Select("update 'DeviceMaintenanceRecord' set 'IsDeleted' = 1 " +
+            "where 'MaintenanceID' = #{MaintenanceID};")
+    public Integer deleteDeviceMaintenanceRecordByMaintenanceID(int MaintenanceID);
 }
 
 

@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ems.business.model.entity.Device;
+import com.ems.business.model.entity.DeviceCheckRecord;
 import com.ems.business.model.entity.DeviceRepairRecord;
 import com.ems.business.model.entity.DeviceScrapRecord;
 import com.ems.business.model.request.DeviceRepairListreq;
@@ -82,7 +83,7 @@ public class ScrapController {
     }
 
 
-    @GetMapping("/numCurrentScarp")
+    @GetMapping("/getNumCurrentScarp")
     //获取“当前用户”报废设备记录的数量
     public int num_current_scarp(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
@@ -101,7 +102,7 @@ public class ScrapController {
 
     }
 
-    @GetMapping("/numExpectedlyScrap")
+    @GetMapping("/getNumExpectedlyScrap")
     //待报废设备计数
     public int num_expectedly_scrap(@RequestHeader(value = "token",required = false) String token) {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
@@ -113,6 +114,8 @@ public class ScrapController {
                 Date date = new Date();
                 //SimpleDateFormat sdFormat=new SimpleDateFormat("yyyy-MM-dd");
                 date.setTime(System.currentTimeMillis());
+
+                //当前时间 > 记录中ExpectScraptime（预计报废时间）时，认为此设备为待报废设备
                 return deviceService.getNumScarpingAll(date);
             } else {
                 Date date = new Date();
@@ -125,10 +128,7 @@ public class ScrapController {
     }
 
     @GetMapping("/getScrapDetill")
-    public Map<String,String> scrapDetill(@RequestHeader(value = "token",required = false) String token){
-        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
-        User user = (User)userInfo.get(RedisConstant.UserInfo);
-        Integer scrapID =user.getUserID();
+    public Map<String,String> scrapDetill(int scrapID){
 
         if(!ObjectUtil.isEmpty(scrapID)){
             QueryWrapper<DeviceScrapRecord> queryWrapper = new QueryWrapper<>();
@@ -145,6 +145,7 @@ public class ScrapController {
     @PostMapping("/insertDeviceScarpRecord")
     //插入报废记录
     public int insertDeviceScarpRecord(@NotNull DeviceScrapListreq deviceScrapListreq){
+        //将request的数据转换为数据表中的格式
         DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
         BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
         deviceScrapRecord.setDeviceState("已报废");
@@ -153,7 +154,6 @@ public class ScrapController {
         else {
             //将数据插入表中
             boolean state=deviceScrapRecordService.save(deviceScrapRecord);
-
             if(state)
             {
                 Device device=new Device();
@@ -171,6 +171,7 @@ public class ScrapController {
     @PostMapping("/updateDeviceScarpRecord")
     //更新报废记录
     public int updateScarpRecord(@NotNull DeviceScrapListreq deviceScrapListreq){
+        //将request的数据转换为数据表中的格式
         DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
         BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
 
@@ -180,7 +181,6 @@ public class ScrapController {
 
             UpdateWrapper<DeviceScrapRecord> userUpdateWrapper = new UpdateWrapper<>();
             userUpdateWrapper.eq("ScrapID", deviceScrapRecord.getScrapID());
-
             boolean state = deviceScrapRecordService.update(deviceScrapRecord, userUpdateWrapper);
 
             if (state)
@@ -195,6 +195,28 @@ public class ScrapController {
             else
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
         }
+    }
+
+    @PostMapping("/deleteDeviceScrapRecord")
+    //删除维修记录
+    public int deleteScrapRecord(int scrapID){
+        if(!ObjectUtil.isEmpty(scrapID)) {
+            DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
+            deviceScrapRecord.setScrapID(scrapID);
+            deviceScrapRecord.setIsDeleted(1);
+            //更改IsDelete属性，删除记录
+            UpdateWrapper<DeviceScrapRecord> userUpdateWrapper = new UpdateWrapper<>();
+            userUpdateWrapper.eq("ScrapID", scrapID);
+            boolean state = deviceScrapRecordService.update(deviceScrapRecord, userUpdateWrapper);
+            if (state)
+            {
+                return 1;
+            }
+            else
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"删除操作失败");
+
+        }
+        else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
     }
 
 

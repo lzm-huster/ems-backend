@@ -20,24 +20,25 @@ public interface DeviceCheckRecordMapper extends BaseMapper<DeviceCheckRecord> {
     @Select("select p.CheckID,p.DeviceID,q.DeviceName,q.UserID,p.CheckTime,p.DeviceState "+
             "from Device q "+
             "inner join DeviceCheckRecord p on q.DeviceID = p.DeviceID "+
-            "where q.UserID= #{userID} ")
+            "where q.UserID= #{userID} and q.IsDeleted = 0 and p.IsDeleted = 0")
     List<DeviceCheckListRes> getCheckList(int userID);    //普通用户：获取当前用户设备核查列表
 
     @Select("select p.CheckID,p.DeviceID,q.DeviceName,q.UserID,p.CheckTime,p.DeviceState "+
             "from Device q "+
-            "inner join DeviceCheckRecord p on q.DeviceID = p.DeviceID")
+            "inner join DeviceCheckRecord p on q.DeviceID = p.DeviceID " +
+            "where q.IsDeleted = 0 and p.IsDeleted = 0")
     List<DeviceCheckListRes> getCheckListAll();  //管理员：获取所有设备的核查列表
 
     @Select("select count(*) "+
             "from Device q "+
             "inner join DeviceCheckRecord p on q.DeviceID = p.DeviceID "+
-            "where p.DeviceState like '%待核查%' ")
+            "where p.DeviceState like '%待核查%' and q.IsDeleted = 0 and p.IsDeleted = 0")
     int getCheckList_CheckingNum_All();   //管理员：获取所有待核查的设备数量
 
     @Select("select count(*) "+
             "from Device q "+
             "inner join DeviceCheckRecord p on q.DeviceID = p.DeviceID "+
-            "where p.DeviceState like '%待核查%' and q.UserID = #{userID} ")
+            "where p.DeviceState like '%待核查%' and q.UserID = #{userID} and q.IsDeleted = 0 and p.IsDeleted = 0 ")
     int getCheckList_CheckingNum(int userID);  //普通用户：获取当前用户待核查的设备数量
 
 }

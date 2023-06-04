@@ -49,7 +49,6 @@ public class RepairController {
     private RoleService roleService;
 
     //获取当前用户的角色名称以判断查询范围
-
     public String getRoleName(int userID){
         QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("UserID", userID);
@@ -63,7 +62,7 @@ public class RepairController {
     }
 
     @GetMapping("/getRepairList")
-    //查询当前设备维修记录
+    //查询当前用户的设备维修记录列表
     public List<DeviceRepairListRes> getRepairlist(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -74,8 +73,8 @@ public class RepairController {
         if(!ObjectUtil.isEmpty(userID))
         {
             if(getRoleName(userID).equals("deviceAdmin"))
-                DeviceRepairList=deviceRepairRecordService.getAllRepairlist();
-            else DeviceRepairList=deviceRepairRecordService.getRepairlist(userID);
+                DeviceRepairList=deviceRepairRecordService.getAllRepairlist(); //管理员查询
+            else DeviceRepairList=deviceRepairRecordService.getRepairlist(userID); //普通用户查询
             return DeviceRepairList;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
@@ -93,34 +92,34 @@ public class RepairController {
         if(!ObjectUtil.isEmpty(userID))
         {
             if(getRoleName(userID).equals("deviceAdmin"))
-                DeviceRepairList=deviceRepairRecordService.getAllRepairlist();
-            else DeviceRepairList=deviceRepairRecordService.getRepairlist(userID);
+                DeviceRepairList=deviceRepairRecordService.getAllRepairlist();//管理员查询
+            else DeviceRepairList=deviceRepairRecordService.getRepairlist(userID); //普通用户查询
             return DeviceRepairList.size();
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }
 
     @GetMapping("/getNumRepair")
-    //获取“所有”正在维修的设备的数量
+    //获取当前用户“所有”正在维修的设备的数量
     public int num_repair(@RequestHeader(value="token" , required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         int userID =user.getUserID();
 
-        int num_repair;
+        int num_repair;  //正在维修的设备的数量
         //获取正在维修的设备的列表
         if(!ObjectUtil.isEmpty(userID)) {
-            if(getRoleName(userID).equals("deviceAdmin"))
+            if(!getRoleName(userID).equals("deviceAdmin"))
             {
                 QueryWrapper<Device> queryWrapper = new QueryWrapper<>();
-                queryWrapper.eq("DeviceState", "维修中").eq("UserID", userID);
+                queryWrapper.eq("DeviceState", "维修中").eq("UserID", userID).eq("IsDeleted",0);
                 List<Device> deviceRepairingList = deviceService.list(queryWrapper);
                 //管理员：查询列表长度获取所有正在维修的设备的数量
                 num_repair = deviceRepairingList.size();
             }else
             {
                 QueryWrapper<Device> queryWrapper1 = new QueryWrapper<>();
-                queryWrapper1.eq("DeviceState", "维修中");
+                queryWrapper1.eq("DeviceState", "维修中").eq("IsDeleted",0);
                 List<Device> deviceRepairingList = deviceService.list(queryWrapper1);
                 //普通用户：查询列表长度获取当前用户正在维修的设备的数量
                 num_repair = deviceRepairingList.size();
@@ -135,7 +134,7 @@ public class RepairController {
         if(!ObjectUtil.isEmpty(repairID)) {
             //获取当前设备记录
             QueryWrapper<DeviceRepairRecord> queryWrapper=new QueryWrapper<>();
-            queryWrapper.eq("RepairID",repairID);
+            queryWrapper.eq("RepairID",repairID).eq("IsDeleted",0);
             DeviceRepairRecord selectOne = deviceRepairRecordService.getOne(queryWrapper);
             //取得备注（Remark）信息
             String S=selectOne.getRemark();
@@ -178,10 +177,8 @@ public class RepairController {
         if(ObjectUtil.isEmpty(deviceRepairRecord.getRepairID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
             //将数据更新进表中
-
             UpdateWrapper<DeviceRepairRecord> userUpdateWrapper = new UpdateWrapper<>();
             userUpdateWrapper.eq("RepairID", deviceRepairRecord.getRepairID());
-
             boolean state = deviceRepairRecordService.update(deviceRepairRecord, userUpdateWrapper);
 
             if (state)
@@ -196,6 +193,32 @@ public class RepairController {
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
         }
     }
+
+    @PostMapping("/deleteDeviceRepairRecord")
+    //更新维修记录
+    public int deleteRepairRecord(int repairID){
+        if(!ObjectUtil.isEmpty(repairID)) {
+
+            DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
+            deviceRepairRecord.setRepairID(repairID);
+            deviceRepairRecord.setIsDeleted(1);
+            //更改IsDelete属性，删除记录
+            UpdateWrapper<DeviceRepairRecord> userUpdateWrapper = new UpdateWrapper<>();
+            userUpdateWrapper.eq("RepairID", repairID);
+            boolean state = deviceRepairRecordService.update(deviceRepairRecord, userUpdateWrapper);
+
+            if (state)
+            {
+                return 1;
+            }
+            else
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"删除操作失败");
+
+
+        }
+         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
+    }
+
 
 /*    @Test
     public void test()
