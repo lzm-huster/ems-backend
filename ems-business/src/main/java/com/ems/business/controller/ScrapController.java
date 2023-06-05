@@ -127,17 +127,15 @@ public class ScrapController {
 
     }
 
-    @GetMapping("/getScrapDetill")
-    public Map<String,String> scrapDetill(int scrapID){
+    @GetMapping("/getScrapDetail")
+    public DeviceScrapRecord scrapDetail(int scrapID){
 
         if(!ObjectUtil.isEmpty(scrapID)){
             QueryWrapper<DeviceScrapRecord> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ScrapID", scrapID);
             DeviceScrapRecord deviceScrapRecord = deviceScrapRecordService.getOne(queryWrapper);
-            Map<String,String> map=new HashMap<>();
-            map.put("ScrapImages",deviceScrapRecord.getScrapImages());
-            map.put("Remark",deviceScrapRecord.getRemark());
-            return map;
+
+            return deviceScrapRecord;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }
