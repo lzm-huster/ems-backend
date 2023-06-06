@@ -15,6 +15,12 @@ public class DeviceScrapList {
      * 设备编号
      */
     private Integer deviceID;
+
+    /**
+     * 资产编号
+     */
+    private String assetNumber;
+
     /**
      * 报废时间
      */
