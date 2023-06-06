@@ -17,6 +17,7 @@ import com.ems.usercenter.service.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -84,6 +85,30 @@ public class NoticeController {
         boolean save = noticeService.save(notice);
         if (!save){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"信息保存失败");
+        }
+        return true;
+    }
+    @Transactional
+    @PostMapping("/read")
+    public boolean hasRead(@RequestHeader(value = "token" ,required = false) String token,@RequestBody Integer noticeId){
+        if (ObjectUtil.isNull(noticeId)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"消息参数为空");
+        }
+        // redis取信息
+        Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
+        // 获取基础User信息
+        User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
+        Notice notice = noticeService.getById(noticeId);
+        if (ObjectUtil.isNull(notice)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该消息不存在");
+        }
+        if (!notice.getReceiverId().equals(user.getUserID())){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"消息的接收人错误");
+        }
+        notice.setIsRead(1);
+        boolean update = noticeService.updateById(notice);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"消息已读设置失败");
         }
         return true;
     }
