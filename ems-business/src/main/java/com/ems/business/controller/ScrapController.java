@@ -9,6 +9,7 @@ import com.ems.business.model.entity.DeviceRepairRecord;
 import com.ems.business.model.entity.DeviceScrapRecord;
 import com.ems.business.model.request.DeviceRepairListreq;
 import com.ems.business.model.request.DeviceScrapListreq;
+import com.ems.business.model.response.DeviceScrapDetail;
 import com.ems.business.service.DeviceService;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
@@ -128,14 +129,24 @@ public class ScrapController {
     }
 
     @GetMapping("/getScrapDetail")
-    public DeviceScrapRecord scrapDetail(int scrapID){
+    public DeviceScrapDetail scrapDetail(int scrapID){
 
         if(!ObjectUtil.isEmpty(scrapID)){
             QueryWrapper<DeviceScrapRecord> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("ScrapID", scrapID);
             DeviceScrapRecord deviceScrapRecord = deviceScrapRecordService.getOne(queryWrapper);
 
-            return deviceScrapRecord;
+            QueryWrapper<Device> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("DeviceID",deviceScrapRecord.getDeviceID());
+
+            DeviceScrapDetail deviceScrapDetail = new DeviceScrapDetail();
+            BeanUtils.copyProperties(deviceScrapRecord,deviceScrapDetail);
+
+            Device device =deviceService.getOne(queryWrapper1);
+            deviceScrapDetail.setDeviceName(device.getDeviceName());
+            deviceScrapDetail.setAssetNumber(device.getAssetNumber());
+
+            return deviceScrapDetail;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }

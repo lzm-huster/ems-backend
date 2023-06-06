@@ -1,11 +1,12 @@
 package com.ems.business.model.response;
+
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
 @Data
-public class DeviceCheckListRes {
+public class DeviceCheckDetail {
     /**
      * 核查编号
      */
@@ -45,5 +46,16 @@ public class DeviceCheckListRes {
      */
     @TableField(value = "AssetNumber")
     private String assetNumber;
+    /**
+     * 核查图片列表
+     */
+    @TableField(value = "CheckImages")
+    private String checkImages;
+    /**
+     * 备注
+     */
+    @TableField(value = "Remark")
+    private String remark;
 
 }
+

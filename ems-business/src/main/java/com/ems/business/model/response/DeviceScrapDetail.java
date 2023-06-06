@@ -1,12 +1,11 @@
 package com.ems.business.model.response;
 
-
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 
 import java.util.Date;
 @Data
-public class DeviceScrapListRes {
+public class DeviceScrapDetail {
     /**
      * 报废编号
      */
@@ -18,6 +17,11 @@ public class DeviceScrapListRes {
      */
     @TableField(value = "DeviceID")
     private Integer deviceID;
+    /**
+     * 设备责任人
+     */
+    @TableField(value = "ScrapPerson")
+    private String scrapPerson;
     /**
      * 报废时间
      */
@@ -34,11 +38,7 @@ public class DeviceScrapListRes {
      */
     @TableField(value = "DeviceName")
     private String deviceName;
-    /**
-     * 设备责任人
-     */
-    @TableField(value = "ScrapPerson")
-    private String scrapPerson;
+
 
     /**
      * 资产编号
@@ -46,4 +46,20 @@ public class DeviceScrapListRes {
     @TableField(value = "AssetNumber")
     private String assetNumber;
 
+    /**
+     * 报废设备图片列表
+     */
+    @TableField(value = "ScrapImages")
+    private String scrapImages;
+
+    /**
+     * 设备报废状态
+     */
+    @TableField(value = "ScrapState")
+    private String scrapState;
+    /**
+     * 备注
+     */
+    @TableField(value = "Remark")
+    private String remark;
 }
