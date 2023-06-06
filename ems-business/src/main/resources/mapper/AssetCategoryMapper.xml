@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ems.business.mapper.AssetCategoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.ems.business.model.entity.AssetCategory">
+            <id property="categoryId" column="CategoryId" jdbcType="INTEGER"/>
+            <result property="categoryCode" column="CategoryCode" jdbcType="VARCHAR"/>
+            <result property="categoryName" column="CategoryName" jdbcType="VARCHAR"/>
+            <result property="categoryDesc" column="CategoryDesc" jdbcType="VARCHAR"/>
+            <result property="unit" column="Unit" jdbcType="VARCHAR"/>
+            <result property="categoryRemark" column="CategoryRemark" jdbcType="VARCHAR"/>
+            <result property="parentId" column="ParentId" jdbcType="INTEGER"/>
+            <result property="categoryLevel" column="CategoryLevel" jdbcType="INTEGER"/>
+            <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        CategoryId,CategoryCode,CategoryName,
+        CategoryDesc,Unit,CategoryRemark,
+        ParentId,CategoryLevel,IsDeleted,
+        CreateTime,UpdateTime
+    </sql>
+</mapper>
