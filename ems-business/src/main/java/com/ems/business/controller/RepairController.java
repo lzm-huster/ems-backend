@@ -27,6 +27,7 @@ import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -128,18 +129,17 @@ public class RepairController {
         } else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }
 
-    @GetMapping("/getRepairDetill")
+    @GetMapping("/getRepairDetail")
     //查询当前设备维修具体信息
-    public String getRepairDetills(int repairID){
+    public DeviceRepairRecord getRepairDetails(int repairID){
         if(!ObjectUtil.isEmpty(repairID)) {
             //获取当前设备记录
             QueryWrapper<DeviceRepairRecord> queryWrapper=new QueryWrapper<>();
             queryWrapper.eq("RepairID",repairID).eq("IsDeleted",0);
             DeviceRepairRecord selectOne = deviceRepairRecordService.getOne(queryWrapper);
             //取得备注（Remark）信息
-            String S=selectOne.getRemark();
-            if(StringUtils.isEmpty(S)) throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "请求数据不存在");
-            else return S;
+            if(ObjectUtils.isEmpty(selectOne)) throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "请求数据不存在");
+            else return selectOne;
             }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
 

@@ -127,17 +127,14 @@ public class CheckController {
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }
 
-    @GetMapping("/getCheckDetill")
-    public Map<String,String> checkDetill(int checkID){
+    @GetMapping("/getCheckDetail")
+    public DeviceCheckRecord checkDetail(int checkID){
         if(!ObjectUtil.isEmpty(checkID)){
             QueryWrapper<DeviceCheckRecord> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("CheckID", checkID);
             DeviceCheckRecord deviceCheckRecord = deviceCheckRecordService.getOne(queryWrapper);
-            //把详细信息（图片，备注）放入Map中返回
-            Map<String,String> map=new HashMap<>();
-            map.put("ScrapImages",deviceCheckRecord.getCheckImages());
-            map.put("Remark",deviceCheckRecord.getRemark());
-            return map;
+
+            return deviceCheckRecord;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }
