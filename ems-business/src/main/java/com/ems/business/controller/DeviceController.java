@@ -20,6 +20,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -179,6 +180,16 @@ public class DeviceController {
         Number=deviceMapper.deleteDeviceByDeviceID(DeviceID);
 
         return Number;
+    }
+
+    @GetMapping("getAllDeviceIDAndAssetNumber")
+    //返回ID与资产编号键值对
+    public  List<Map<Integer,String>> getAllDeviceIDAndAssetNumber()
+    {
+        List<Map<Integer,String>> mapList=new ArrayList<>();
+        mapList=deviceMapper.getAllDeviceIDAndAssetNumber();
+
+        return mapList;
     }
 
 }

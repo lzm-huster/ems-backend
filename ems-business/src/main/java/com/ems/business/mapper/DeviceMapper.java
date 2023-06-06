@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -47,6 +48,10 @@ public interface DeviceMapper extends BaseMapper<Device> {
     //根据DeviceID删除一条数据
     @Update("update `Device` set `IsDeleted`=1 where `DeviceID`=#{DeviceID};")
     Integer deleteDeviceByDeviceID(int DeviceID);
+
+    //返回ID与资产编号键值对
+    @Select("select DeviceID ,AssetNumber from Device WHERE IsDeleted=0;")
+    List<Map<Integer,String>> getAllDeviceIDAndAssetNumber();
 
     @Select("select count(*) "+
             "from Device "+
