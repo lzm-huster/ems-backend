@@ -17,13 +17,13 @@ import java.util.List;
 */
 @Mapper
 public interface DeviceScrapRecordMapper extends BaseMapper<DeviceScrapRecord> {
-    @Select("select t.UserName,p.DeviceName,q.ScrapID,q.DeviceID,q.ScrapTime,q.ScrapReason "+
+    @Select("select t.UserName,p.DeviceName,q.ScrapID,q.DeviceID,q.ScrapTime,q.ScrapReason,p.AssetNumber "+
             "from Device p "+
             "inner join DeviceScrapRecord q on p.DeviceID = q.DeviceID "+
             "inner join User t on t.UserID = p.UserID "+
             "where t.UserID=#{userID} and p.IsDeleted = 0 and q.IsDeleted = 0 ")
     List<DeviceScrapListRes> getScrapList(Integer userID);    //普通用户查询：查询当前用户所有维修记录
-    @Select("select t.UserName,p.DeviceName,q.ScrapID,q.DeviceID,q.ScrapTime,q.ScrapReason "+
+    @Select("select t.UserName,p.DeviceName,q.ScrapID,q.DeviceID,q.ScrapTime,q.ScrapReason,p.AssetNumber "+
             "from Device p "+
             "inner join DeviceScrapRecord q on p.DeviceID = q.DeviceID "+
             "inner join User t on t.UserID = p.UserID " +

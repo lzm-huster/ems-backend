@@ -9,6 +9,7 @@ import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceCheckRecord;
 import com.ems.business.model.entity.DeviceRepairRecord;
 import com.ems.business.model.request.DeviceRepairListreq;
+import com.ems.business.model.response.DeviceRepairDetail;
 import com.ems.business.model.response.DeviceRepairListRes;
 import com.ems.business.service.DeviceRepairRecordService;
 import com.ems.business.service.DeviceService;
@@ -131,15 +132,25 @@ public class RepairController {
 
     @GetMapping("/getRepairDetail")
     //查询当前设备维修具体信息
-    public DeviceRepairRecord getRepairDetails(int repairID){
+    public DeviceRepairDetail getRepairDetails(int repairID){
         if(!ObjectUtil.isEmpty(repairID)) {
             //获取当前设备记录
             QueryWrapper<DeviceRepairRecord> queryWrapper=new QueryWrapper<>();
             queryWrapper.eq("RepairID",repairID).eq("IsDeleted",0);
-            DeviceRepairRecord selectOne = deviceRepairRecordService.getOne(queryWrapper);
-            //取得备注（Remark）信息
-            if(ObjectUtils.isEmpty(selectOne)) throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "请求数据不存在");
-            else return selectOne;
+            DeviceRepairRecord deviceRepairRecord = deviceRepairRecordService.getOne(queryWrapper);
+
+            QueryWrapper<Device> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("DeviceID",deviceRepairRecord.getDeviceID());
+
+            DeviceRepairDetail deviceRepairDetail =new DeviceRepairDetail();
+            BeanUtils.copyProperties(deviceRepairRecord,deviceRepairDetail);
+
+            Device device =deviceService.getOne(queryWrapper1);
+            deviceRepairDetail.setDeviceName(device.getDeviceName());
+            deviceRepairDetail.setAssetNumber(device.getAssetNumber());
+
+            if(ObjectUtils.isEmpty(deviceRepairDetail)) throw new BusinessException(ErrorCode.NOT_FOUND_ERROR, "请求数据不存在");
+            else return deviceRepairDetail;
             }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
 

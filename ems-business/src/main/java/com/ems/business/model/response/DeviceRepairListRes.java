@@ -43,5 +43,10 @@ public class DeviceRepairListRes {
     @TableField(value = "DeviceName")
     private String deviceName;
 
+    /**
+     * 资产编号
+     */
+    @TableField(value = "AssetNumber")
+    private String assetNumber;
 
 }

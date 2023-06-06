@@ -17,13 +17,13 @@ import java.util.List;
 */
 @Mapper
 public interface DeviceCheckRecordMapper extends BaseMapper<DeviceCheckRecord> {
-    @Select("select p.CheckID,p.DeviceID,q.DeviceName,q.UserID,p.CheckTime,p.DeviceState "+
+    @Select("select p.CheckID,p.DeviceID,q.DeviceName,q.UserID,p.CheckTime,p.DeviceState,q.AssetNumber "+
             "from Device q "+
             "inner join DeviceCheckRecord p on q.DeviceID = p.DeviceID "+
             "where q.UserID= #{userID} and q.IsDeleted = 0 and p.IsDeleted = 0")
     List<DeviceCheckListRes> getCheckList(int userID);    //普通用户：获取当前用户设备核查列表
 
-    @Select("select p.CheckID,p.DeviceID,q.DeviceName,q.UserID,p.CheckTime,p.DeviceState "+
+    @Select("select p.CheckID,p.DeviceID,q.DeviceName,q.UserID,p.CheckTime,p.DeviceState,q.AssetNumber "+
             "from Device q "+
             "inner join DeviceCheckRecord p on q.DeviceID = p.DeviceID " +
             "where q.IsDeleted = 0 and p.IsDeleted = 0")
