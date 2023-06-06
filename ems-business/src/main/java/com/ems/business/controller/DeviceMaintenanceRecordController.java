@@ -34,6 +34,7 @@ public class DeviceMaintenanceRecordController {
     @GetMapping("/deviceMaintenanceDetailQuery")
     //根据设备保养记录编号返回设备保养记录表
     public DeviceMaintenanceRecord getDeviceMaintenanceRecord (Integer maintenanceId){
+
         if (ObjectUtil.isNull(maintenanceId)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"设备保养记录Id参数为空");
         }

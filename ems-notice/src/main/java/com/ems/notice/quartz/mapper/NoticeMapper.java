@@ -2,6 +2,7 @@ package com.ems.notice.quartz.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.notice.quartz.model.entity.Notice;
+import org.apache.ibatis.annotations.Mapper;
 
 
 /**
@@ -10,6 +11,7 @@ import com.ems.notice.quartz.model.entity.Notice;
 * @createDate 2023-06-04 19:25:27
 * @Entity generator.domain.Notice
 */
+@Mapper
 public interface NoticeMapper extends BaseMapper<Notice> {
 
 }
