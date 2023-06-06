@@ -11,6 +11,7 @@ import com.ems.business.model.entity.DeviceRepairRecord;
 import com.ems.business.model.entity.DeviceScrapRecord;
 import com.ems.business.model.request.DeviceCheckListreq;
 import com.ems.business.model.request.DeviceScrapListreq;
+import com.ems.business.model.response.DeviceCheckDetail;
 import com.ems.business.model.response.DeviceCheckListRes;
 import com.ems.business.service.DeviceCheckRecordService;
 import com.ems.business.service.DeviceService;
@@ -37,9 +38,9 @@ import java.util.Map;
 @RequestMapping("/check")
 public class CheckController {
     @Autowired
-    DeviceCheckRecordService deviceCheckRecordService;
+    private DeviceCheckRecordService deviceCheckRecordService;
     @Autowired
-    DeviceService deviceService;
+    private DeviceService deviceService;
     @Autowired
     private UserRoleService userRoleService;
     @Autowired
@@ -128,13 +129,23 @@ public class CheckController {
     }
 
     @GetMapping("/getCheckDetail")
-    public DeviceCheckRecord checkDetail(int checkID){
+    public DeviceCheckDetail checkDetail(int checkID){
         if(!ObjectUtil.isEmpty(checkID)){
             QueryWrapper<DeviceCheckRecord> queryWrapper = new QueryWrapper<>();
             queryWrapper.eq("CheckID", checkID);
             DeviceCheckRecord deviceCheckRecord = deviceCheckRecordService.getOne(queryWrapper);
 
-            return deviceCheckRecord;
+            QueryWrapper<Device> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("DeviceID",deviceCheckRecord.getDeviceID());
+
+            DeviceCheckDetail deviceCheckDetail=new DeviceCheckDetail();
+            BeanUtils.copyProperties(deviceCheckRecord,deviceCheckDetail);
+
+            Device device=deviceService.getOne(queryWrapper1);
+            deviceCheckDetail.setDeviceName(device.getDeviceName());
+            deviceCheckDetail.setAssetNumber(device.getAssetNumber());
+
+            return deviceCheckDetail;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }

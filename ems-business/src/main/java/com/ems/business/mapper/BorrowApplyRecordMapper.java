@@ -20,23 +20,23 @@ import java.util.List;
 public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
 
     //个人查询：根据UserID查询返回个人设备借用列表需要数据
-    @Select("\n" +
-            "select br.BorrowApplyID, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
-            "from BorrowApplyRecord br\n" +
-            "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
-            "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
-            "inner join User u2 on br.BorrowerID = u2.UserID \n" +
-            "where u2.UserID =#{UserID} and br.IsDeleted=0 ;")
+    @Select("select br.BorrowApplyID,d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "  from BorrowApplyRecord br\n" +
+            "  inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
+            "  inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
+            "  inner join User u2 on br.BorrowerID = u2.UserID \n" +
+            "  inner join Device d on bs.DeviceID = d.DeviceID\n" +
+            "  where u2.UserID =#{UserID} and br.IsDeleted=0 ;")
     List<BorrowApplyRecordList> getPersonBorrowApplyRecordList(int UserID);
 
     //管理员查询：返回所有设备借用列表需要数据
-    @Select("\n" +
-            "select br.BorrowApplyID, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
-            "from BorrowApplyRecord br\n" +
-            "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
-            "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
-            "inner join User u2 on br.BorrowerID = u2.UserID \n"+
-            "where br.IsDeleted=0;")
+    @Select("select br.BorrowApplyID,d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "  from BorrowApplyRecord br\n" +
+            "  inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
+            "  inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
+            "  inner join User u2 on br.BorrowerID = u2.UserID \n" +
+            "  inner join Device d on bs.DeviceID = d.DeviceID\n" +
+            "  where  br.IsDeleted=0 ;")
     List<BorrowApplyRecordList> getAllBorrowApplyRecordList();
 
     //个人查询：根据UserID查询返回个人正在借出设备数量

@@ -1,16 +1,22 @@
 package com.ems.business.model.response;
+
 import com.baomidou.mybatisplus.annotation.TableField;
-import lombok.Data;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
+import lombok.Data;
+
+
+
 @Data
-public class DeviceCheckListRes {
+
+public class DeviceRepairDetail {
     /**
-     * 核查编号
+     * 维修编号
      */
-    @TableField(value = "CheckID")
-    private Integer checkID;
+    @TableField(value = "RepairID")
+    private Integer repairID;
 
     /**
      * 设备编号
@@ -19,21 +25,23 @@ public class DeviceCheckListRes {
     private Integer deviceID;
 
     /**
-     * 设备责任人
+     * 维修时间
      */
-    @TableField(value = "Checker")
-    private String checker;
+    @TableField(value = "RepairTime")
+    private Date repairTime;
 
     /**
-     * 核查时间
+     * 维修内容
      */
-    @TableField(value = "CheckTime")
-    private Date checkTime;
+    @TableField(value = "RepairContent")
+    private String repairContent;
+
     /**
-     * 设备状态
+     * 维修费用
      */
-    @TableField(value = "DeviceState")
-    private String deviceState;
+    @TableField(value = "RepairFee")
+    private BigDecimal repairFee;
+
     /**
      * 设备名称
      */
@@ -45,5 +53,11 @@ public class DeviceCheckListRes {
      */
     @TableField(value = "AssetNumber")
     private String assetNumber;
+
+    /**
+     * 备注
+     */
+    @TableField(value = "Remark")
+    private String remark;
 
 }

@@ -20,21 +20,21 @@ public interface DeviceMaintenanceRecordMapper extends BaseMapper<DeviceMaintena
     //根据UserID查询保养设备数量
     @Select("select count(m.MaintenanceID) as MaintenanceCount "+
             "from Device d inner join DeviceMaintenanceRecord m on "+
-            "d.DeviceID = m.DeviceID where d.UserID = #{UserID};")
+            "d.DeviceID = m.DeviceID where d.UserID = #{UserID} and m.IsDeleted=0;")
     int getAllMaintenanceDeviceNumber(Integer UserID);
 
     //根据UserID查询设备保养数据
-    @Select("select m.MaintenanceID, d.DeviceID, d.DeviceName, m.MaintenanceTime, m.MaintenanceContent " +
+    @Select("select m.MaintenanceID, d.DeviceID, d.AssetNumber, d.DeviceName, m.MaintenanceTime, m.MaintenanceContent " +
             "from Device d " +
             "inner join DeviceMaintenanceRecord m on d.DeviceID = m.DeviceID " +
-            "where d.UserID = #{UserID};")
+            "where d.UserID = #{UserID} and m.IsDeleted=0;")
     List<DeviceMaintenanceRecordList> getDeviceMaintenanceRecordList(Integer UserID);
     //根据MaintenanceID查询设备保养表
-    @Select("select * from `DeviceMaintenanceRecord` where `MaintenanceID` = #{MaintenanceID};")
+    @Select("select * from `DeviceMaintenanceRecord` where `MaintenanceID` = #{MaintenanceID} and DeviceMaintenanceRecord.IsDeleted=0;")
     DeviceMaintenanceRecord selectById(Integer MaintenanceID);
     //根据MaintenanceID删除设备保养记录，成功返回1，失败返回0
     @Select("update 'DeviceMaintenanceRecord' set 'IsDeleted' = 1 " +
-            "where 'MaintenanceID' = #{MaintenanceID};")
+            "where 'MaintenanceID' = #{MaintenanceID} and DeviceMaintenanceRecord.IsDeleted=0;")
     public Integer deleteDeviceMaintenanceRecordByMaintenanceID(int MaintenanceID);
 }
 

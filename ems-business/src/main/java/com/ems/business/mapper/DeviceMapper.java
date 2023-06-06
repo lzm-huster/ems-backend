@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Update;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -20,18 +21,18 @@ import java.util.List;
 @Mapper
 public interface DeviceMapper extends BaseMapper<Device> {
     //个人查询：根据UserID查询负责的所有设备
-    @Select("select d.DeviceID,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
+    @Select("select d.DeviceID,d.AssetNumber,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
             "from Device d inner join User u on d.UserID = u.UserID " +
             "where d.UserID = #{UserID} and d.IsDeleted=0;")
     List<DeviceList> getPersonDeviceList(int UserID);
 
     //管理员查询：返回所有所有设备列表
-    @Select("select d.DeviceID,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
+    @Select("select d.DeviceID,d.AssetNumber,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
             "from Device d inner join User u on d.UserID = u.UserID and d.IsDeleted=0;")
     List<DeviceList> getAllDeviceList();
 
     //普通用户查询：返回所有公用设备列表
-    @Select("select d.DeviceID,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
+    @Select("select d.DeviceID,d.AssetNumber,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
             "from Device d inner join User u on d.UserID = u.UserID " +
             "where d.IsPublic=1 and d.IsDeleted=0;")
     List<DeviceList> getPublicDevice();
@@ -47,6 +48,10 @@ public interface DeviceMapper extends BaseMapper<Device> {
     //根据DeviceID删除一条数据
     @Update("update `Device` set `IsDeleted`=1 where `DeviceID`=#{DeviceID};")
     Integer deleteDeviceByDeviceID(int DeviceID);
+
+    //返回ID与资产编号键值对
+    @Select("select DeviceID ,AssetNumber from Device WHERE IsDeleted=0;")
+    List<Map<Integer,String>> getAllDeviceIDAndAssetNumber();
 
     @Select("select count(*) "+
             "from Device "+
