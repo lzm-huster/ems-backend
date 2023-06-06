@@ -151,14 +151,6 @@ public class UserController {
         Object permissionObj = redisUserInfo.get(RedisConstant.UserPermission);
         List<String> permissionList = (List<String>) permissionObj;
         userCurrentRes.setUserPermissionList(permissionList);
-//        // 菜单权限信息
-//        Object menuObj = redisUserInfo.get(RedisConstant.MenuPermission);
-//        List<UserMenuPermissionRes> menuPermissionList = (List<UserMenuPermissionRes>) menuObj;
-//        userCurrentRes.setMenuPermissionList(menuPermissionList);
-//        // 表权限信息
-//        Object permissionObj = redisUserInfo.get(RedisConstant.UserPermission);
-//        List<String> userPermissionList = (List<String>) permissionObj;
-//        userCurrentRes.setUserPermissionList(userPermissionList);
         return userCurrentRes;
     }
 

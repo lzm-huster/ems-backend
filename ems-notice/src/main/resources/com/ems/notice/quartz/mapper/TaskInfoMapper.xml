@@ -12,9 +12,7 @@
             <result property="taskStatus" column="TaskStatus" jdbcType="TINYINT"/>
             <result property="taskCron" column="TaskCron" jdbcType="VARCHAR"/>
             <result property="taskClass" column="TaskClass" jdbcType="VARCHAR"/>
-            <result property="noticeCreatorID" column="NoticeCreatorID" jdbcType="INTEGER"/>
-            <result property="noticeReceiverID" column="NoticeReceiverID" jdbcType="INTEGER"/>
-            <result property="noticeInfo" column="NoticeInfo" jdbcType="VARCHAR"/>
+            <result property="noticeId" column="NoticeId" jdbcType="INTEGER"/>
             <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
             <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
             <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
@@ -23,8 +21,7 @@
     <sql id="Base_Column_List">
         TaskID,TaskGroup,TaskName,
         TaskDescription,TaskStatus,TaskCron,
-        TaskClass,NoticeCreatorID,NoticeReceiverID,
-        NoticeInfo,IsDeleted,CreateTime,
+        TaskClass,NoticeId,IsDeleted,CreateTime,
         UpdateTime
     </sql>
 <!--    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">-->

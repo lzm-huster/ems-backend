@@ -26,11 +26,11 @@ public class TaskAddReq {
     /**
      * 通知创建人
      */
-    private Integer noticeCreatorID;
+    private Integer creatorId;
     /**
      * 通知接收人
      */
-    private Integer noticeReceiverID;
+    private Integer receiverId;
     /**
      * 任务类型
      */

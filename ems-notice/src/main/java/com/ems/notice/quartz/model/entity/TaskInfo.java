@@ -60,23 +60,10 @@ public class TaskInfo implements Serializable {
     private String taskClass;
 
     /**
-     * 通知创建人
+     * 通知ID
      */
-    @TableField(value = "NoticeCreatorID")
-    private Integer noticeCreatorID;
-
-    /**
-     * 通知接收人
-     */
-    @TableField(value = "NoticeReceiverID")
-    private Integer noticeReceiverID;
-
-    /**
-     * 通知内容
-     */
-    @TableField(value = "NoticeInfo")
-    private String noticeInfo;
-
+    @TableField(value = "NoticeId")
+    private Integer noticeId;
     /**
      * 是否删除
      */

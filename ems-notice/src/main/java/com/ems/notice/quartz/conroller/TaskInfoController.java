@@ -1,16 +1,20 @@
 package com.ems.notice.quartz.conroller;
 
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.ems.annotation.ResponseResult;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.notice.quartz.constant.TaskStatus;
 import com.ems.notice.quartz.constant.TaskUtil;
+import com.ems.notice.quartz.model.entity.Notice;
 import com.ems.notice.quartz.model.entity.TaskInfo;
 import com.ems.notice.quartz.model.request.TaskAddReq;
 import com.ems.notice.quartz.model.request.TaskInfoReq;
 import com.ems.notice.quartz.model.response.TaskInfoRes;
+import com.ems.notice.quartz.service.NoticeService;
 import com.ems.notice.quartz.service.TaskInfoService;
 import com.github.pagehelper.PageInfo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,6 +27,7 @@ import java.util.Objects;
 /**
  * 定时任务管理
  **/
+@ResponseResult
 @RestController
 @RequestMapping("/task")
 public class TaskInfoController {
@@ -31,6 +36,8 @@ public class TaskInfoController {
     private TaskInfoService taskInfoService;
     @Autowired
     private TaskUtil taskUtil;
+    @Autowired
+    private NoticeService noticeService;
 
     /**
      * 定时器列表
@@ -78,7 +85,14 @@ public class TaskInfoController {
         if(Objects.isNull(taskAddReq.getTaskStatus())){
             taskAddReq.setTaskStatus(TaskStatus.START.getCode());
         }
+        Notice notice = new Notice();
+        BeanUtils.copyProperties(taskAddReq,notice);
+        boolean save = noticeService.save(notice);
+        if (save){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"通知保存失败");
+        }
         TaskInfo taskInfo = taskUtil.taskAddInfo(taskAddReq);
+        taskInfo.setNoticeId(notice.getNoticeId());
         return taskInfoService.addJob(taskInfo);
     }
 

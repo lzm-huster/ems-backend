@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ems.notice.quartz.mapper.NoticeMapper">
+
+    <resultMap id="BaseResultMap" type="com.ems.notice.quartz.model.entity.Notice">
+            <id property="noticeId" column="NoticeId" jdbcType="INTEGER"/>
+            <result property="creatorId" column="CreatorId" jdbcType="INTEGER"/>
+            <result property="receiverId" column="ReceiverId" jdbcType="INTEGER"/>
+            <result property="noticeInfo" column="NoticeInfo" jdbcType="VARCHAR"/>
+            <result property="isSend" column="IsSend" jdbcType="TINYINT"/>
+            <result property="isRead" column="IsRead" jdbcType="TINYINT"/>
+            <result property="isDeleted" column="IsDeleted" jdbcType="TINYINT"/>
+            <result property="createTime" column="CreateTime" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="UpdateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        NoticeId,CreatorId,ReceiverId,
+        NoticeInfo,IsSend,IsRead,
+        IsDeleted,CreateTime,UpdateTime
+    </sql>
+</mapper>

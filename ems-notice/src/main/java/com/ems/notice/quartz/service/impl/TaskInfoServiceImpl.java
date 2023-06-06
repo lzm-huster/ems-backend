@@ -1,16 +1,21 @@
 package com.ems.notice.quartz.service.impl;
 
+import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.notice.quartz.constant.TaskUtil;
 import com.ems.notice.quartz.manager.TaskManager;
+import com.ems.notice.quartz.mapper.NoticeMapper;
 import com.ems.notice.quartz.mapper.TaskInfoMapper;
+import com.ems.notice.quartz.model.entity.Notice;
 import com.ems.notice.quartz.model.entity.TaskInfo;
 import com.ems.notice.quartz.model.response.TaskInfoRes;
+import com.ems.notice.quartz.service.NoticeService;
 import com.ems.notice.quartz.service.TaskInfoService;
 import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.service.UserService;
+import com.sun.corba.se.impl.orbutil.ObjectStreamClassUtil_1_3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +39,8 @@ public class TaskInfoServiceImpl implements TaskInfoService {
     private TaskUtil taskUtil;
     @Autowired
     private UserService userService;
+    @Autowired
+    private NoticeService noticeService;
 
     //    @Override
 //    public PageInfo<TaskInfo> selectTaskListByPage(TaskInfoReq taskInfoReq) {
@@ -115,8 +122,13 @@ public class TaskInfoServiceImpl implements TaskInfoService {
         if (!taskManager.addJob(taskInfo)) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "数据库增加成功，但任务调度增加失败，请刷新后重启任务");
         }
-        User creator = userService.getUserById(taskInfo.getNoticeCreatorID());
-        User receiver = userService.getUserById(taskInfo.getNoticeReceiverID());
+        Integer noticeId = taskInfo.getNoticeId();
+        Notice notice = noticeService.getById(noticeId);
+        if (ObjectUtil.isNull(notice)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"通知内容不存在");
+        }
+        User creator = userService.getUserById(notice.getCreatorId());
+        User receiver = userService.getUserById(notice.getReceiverId());
         TaskInfoRes taskInfoRes = taskUtil.taskInfoRes(taskInfo, creator.getUserName(), receiver.getUserName());
         return taskInfoRes;
     }
