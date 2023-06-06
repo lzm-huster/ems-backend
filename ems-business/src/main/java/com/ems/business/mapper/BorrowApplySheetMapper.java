@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.business.model.entity.BorrowApplySheet;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -22,7 +23,7 @@ public interface BorrowApplySheetMapper extends BaseMapper<BorrowApplySheet> {
     List<BorrowApplySheet> getBorrowApplySheetByBorrowApplyID(int BorrowApplyID);
 
     //根据借用申请单表的BorrowApplyID删除借用单表数据
-    @Select("update `BorrowApplySheet` set `IsDeleted`=1 where `BorrowApplyID`=#{BorrowApplyID};")
+    @Update("update `BorrowApplySheet` set `IsDeleted`=1 where `BorrowApplyID`=#{BorrowApplyID};")
     public Integer deleteBorrowApplySheetByBorrowApplyID(int BorrowApplyID);
 
 }

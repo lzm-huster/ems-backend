@@ -16,6 +16,11 @@ public class BorrowApplyRecordList {
     private Integer borrowApplyID;
 
     /**
+     * 资产编号
+     */
+    private String assetNumber;
+
+    /**
      * 设备名称
      */
     private String deviceList;
