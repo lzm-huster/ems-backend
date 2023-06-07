@@ -53,6 +53,11 @@ public interface DeviceMapper extends BaseMapper<Device> {
     @Select("select DeviceID ,AssetNumber from Device WHERE IsDeleted=0;")
     List<Map<Integer,String>> getAllDeviceIDAndAssetNumber();
 
+    //返回某类设备的个数
+    @Select("select COUNT(*) from `Device` where `AssetNumber` like #{CategoryCode};")
+    Integer getNumberByCategoryCode(String CategoryCode);
+
+
     @Select("select count(*) "+
             "from Device "+
             "where ExpectedScrapDate < #{date} and UserID = #{userID}")

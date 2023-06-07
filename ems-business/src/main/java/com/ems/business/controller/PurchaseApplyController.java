@@ -8,12 +8,15 @@ import com.ems.business.model.entity.PurchaseApply;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @ResponseResult
 @RestController
@@ -68,6 +71,21 @@ public class PurchaseApplyController {
 
         return Number;
     }
+
+    @GetMapping("/getPurchaseApplyDetailByPurchaseApplySheetID")
+    //根据PurchaseApplySheetID查看PurchaseApply详情
+    public List<PurchaseApply> getPurchaseApplyDetailByPurchaseApplySheetID(int PurchaseApplySheetID)
+    {
+        if (ObjectUtil.isNull(PurchaseApplySheetID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
+        List<PurchaseApply> purchaseApplyList=new ArrayList<>();
+        purchaseApplyList=purchaseApplyMapper.getPurchaseApplyDetailByPurchaseApplySheetID( PurchaseApplySheetID);
+
+        return purchaseApplyList;
+    }
+
 
 
 

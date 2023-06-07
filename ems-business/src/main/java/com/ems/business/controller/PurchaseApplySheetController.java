@@ -136,7 +136,7 @@ public class PurchaseApplySheetController {
     }
 
     @PostMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
-    //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
+    //根据PurchaseApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
     public int deletePurchaseApplySheetByPurchaseApplySheetID(int PurchaseApplySheetID)
     {
         if (ObjectUtil.isNull(PurchaseApplySheetID)) {

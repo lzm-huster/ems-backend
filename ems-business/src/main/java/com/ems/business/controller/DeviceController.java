@@ -106,6 +106,7 @@ public class DeviceController {
         Double unitPrice = device.getUnitPrice();
         Integer isPublic = device.getIsPublic();
         Integer userID = device.getUserID();
+        String CategoryCode = device.getAssetNumber();
         //部分数据系统赋值
         device.setDeviceState("申请中");
         device.setBorrowRate(0.05);
@@ -114,9 +115,6 @@ public class DeviceController {
         //预计五年后报废
         device.setExpectedScrapDate(new Date());
         Date newDate = DateUtil.offset(date, DateField.DAY_OF_YEAR, 5);
-        //判断是否存在空值数据
-//        StringUtils.isBlank(deviceType);
-//        ObjectUtil.isNull();
 
         // 判断空
         if (StringUtils.isBlank(deviceName)|| StringUtils.isBlank(deviceType)||
@@ -126,6 +124,22 @@ public class DeviceController {
                 ObjectUtil.isNull(userID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
+        // 判断设备资产编号目录是否传入
+        if(StringUtils.isBlank(CategoryCode))
+        {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入CategoryCode为空");
+        }
+        String assetNumber=CategoryCode;
+        CategoryCode=CategoryCode+"%"; //模糊查询条件
+        int num=deviceMapper.getNumberByCategoryCode(CategoryCode)+1;
+
+        if(num<10){assetNumber= assetNumber+"000"+Integer.toString(num);}
+        else  if(num<100){assetNumber= assetNumber+"00"+Integer.toString(num);}
+        else  if(num<1000){assetNumber= assetNumber+"0"+Integer.toString(num);}
+        else {assetNumber= assetNumber+Integer.toString(num);}
+        //设置设备资产编号
+        device.setAssetNumber(assetNumber);
+
         int Number=0;
         Number=deviceMapper.insert(device);
         return Number;
@@ -191,5 +205,6 @@ public class DeviceController {
 
         return mapList;
     }
+
 
 }
