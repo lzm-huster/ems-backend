@@ -31,6 +31,13 @@ public interface DeviceMapper extends BaseMapper<Device> {
             "from Device d inner join User u on d.UserID = u.UserID and d.IsDeleted=0;")
     List<DeviceList> getAllDeviceList();
 
+
+    //返回所有公用设备列表
+    @Select("select d.DeviceID,d.AssetNumber,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate\n" +
+            "from Device d inner join User u on d.UserID = u.UserID and d.IsDeleted=0 and d.IsPublic=1;")
+    List<DeviceList> getPublicDeviceList();
+
+
     //普通用户查询：返回所有公用设备列表
     @Select("select d.DeviceID,d.AssetNumber,d.DeviceName, d.DeviceType,d.DeviceModel,d.DeviceState,u.UserName,d.PurchaseDate " +
             "from Device d inner join User u on d.UserID = u.UserID " +
@@ -56,6 +63,10 @@ public interface DeviceMapper extends BaseMapper<Device> {
     //返回个人ID与资产编号键值对
     @Select("select DeviceID ,AssetNumber from Device WHERE UserID=#{UserID} and IsDeleted=0;")
     List<Map<Integer,String>> getPersonDeviceIDAndAssetNumber(int UserID);
+
+    //返回公用的ID与资产编号键值对
+    @Select("select DeviceID ,AssetNumber from Device WHERE IsPublic=1 and IsDeleted=0;")
+    List<Map<Integer,String>> getPublicDeviceIDAndAssetNumber();
 
     //返回某类设备的个数
     @Select("select COUNT(*) from `Device` where `AssetNumber` like #{CategoryCode};")

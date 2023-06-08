@@ -78,6 +78,18 @@ public class DeviceController {
         return deviceLists;
     }
 
+    @GetMapping("/getPublicDeviceList")
+    //返回公用设备信息列表
+    public List<DeviceList> getPublicDeviceList()
+    {
+
+        List<DeviceList> deviceLists=null;
+        deviceLists=deviceMapper.getPublicDeviceList();
+
+        return deviceLists;
+    }
+
+
     @GetMapping("getDeviceDetail")
     //根据DeviceID查询详细信息
     public Device getDeviceDetail(int DeviceID)
@@ -196,6 +208,7 @@ public class DeviceController {
         return Number;
     }
 
+    @AuthCheck
     @GetMapping("getDeviceIDAndAssetNumber")
     //根据token返回ID与资产编号键值对,个人返回个人的，管理员返回所有的
     public  List<Map<Integer,String>> getDeviceIDAndAssetNumber(@RequestHeader(value = "token",required = false) String token)
@@ -219,6 +232,23 @@ public class DeviceController {
 
         return mapList;
     }
+
+    @GetMapping("getPublicDeviceIDAndAssetNumber")
+    //返回公用ID与资产编号键值对
+    public  List<Map<Integer,String>> getPublicDeviceIDAndAssetNumber()
+    {
+
+
+        List<Map<Integer,String>> mapList=new ArrayList<>();
+
+        mapList=deviceMapper.getPublicDeviceIDAndAssetNumber();
+
+        return mapList;
+    }
+
+
+
+
 
 
 }
