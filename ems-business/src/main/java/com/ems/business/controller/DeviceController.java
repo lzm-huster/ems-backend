@@ -198,7 +198,7 @@ public class DeviceController {
 
     @GetMapping("getDeviceIDAndAssetNumber")
     //根据token返回ID与资产编号键值对,个人返回个人的，管理员返回所有的
-    public  List<Map<Integer,String>> getAllDeviceIDAndAssetNumber(@RequestHeader(value = "token",required = false) String token)
+    public  List<Map<Integer,String>> getDeviceIDAndAssetNumber(@RequestHeader(value = "token",required = false) String token)
     {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
