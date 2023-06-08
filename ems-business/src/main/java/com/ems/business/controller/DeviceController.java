@@ -120,7 +120,7 @@ public class DeviceController {
         Integer userID = device.getUserID();
         String CategoryCode = device.getAssetNumber();
         //部分数据系统赋值
-        device.setDeviceState("申请中");
+        device.setDeviceState("正常");
         device.setBorrowRate(0.05);
         Date date=new Date();
         device.setPurchaseDate(date);

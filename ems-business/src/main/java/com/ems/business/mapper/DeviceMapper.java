@@ -57,15 +57,15 @@ public interface DeviceMapper extends BaseMapper<Device> {
     Integer deleteDeviceByDeviceID(int DeviceID);
 
     //返回所有ID与资产编号键值对
-    @Select("select DeviceID ,AssetNumber from Device WHERE IsDeleted=0;")
+    @Select("select DeviceID ,AssetNumber from Device WHERE IsDeleted=0 and `DeviceState` = '正常';")
     List<Map<Integer,String>> getAllDeviceIDAndAssetNumber();
 
     //返回个人ID与资产编号键值对
-    @Select("select DeviceID ,AssetNumber from Device WHERE UserID=#{UserID} and IsDeleted=0;")
+    @Select("select DeviceID ,AssetNumber from Device WHERE UserID=#{UserID} and IsDeleted=0  and `DeviceState` = '正常';")
     List<Map<Integer,String>> getPersonDeviceIDAndAssetNumber(int UserID);
 
     //返回公用的ID与资产编号键值对
-    @Select("select DeviceID ,AssetNumber from Device WHERE IsPublic=1 and IsDeleted=0;")
+    @Select("select DeviceID ,AssetNumber from Device WHERE IsPublic=1 and IsDeleted=0 and `DeviceState` = '正常';")
     List<Map<Integer,String>> getPublicDeviceIDAndAssetNumber();
 
     //返回某类设备的个数

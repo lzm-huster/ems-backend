@@ -89,6 +89,7 @@ public class PurchaseApplySheetController {
         Integer purchaseApplicantID = purchaseApplySheet.getPurchaseApplicantID();
         //部分数据系统赋值
         purchaseApplySheet.setPurchaseApplyDate(new Date());
+        purchaseApplySheet.setPurchaseApplyState("未审批");
 
         if (ObjectUtil.isNull(approveTutorID)|| StringUtils.isBlank(purchaseApplyDescription)||ObjectUtil.isNull(purchaseApplicantID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
