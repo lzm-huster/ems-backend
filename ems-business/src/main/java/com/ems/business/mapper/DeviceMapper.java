@@ -49,9 +49,13 @@ public interface DeviceMapper extends BaseMapper<Device> {
     @Update("update `Device` set `IsDeleted`=1 where `DeviceID`=#{DeviceID};")
     Integer deleteDeviceByDeviceID(int DeviceID);
 
-    //返回ID与资产编号键值对
+    //返回所有ID与资产编号键值对
     @Select("select DeviceID ,AssetNumber from Device WHERE IsDeleted=0;")
     List<Map<Integer,String>> getAllDeviceIDAndAssetNumber();
+
+    //返回个人ID与资产编号键值对
+    @Select("select DeviceID ,AssetNumber from Device WHERE UserID=#{UserID} and IsDeleted=0;")
+    List<Map<Integer,String>> getPersonDeviceIDAndAssetNumber(int UserID);
 
     //返回某类设备的个数
     @Select("select COUNT(*) from `Device` where `AssetNumber` like #{CategoryCode};")

@@ -196,12 +196,26 @@ public class DeviceController {
         return Number;
     }
 
-    @GetMapping("getAllDeviceIDAndAssetNumber")
-    //返回ID与资产编号键值对
-    public  List<Map<Integer,String>> getAllDeviceIDAndAssetNumber()
+    @GetMapping("getDeviceIDAndAssetNumber")
+    //根据token返回ID与资产编号键值对,个人返回个人的，管理员返回所有的
+    public  List<Map<Integer,String>> getAllDeviceIDAndAssetNumber(@RequestHeader(value = "token",required = false) String token)
     {
+
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
+        String RoleName=null;
+        RoleName=userMapper.getRoleNameByUserID(UserID);
+
         List<Map<Integer,String>> mapList=new ArrayList<>();
-        mapList=deviceMapper.getAllDeviceIDAndAssetNumber();
+        if(RoleName.contains("deviceAdmin"))
+        {
+            mapList=deviceMapper.getAllDeviceIDAndAssetNumber();
+
+        } else {
+            mapList=deviceMapper.getPersonDeviceIDAndAssetNumber(UserID);
+        }
 
         return mapList;
     }
