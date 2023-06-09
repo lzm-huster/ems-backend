@@ -7,7 +7,7 @@ public class PermissionSimpleRes {
     /**
      * 权限编号
      */
-    private Integer permissionId;
+    private Integer permissionID;
 
     /**
      * 权限名
