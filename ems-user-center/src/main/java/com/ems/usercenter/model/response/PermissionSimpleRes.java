@@ -18,5 +18,5 @@ public class PermissionSimpleRes {
      * 权限描述
      */
 
-    private String permissionDesc;
+    private String permissionDescription;
 }

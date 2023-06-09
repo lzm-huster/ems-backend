@@ -12,5 +12,5 @@ import java.io.IOException;
 */
 public interface NoticeService extends IService<Notice> {
     Notice addNotice(Notice notice) throws IOException;
-
+    Notice addNoticeWithTask(Notice notice);
 }
