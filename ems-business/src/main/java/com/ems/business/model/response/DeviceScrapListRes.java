@@ -3,6 +3,7 @@ package com.ems.business.model.response;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 @Data
@@ -22,6 +23,7 @@ public class DeviceScrapListRes {
      * 报废时间
      */
     @TableField(value = "ScrapTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date scrapTime;
 
     /**

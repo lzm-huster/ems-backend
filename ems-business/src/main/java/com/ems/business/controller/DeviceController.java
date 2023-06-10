@@ -78,6 +78,18 @@ public class DeviceController {
         return deviceLists;
     }
 
+    @GetMapping("/getPublicDeviceList")
+    //返回公用设备信息列表
+    public List<DeviceList> getPublicDeviceList()
+    {
+
+        List<DeviceList> deviceLists=null;
+        deviceLists=deviceMapper.getPublicDeviceList();
+
+        return deviceLists;
+    }
+
+
     @GetMapping("getDeviceDetail")
     //根据DeviceID查询详细信息
     public Device getDeviceDetail(int DeviceID)
@@ -106,17 +118,15 @@ public class DeviceController {
         Double unitPrice = device.getUnitPrice();
         Integer isPublic = device.getIsPublic();
         Integer userID = device.getUserID();
+        String CategoryCode = device.getAssetNumber();
         //部分数据系统赋值
-        device.setDeviceState("申请中");
+        device.setDeviceState("正常");
         device.setBorrowRate(0.05);
         Date date=new Date();
         device.setPurchaseDate(date);
         //预计五年后报废
         device.setExpectedScrapDate(new Date());
         Date newDate = DateUtil.offset(date, DateField.DAY_OF_YEAR, 5);
-        //判断是否存在空值数据
-//        StringUtils.isBlank(deviceType);
-//        ObjectUtil.isNull();
 
         // 判断空
         if (StringUtils.isBlank(deviceName)|| StringUtils.isBlank(deviceType)||
@@ -126,6 +136,22 @@ public class DeviceController {
                 ObjectUtil.isNull(userID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
+        // 判断设备资产编号目录是否传入
+        if(StringUtils.isBlank(CategoryCode))
+        {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入CategoryCode为空");
+        }
+        String assetNumber=CategoryCode;
+        CategoryCode=CategoryCode+"%"; //模糊查询条件
+        int num=deviceMapper.getNumberByCategoryCode(CategoryCode)+1;
+
+        if(num<10){assetNumber= assetNumber+"000"+Integer.toString(num);}
+        else  if(num<100){assetNumber= assetNumber+"00"+Integer.toString(num);}
+        else  if(num<1000){assetNumber= assetNumber+"0"+Integer.toString(num);}
+        else {assetNumber= assetNumber+Integer.toString(num);}
+        //设置设备资产编号
+        device.setAssetNumber(assetNumber);
+
         int Number=0;
         Number=deviceMapper.insert(device);
         return Number;
@@ -182,14 +208,47 @@ public class DeviceController {
         return Number;
     }
 
-    @GetMapping("getAllDeviceIDAndAssetNumber")
-    //返回ID与资产编号键值对
-    public  List<Map<Integer,String>> getAllDeviceIDAndAssetNumber()
+    @AuthCheck
+    @GetMapping("getDeviceIDAndAssetNumber")
+    //根据token返回ID与资产编号键值对,个人返回个人的，管理员返回所有的
+    public  List<Map<Integer,String>> getDeviceIDAndAssetNumber(@RequestHeader(value = "token",required = false) String token)
     {
+
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
+        String RoleName=null;
+        RoleName=userMapper.getRoleNameByUserID(UserID);
+
         List<Map<Integer,String>> mapList=new ArrayList<>();
-        mapList=deviceMapper.getAllDeviceIDAndAssetNumber();
+        if(RoleName.contains("deviceAdmin"))
+        {
+            mapList=deviceMapper.getAllDeviceIDAndAssetNumber();
+
+        } else {
+            mapList=deviceMapper.getPersonDeviceIDAndAssetNumber(UserID);
+        }
 
         return mapList;
     }
+
+    @GetMapping("getPublicDeviceIDAndAssetNumber")
+    //返回公用ID与资产编号键值对
+    public  List<Map<Integer,String>> getPublicDeviceIDAndAssetNumber()
+    {
+
+
+        List<Map<Integer,String>> mapList=new ArrayList<>();
+
+        mapList=deviceMapper.getPublicDeviceIDAndAssetNumber();
+
+        return mapList;
+    }
+
+
+
+
+
 
 }

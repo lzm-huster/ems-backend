@@ -3,6 +3,8 @@ package com.ems.business.model.request;
 import com.baomidou.mybatisplus.annotation.TableField;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
@@ -22,7 +24,7 @@ public class DeviceScrapListreq {
     /**
      * 报废时间
      */
-
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date scrapTime;
 
     /**
@@ -45,7 +47,7 @@ public class DeviceScrapListreq {
      * 报废设备图片列表
      */
 
-    private String scrapImages;
+    private MultipartFile scrapImages;
     /**
      * 备注
      */

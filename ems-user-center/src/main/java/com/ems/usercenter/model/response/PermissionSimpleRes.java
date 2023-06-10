@@ -7,7 +7,7 @@ public class PermissionSimpleRes {
     /**
      * 权限编号
      */
-    private Integer permissionId;
+    private Integer permissionID;
 
     /**
      * 权限名
@@ -18,5 +18,5 @@ public class PermissionSimpleRes {
      * 权限描述
      */
 
-    private String permissionDesc;
+    private String permissionDescription;
 }

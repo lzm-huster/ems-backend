@@ -36,6 +36,15 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, Notice>
         }
         return notice;
     }
+
+    @Override
+    public Notice addNoticeWithTask(Notice notice) {
+        boolean save = this.save(notice);
+        if (!save){
+            return null;
+        }
+        return notice;
+    }
 }
 
 

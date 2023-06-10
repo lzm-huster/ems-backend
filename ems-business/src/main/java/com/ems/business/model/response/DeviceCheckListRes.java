@@ -1,6 +1,7 @@
 package com.ems.business.model.response;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -28,6 +29,7 @@ public class DeviceCheckListRes {
      * 核查时间
      */
     @TableField(value = "CheckTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date checkTime;
     /**
      * 设备状态

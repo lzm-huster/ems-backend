@@ -1,6 +1,8 @@
 package com.ems.business.model.request;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 @Data
@@ -26,7 +28,7 @@ public class DeviceCheckListreq {
     /**
      * 核查时间
      */
-
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date checkTime;
     /**
      * 设备状态
@@ -37,7 +39,7 @@ public class DeviceCheckListreq {
      * 核查图片列表
      */
 
-    private String checkImages;
+    private MultipartFile checkImages;
     /**
      * 备注
      */

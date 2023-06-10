@@ -2,6 +2,7 @@ package com.ems.business.model.request;
 
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 @Data
@@ -24,6 +25,7 @@ public class DeviceMaintenanceRecordRequest {
     /**
      * 保养时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date maintenanceTime;
 
     /**

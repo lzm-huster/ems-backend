@@ -89,6 +89,7 @@ public class PurchaseApplySheetController {
         Integer purchaseApplicantID = purchaseApplySheet.getPurchaseApplicantID();
         //部分数据系统赋值
         purchaseApplySheet.setPurchaseApplyDate(new Date());
+        purchaseApplySheet.setPurchaseApplyState("未审批");
 
         if (ObjectUtil.isNull(approveTutorID)|| StringUtils.isBlank(purchaseApplyDescription)||ObjectUtil.isNull(purchaseApplicantID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
@@ -136,7 +137,7 @@ public class PurchaseApplySheetController {
     }
 
     @PostMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
-    //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
+    //根据PurchaseApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
     public int deletePurchaseApplySheetByPurchaseApplySheetID(int PurchaseApplySheetID)
     {
         if (ObjectUtil.isNull(PurchaseApplySheetID)) {
