@@ -6,9 +6,15 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.ResponseResult;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
+import com.ems.usercenter.mapper.RoleMapper;
 import com.ems.usercenter.model.entity.Role;
+import com.ems.usercenter.model.entity.RolePermission;
 import com.ems.usercenter.model.request.RoleAddReq;
+import com.ems.usercenter.model.response.PermissionSimpleRes;
+import com.ems.usercenter.model.response.RoleDetailRes;
 import com.ems.usercenter.model.response.RoleSimpleRes;
+import com.ems.usercenter.service.PermissionService;
+import com.ems.usercenter.service.RolePermissionService;
 import com.ems.usercenter.service.RoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +22,7 @@ import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfigurat
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ResponseResult
 @RestController
@@ -23,6 +30,10 @@ import java.util.List;
 public class RoleController {
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private RolePermissionService rolePermissionService;
+    @Autowired
+    private PermissionService permissionService;
 
     @GetMapping("/list")
     public List<RoleSimpleRes> getRoleList(){
@@ -49,5 +60,24 @@ public class RoleController {
         RoleSimpleRes roleSimpleRes = new RoleSimpleRes();
         BeanUtils.copyProperties(role,roleSimpleRes);
         return roleSimpleRes;
+    }
+    @GetMapping("/detail")
+    public RoleDetailRes roleDetail(Integer roleId){
+        if (ObjectUtil.isNull(roleId)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"角色Id不能为空");
+        }
+        Role role = roleService.getById(roleId);
+        if (ObjectUtil.isNull(role)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该角色不存在");
+        }
+
+        List<PermissionSimpleRes> permissionListByRoleId = permissionService.getPermissionListByRoleId(roleId);
+        if (ObjectUtil.isNull(permissionListByRoleId)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR);
+        }
+        RoleDetailRes roleDetailRes = new RoleDetailRes();
+        BeanUtils.copyProperties(role,roleDetailRes);
+        roleDetailRes.setPermissionSimpleResListList(permissionListByRoleId);
+        return roleDetailRes;
     }
 }

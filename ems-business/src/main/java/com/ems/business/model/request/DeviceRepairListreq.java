@@ -3,6 +3,8 @@ package com.ems.business.model.request;
 import cn.hutool.core.date.DateTime;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import org.checkerframework.checker.formatter.qual.Format;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -23,7 +25,7 @@ public class DeviceRepairListreq {
     /**
      * 维修时间
      */
-
+    @DateTimeFormat(pattern="yyyy-MM-dd HH:mm:ss")
     private Date repairTime;
 
     /**

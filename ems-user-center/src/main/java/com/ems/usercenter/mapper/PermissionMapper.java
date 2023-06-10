@@ -2,6 +2,7 @@ package com.ems.usercenter.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.usercenter.model.entity.Permission;
+import com.ems.usercenter.model.response.PermissionSimpleRes;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -25,8 +26,14 @@ public interface PermissionMapper extends BaseMapper<Permission> {
             "from Permission p " +
             "inner join RolePermission rp on p.PermissionID = rp.PermissionID " +
             "inner join UserRole ur on rp.RoleID = ur.RoleID " +
-            "where ur.UserID = #{userID};")
+            "where ur.UserID = #{userID} and ur.IsDeleted = 0 and p.IsDeleted = 0;")
     List<String> getPermissionListByUserId(Integer userID);
+
+    @Select("select p.PermissionID, p.PermissionName,p.PermissionDescription " +
+            "from Permission p " +
+            "inner join RolePermission rp on p.PermissionID = rp.PermissionID " +
+            "where rp.RoleID = #{roleId} and rp.IsDeleted = 0 and p.IsDeleted = 0;")
+    List<PermissionSimpleRes> getPermissionListByRoleId(Integer roleId);
 }
 
 

@@ -27,12 +27,12 @@ public interface UserMapper extends BaseMapper<User> {
             "from User u " +
             "join UserRole ur on u.UserID = ur.UserID " +
             "join Role r on ur.RoleID = r.RoleID " +
-            "where u.UserID = #{userId};")
+            "where u.UserID = #{userId} And u.IsDeleted = 0 And r.IsDeleted = 0;")
     UserDetailRes getUserDetail(int userId);
     @Select("select u.*, r.RoleName,r.RoleDescription " +
             "from User u " +
             "join UserRole ur on u.UserID = ur.UserID " +
-            "join Role r on ur.RoleID = r.RoleID ")
+            "join Role r on ur.RoleID = r.RoleID And r.IsDeleted = 0 And u.IsDeleted = 0")
     List<UserDetailRes> getAllDetail();
 }
 
