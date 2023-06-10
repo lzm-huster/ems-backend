@@ -56,12 +56,14 @@ public class DeviceMaintenanceRecord implements Serializable {
      * 创建时间
      */
     @TableField(value = "CreateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
      * 更新时间
      */
     @TableField(value = "UpdateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     @TableField(exist = false)

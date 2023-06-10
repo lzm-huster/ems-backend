@@ -1,6 +1,7 @@
 package com.ems.business.model.response;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -33,6 +34,7 @@ public class BorrowApplyRecordList {
     /**
      * 借用申请时间
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date borrowApplyDate;
 
     /**
