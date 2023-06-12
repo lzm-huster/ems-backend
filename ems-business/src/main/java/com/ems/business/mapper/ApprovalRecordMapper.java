@@ -44,28 +44,30 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     // 2、返回需要审批的借用申请单：老师   BorrowApplyRecordList
     @Select("\n" +
-            "select br.BorrowApplyID, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
+            "inner join Device d on d.DeviceID=d.DeviceID \n"+
             "where br.ApproveTutorID=#{id} and br.BorrowApplyState = #{state} and br.IsDeleted = 0;")
     public List<BorrowApplyRecordList> borrowApprovalListTe(Integer id, String state);
 
     // 2、返回需要审批的借用申请单：设备管理员 （全部）   BorrowApplyRecordList
     @Select("\n" +
-            "select br.BorrowApplyID, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
+            "inner join Device d on d.DeviceID=d.DeviceID \n"+
             "where br.BorrowApplyState = #{state} and br.IsDeleted = 0;")
     public List<BorrowApplyRecordList> borrowApprovalList(String state);
 
     // 3、返回需要审批的报废申请单：设备管理员 （全部）   DeviceScrapListRes
 
     @Select("\n" +
-            "select q.ScrapID, q.DeviceID, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, u.UserName \n"+
+            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, u.UserName \n"+
             "from DeviceScrapRecord q \n"+
             "inner join Device p on p.DeviceID=q.DeviceID \n"+
             "inner join User u on u.UserID=p.UserID \n"+
@@ -119,27 +121,29 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //2、按照设备申请时间筛选借用申请单：老师
     @Select("\n" +
-            "select br.BorrowApplyID, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
+            "inner join Device d on d.DeviceID=d.DeviceID \n"+
             "where br.ApproveTutorID=#{id} and br.BorrowApplyState >= #{mindate} and br.BorrowApplyState <= #{maxdate} and br.IsDeleted = 0;")
     public List<BorrowApplyRecordList> getBSheetByTimeTe(Date mindate, Date maxdate, Integer id);
 
     //2、按照设备申请时间筛选借用申请单：设备管理员 （全部）
     @Select("\n" +
-            "select br.BorrowApplyID, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
+            "inner join Device d on d.DeviceID=d.DeviceID \n"+
             "where br.BorrowApplyState >= #{mindate} and br.BorrowApplyState <= #{maxdate} and br.IsDeleted = 0;")
     public List<BorrowApplyRecordList> getBSheetByTime(Date mindate, Date maxdate);
 
     //3、按照设备申请时间筛选报废申请单 （全部）
     @Select("\n" +
-            "select q.ScrapID, q.DeviceID, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, u.UserName \n"+
+            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, u.UserName \n"+
             "from DeviceScrapRecord q \n"+
             "inner join Device p on p.DeviceID=q.DeviceID \n"+
             "inner join User u on u.UserID=p.UserID \n"+
@@ -168,12 +172,13 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //5、按照提出借用申请的用户类型筛选借用申请单：设备管理员（全部）
     @Select("\n" +
-            "select br.BorrowApplyID, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID\n" +
             "inner join UserRole ur on u2.UserId = ur.UserID \n" +
+            "inner join Device d on d.DeviceID=d.DeviceID \n"+
             "where ur.RoleId = #{rid} and br.IsDeleted = 0;")
     public List<BorrowApplyRecordList> getAllBSheetByUserType(Integer rid);
 

@@ -1,6 +1,7 @@
 package com.ems.business.model.response;
 import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -23,6 +24,7 @@ public class DeviceRepairListRes {
      * 维修时间
      */
     @TableField(value = "RepairTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date repairTime;
 
     /**

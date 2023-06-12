@@ -6,7 +6,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import lombok.Data;
-
+import org.springframework.format.annotation.DateTimeFormat;
 
 
 @Data
@@ -28,6 +28,7 @@ public class DeviceRepairDetail {
      * 维修时间
      */
     @TableField(value = "RepairTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date repairTime;
 
     /**

@@ -3,6 +3,7 @@ package com.ems.business.model.entity;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -36,6 +37,7 @@ public class DeviceCheckRecord implements Serializable {
      * 核查时间
      */
     @TableField(value = "CheckTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date checkTime;
 
     /**
@@ -66,12 +68,14 @@ public class DeviceCheckRecord implements Serializable {
      * 创建时间
      */
     @TableField(value = "CreateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
     /**
      * 更新时间
      */
     @TableField(value = "UpdateTime")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     @TableField(exist = false)

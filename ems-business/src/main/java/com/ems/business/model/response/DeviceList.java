@@ -1,6 +1,7 @@
 package com.ems.business.model.response;
 
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -50,6 +51,7 @@ public class DeviceList {
     /**
      * 购买日期
      */
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date purchaseDate;
 
 

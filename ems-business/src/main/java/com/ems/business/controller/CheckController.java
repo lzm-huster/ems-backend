@@ -16,6 +16,7 @@ import com.ems.business.model.response.DeviceCheckListRes;
 import com.ems.business.service.DeviceCheckRecordService;
 import com.ems.business.service.DeviceService;
 import com.ems.common.ErrorCode;
+import com.ems.cos.service.CosService;
 import com.ems.exception.BusinessException;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
@@ -49,6 +50,8 @@ public class CheckController {
     private RoleService roleService;
     @Autowired
     private DeviceCheckRecordMapper deviceCheckRecordMapper;
+    @Autowired
+    private CosService cosService;
 
 
 
@@ -154,8 +157,10 @@ public class CheckController {
     //插入报废记录
     public int insertDeviceCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
         //将request的数据转换为数据表中的格式
+        String path = cosService.uploadFile(deviceCheckListreq.getCheckImages(),"Check");
         DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
         BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
+        deviceCheckRecord.setCheckImages(path);
 
         if(ObjectUtil.isEmpty(deviceCheckListreq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
@@ -172,8 +177,10 @@ public class CheckController {
     //更新报废记录
     public int updateCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
         //将request的数据转换为数据表中的格式
+        String path = cosService.uploadFile(deviceCheckListreq.getCheckImages(),"Check");
         DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
         BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
+        deviceCheckRecord.setCheckImages(path);
 
         if(ObjectUtil.isEmpty(deviceCheckListreq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
@@ -192,7 +199,7 @@ public class CheckController {
 
 
     @PostMapping("/deleteDeviceCheckRecord")
-    //更新维修记录
+    //删除维修记录
     public int deleteCheckRecord(int checkID){
         if(!ObjectUtil.isEmpty(checkID)) {
             DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();

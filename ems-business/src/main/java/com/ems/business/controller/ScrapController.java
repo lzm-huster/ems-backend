@@ -11,6 +11,7 @@ import com.ems.business.model.request.DeviceRepairListreq;
 import com.ems.business.model.request.DeviceScrapListreq;
 import com.ems.business.model.response.DeviceScrapDetail;
 import com.ems.business.service.DeviceService;
+import com.ems.cos.service.CosService;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.model.entity.Role;
@@ -49,6 +50,8 @@ public class ScrapController {
     private UserRedisConstant redisConstant;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private CosService cosService;
 
 
     //获取当前用户的角色名称以判断查询范围
@@ -155,9 +158,11 @@ public class ScrapController {
     //插入报废记录
     public int insertDeviceScarpRecord(@NotNull DeviceScrapListreq deviceScrapListreq){
         //将request的数据转换为数据表中的格式
+        String path = cosService.uploadFile(deviceScrapListreq.getScrapImages(),"Scarp");
         DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
         BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
         deviceScrapRecord.setDeviceState("已报废");
+        deviceScrapRecord.setScrapImages(path);
 
         if(ObjectUtil.isEmpty(deviceScrapListreq.getScrapID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
@@ -181,8 +186,10 @@ public class ScrapController {
     //更新报废记录
     public int updateScarpRecord(@NotNull DeviceScrapListreq deviceScrapListreq){
         //将request的数据转换为数据表中的格式
+        String path = cosService.uploadFile(deviceScrapListreq.getScrapImages(),"Scarp");
         DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
         BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
+        deviceScrapRecord.setScrapImages(path);
 
         if(ObjectUtil.isEmpty(deviceScrapRecord.getScrapID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
