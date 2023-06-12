@@ -374,8 +374,8 @@ public class UserController {
         }
         return true;
     }
-    @PostMapping("/updateAvatar")
-    public String updateAvatar(@RequestPart("file") MultipartFile file,Integer userId){
+    @PostMapping("/updateAvatar/{userId}")
+    public String updateAvatarById(@RequestPart("file") MultipartFile file, @PathVariable String userId){
         String path = cosService.uploadFile(file, avatarPrefix);
         if (StringUtils.isBlank(path)){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"文件上传失败");
@@ -383,7 +383,8 @@ public class UserController {
         if (ObjectUtil.isNull(userId)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户ID不能为空");
         }
-        User user = userService.getUserById(userId);
+        Integer id = Integer.valueOf(userId);
+        User user = userService.getUserById(id);
         if (ObjectUtil.isNull(user)){
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该用户不存在");
         }
@@ -395,8 +396,8 @@ public class UserController {
         return path;
     }
     @Transactional
-    @PostMapping("/updateInfo")
-    public boolean updateInfo(@RequestBody UserUpdateReq userUpdateReq,Integer userId){
+    @PostMapping("/updateInfo/{userId}")
+    public boolean updateInfoById(@RequestBody UserUpdateReq userUpdateReq,  @PathVariable String userId){
         Integer roleId = userUpdateReq.getRoleId();
         String userName = userUpdateReq.getUserName();
         String phoneNumber = userUpdateReq.getPhoneNumber();
@@ -406,7 +407,8 @@ public class UserController {
         if (ObjectUtil.isNull(userId)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户ID不能为空");
         }
-        User user = userService.getUserById(userId);
+        Integer id = Integer.valueOf(userId);
+        User user = userService.getUserById(id);
         if (ObjectUtil.isNull(user)){
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该用户不存在");
         }

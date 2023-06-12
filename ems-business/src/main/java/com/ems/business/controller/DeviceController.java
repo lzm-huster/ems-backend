@@ -107,7 +107,7 @@ public class DeviceController {
 
     @PostMapping("insertDevice")
     //插入一条Device数据,返回受影响条数
-    public int insertDevice(@NotNull Device device, MultipartFile[] files) {
+    public int insertDevice(@NotNull Device device, @RequestPart("files")MultipartFile[] files) {
         List<String> pathList = cosService.batchUpload(files, devicePrefix);
         if (ObjectUtil.isNull(pathList)) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
