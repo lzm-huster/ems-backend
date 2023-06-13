@@ -222,6 +222,62 @@ public class UserController {
         BeanUtils.copyProperties(user, userDetailRes);
         return userDetailRes;
     }
+    @PostMapping("/updateAvatar")
+    public String updateAvatar(@RequestPart("file") MultipartFile file,@RequestHeader("token") String token){
+        String path = cosService.uploadFile(file, avatarPrefix);
+        if (StringUtils.isBlank(path)){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"文件上传失败");
+        }
+        // redis取信息
+        Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
+        // 获取基础User信息
+        User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
+        user.setAvatar(path);
+        boolean update = userService.updateById(user);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"头像更新失败");
+        }
+        userRedisConstant.storeUserInfoRedis(user,token);
+        return path;
+    }
+    @Transactional
+    @PostMapping("/updateInfo")
+    public boolean updateInfo(@RequestBody UserUpdateReq userUpdateReq,@RequestHeader("token") String token){
+        Integer roleId = userUpdateReq.getRoleId();
+        String userName = userUpdateReq.getUserName();
+        String phoneNumber = userUpdateReq.getPhoneNumber();
+        if (ObjectUtil.isNull(roleId)||ObjectUtil.isNull(userName)||ObjectUtil.isNull(phoneNumber)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分必需参数为空");
+        }
+        // redis取信息
+        Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
+        // 获取基础User信息
+        User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
+        BeanUtils.copyProperties(userUpdateReq,user);
+        boolean update = userService.updateById(user);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新用户信息失败");
+        }
+        userRedisConstant.storeUserInfoRedis(user,token);
+        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("UserID",user.getUserID());
+        UserRole one = userRoleService.getOne(queryWrapper);
+        if (ObjectUtil.isNotNull(one)){
+            if (ObjectUtil.notEqual(one.getRoleID(),roleId)){
+                boolean b = userRoleService.deleteByMultiId(one);
+                if (!b){
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新失败");
+                }
+                one.setUserID(user.getUserID());
+                one.setRoleID(roleId);
+                boolean save = userRoleService.saveOrUpdateByMultiId(one);
+                if (!save){
+                    throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新信息失败");
+                }
+            }
+        }
+        return true;
+    }
 
     /**
      * 获取用户详细信息 - 用户管理
@@ -299,43 +355,68 @@ public class UserController {
         return userService.getAllDetail();
     }
 
-    @PostMapping("/updateAvatar")
-    public String updateAvatar(@RequestPart("file") MultipartFile file,@RequestHeader("token") String token){
+
+    @Transactional
+    @PostMapping("/password/reset")
+    public boolean reset(Integer userId){
+        if (ObjectUtil.isNull(userId)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
+        }
+        User user = userService.getUserById(userId);
+        if (ObjectUtil.isEmpty(user)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该用户不存在");
+        }
+        MD5 md5 = new MD5(salt.getBytes());
+        user.setPassword(md5.digestHex(defaultPassword));
+        boolean update = userService.updateById(user);
+        if (update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"操作失败");
+        }
+        return true;
+    }
+    @PostMapping("/updateAvatar/{userId}")
+    public String updateAvatarById(@RequestPart("file") MultipartFile file, @PathVariable String userId){
         String path = cosService.uploadFile(file, avatarPrefix);
         if (StringUtils.isBlank(path)){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"文件上传失败");
         }
-        // redis取信息
-        Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
-        // 获取基础User信息
-        User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
+        if (ObjectUtil.isNull(userId)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户ID不能为空");
+        }
+        Integer id = Integer.valueOf(userId);
+        User user = userService.getUserById(id);
+        if (ObjectUtil.isNull(user)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该用户不存在");
+        }
         user.setAvatar(path);
         boolean update = userService.updateById(user);
         if (!update){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"头像更新失败");
         }
-        userRedisConstant.storeUserInfoRedis(user,token);
         return path;
     }
     @Transactional
-    @PostMapping("/updateInfo")
-    public boolean updateInfo(@RequestBody UserUpdateReq userUpdateReq,@RequestHeader("token") String token){
+    @PostMapping("/updateInfo/{userId}")
+    public boolean updateInfoById(@RequestBody UserUpdateReq userUpdateReq,  @PathVariable String userId){
         Integer roleId = userUpdateReq.getRoleId();
         String userName = userUpdateReq.getUserName();
         String phoneNumber = userUpdateReq.getPhoneNumber();
         if (ObjectUtil.isNull(roleId)||ObjectUtil.isNull(userName)||ObjectUtil.isNull(phoneNumber)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分必需参数为空");
         }
-        // redis取信息
-        Map<Object, Object> redisUserInfo = userRedisConstant.getRedisMapFromToken(token);
-        // 获取基础User信息
-        User user = (User) redisUserInfo.get(RedisConstant.UserInfo);
+        if (ObjectUtil.isNull(userId)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户ID不能为空");
+        }
+        Integer id = Integer.valueOf(userId);
+        User user = userService.getUserById(id);
+        if (ObjectUtil.isNull(user)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该用户不存在");
+        }
         BeanUtils.copyProperties(userUpdateReq,user);
         boolean update = userService.updateById(user);
         if (!update){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新用户信息失败");
         }
-        userRedisConstant.storeUserInfoRedis(user,token);
         QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("UserID",user.getUserID());
         UserRole one = userRoleService.getOne(queryWrapper);
@@ -352,24 +433,6 @@ public class UserController {
                     throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新信息失败");
                 }
             }
-        }
-        return true;
-    }
-    @Transactional
-    @PostMapping("/password/reset")
-    public boolean reset(Integer userId){
-        if (ObjectUtil.isNull(userId)){
-            throw new BusinessException(ErrorCode.PARAMS_ERROR,"参数为空");
-        }
-        User user = userService.getUserById(userId);
-        if (ObjectUtil.isEmpty(user)){
-            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"该用户不存在");
-        }
-        MD5 md5 = new MD5(salt.getBytes());
-        user.setPassword(md5.digestHex(defaultPassword));
-        boolean update = userService.updateById(user);
-        if (update){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"操作失败");
         }
         return true;
     }
