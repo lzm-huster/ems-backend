@@ -1,5 +1,6 @@
 package com.ems.business.model.response;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -24,11 +25,13 @@ public class BorrowApplyRecordList {
     /**
      * 设备名称
      */
+    @TableField(value = "DeviceName")
     private String deviceList;
 
     /**
      * 申请人名称
      */
+    @TableField(value = "UserName")
     private String userName;
 
     /**
@@ -45,6 +48,7 @@ public class BorrowApplyRecordList {
     /**
      * 责任导师名称
      */
+    @TableField(value = "UserName")
     private String approveTutorName;
 
 

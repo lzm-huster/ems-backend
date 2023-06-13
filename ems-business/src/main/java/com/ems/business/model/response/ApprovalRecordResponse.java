@@ -1,5 +1,6 @@
 package com.ems.business.model.response;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
@@ -33,6 +34,7 @@ public class ApprovalRecordResponse {
     /**
      * 审批人名字
      */
+    @TableField(value = "UserName")
     private Integer approver;
 
     /**

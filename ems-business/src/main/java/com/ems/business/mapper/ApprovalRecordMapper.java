@@ -67,10 +67,9 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
     // 3、返回需要审批的报废申请单：设备管理员 （全部）   DeviceScrapListRes
 
     @Select("\n" +
-            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, u.UserName \n"+
+            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, q.ScrapPerson \n"+
             "from DeviceScrapRecord q \n"+
             "inner join Device p on p.DeviceID=q.DeviceID \n"+
-            "inner join User u on u.UserID=p.UserID \n"+
             "where q.ScrapState = #{state} and q.IsDeleted = 0;")
     public List<DeviceScrapList> scrapApprovalList(String state);
 
@@ -143,10 +142,9 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //3、按照设备申请时间筛选报废申请单 （全部）
     @Select("\n" +
-            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, u.UserName \n"+
+            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, q.ScrapPerson \n"+
             "from DeviceScrapRecord q \n"+
             "inner join Device p on p.DeviceID=q.DeviceID \n"+
-            "inner join User u on u.UserID=p.UserID \n"+
             "where q.ScrapTime >= #{mindate} and q.ScrapTime <+ #{maxdate} and q.IsDeleted = 0;")
     public List<DeviceScrapList> getSSheetByTime(Date mindate, Date maxdate);
 
