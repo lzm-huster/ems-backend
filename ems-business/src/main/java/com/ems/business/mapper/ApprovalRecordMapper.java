@@ -23,7 +23,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     // 1、返回需要审批的采购申请单：老师   PurchaseApplySheetList
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName Applicant,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName TutorName\n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
@@ -33,7 +33,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     // 1、返回需要审批的采购申请单：设备管理员/院领导 （全部）   PurchaseApplySheetList
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName Applicant,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName TutorName\n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
@@ -44,7 +44,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     // 2、返回需要审批的借用申请单：老师   BorrowApplyRecordList
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName  \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
@@ -55,7 +55,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     // 2、返回需要审批的借用申请单：设备管理员 （全部）   BorrowApplyRecordList
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName  \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
@@ -101,7 +101,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //1、按照设备申请时间筛选采购申请单：老师
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName Applicant,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName TutorName\n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
@@ -111,7 +111,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //1、按照设备申请时间筛选采购申请单：设备管理员/院领导 （全部）
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName Applicant,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName TutorName\n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
@@ -121,7 +121,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //2、按照设备申请时间筛选借用申请单：老师
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName  \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
@@ -132,7 +132,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //2、按照设备申请时间筛选借用申请单：设备管理员 （全部）
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName  \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
@@ -152,7 +152,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //4、照价格区间筛选采购申请单：老师
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName Applicant,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName TutorName\n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
@@ -162,7 +162,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //4、照价格区间筛选采购申请单：设备管理员、院领导（全部）
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName Applicant,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName TutorName\n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
@@ -172,7 +172,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //5、按照提出借用申请的用户类型筛选借用申请单：设备管理员（全部）
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
