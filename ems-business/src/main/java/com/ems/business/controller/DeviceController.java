@@ -18,6 +18,9 @@ import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -106,8 +109,12 @@ public class DeviceController {
     }
 
     @PostMapping("insertDevice")
+    @ApiOperation(value = "图片上传",notes = "图片上传",consumes = "multipart/form-data",response = Object.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "files", paramType="form", value = "文件", dataType="file", collectionFormat="array"),
+    })
     //插入一条Device数据,返回受影响条数
-    public int insertDevice(@NotNull Device device, @RequestPart("files")MultipartFile[] files) {
+    public int insertDevice(@NotNull Device device,@RequestPart("files") MultipartFile[] files) {
         List<String> pathList = cosService.batchUpload(files, devicePrefix);
         if (ObjectUtil.isNull(pathList)) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
