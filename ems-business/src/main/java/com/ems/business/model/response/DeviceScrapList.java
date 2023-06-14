@@ -40,6 +40,7 @@ public class DeviceScrapList {
     /**
      * 设备名称
      */
+    @TableField(value = "DeviceName")
     private String deviceName;
 
 
