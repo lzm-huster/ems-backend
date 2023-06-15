@@ -8,6 +8,7 @@ import java.util.Date;
 
 @Data
 public class UserDetailRes {
+    private Integer userID;
 
     /**
      * 用户名
@@ -24,6 +25,8 @@ public class UserDetailRes {
      * 头像
      */
     private String avatar;
+
+    private Integer roleID;
     /**
      * 角色
      */
