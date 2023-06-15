@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ems.business.mapper.DeviceMaintenanceRecordMapper;
 import com.ems.business.model.entity.DeviceMaintenanceRecord;
 import com.ems.business.model.response.DeviceMaintenanceRecordList;
+import com.ems.business.model.response.DeviceMaintenanceRecordResponse;
 import com.ems.business.service.DeviceMaintenanceRecordService;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
@@ -25,17 +26,18 @@ public class DeviceMaintenanceRecordServiceImpl extends ServiceImpl<DeviceMainte
     private DeviceMaintenanceRecordMapper deviceMaintenanceRecordMapper;
     //根据保养编号返回设备保养数据
     @Override
-    public DeviceMaintenanceRecord getDeviceMaintenanceRecord(Integer maintenanceId) {
+    public List<DeviceMaintenanceRecordResponse> getDeviceMaintenanceRecord(Integer maintenanceId) {
         if (ObjectUtil.isNull(maintenanceId)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"设备保养记录Id参数为空");
         }
-        DeviceMaintenanceRecord deviceMaintenanceRecordService =deviceMaintenanceRecordMapper.selectById(maintenanceId);
+        List<DeviceMaintenanceRecordResponse> deviceMaintenanceRecordService = deviceMaintenanceRecordMapper.selectById(maintenanceId);
         return deviceMaintenanceRecordService;
     }
+
     //根据UserID返回设备保养数据
     @Override
     public List<DeviceMaintenanceRecordList> getDeviceMaintenanceRecordList(Integer UserID){
-        List<DeviceMaintenanceRecordList> deviceMaintenanceRecordList=deviceMaintenanceRecordMapper.getDeviceMaintenanceRecordList(UserID);
+        List<DeviceMaintenanceRecordList> deviceMaintenanceRecordList = deviceMaintenanceRecordMapper.getDeviceMaintenanceRecordList(UserID);
         return deviceMaintenanceRecordList;
     }
 }

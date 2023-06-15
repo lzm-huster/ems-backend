@@ -7,10 +7,8 @@ import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.DeviceCheckRecordMapper;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceCheckRecord;
-import com.ems.business.model.entity.DeviceRepairRecord;
-import com.ems.business.model.entity.DeviceScrapRecord;
+
 import com.ems.business.model.request.DeviceCheckListreq;
-import com.ems.business.model.request.DeviceScrapListreq;
 import com.ems.business.model.response.DeviceCheckDetail;
 import com.ems.business.model.response.DeviceCheckListRes;
 import com.ems.business.service.DeviceCheckRecordService;

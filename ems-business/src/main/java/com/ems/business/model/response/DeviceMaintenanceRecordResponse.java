@@ -4,9 +4,8 @@ import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-
 @Data
-public class DeviceMaintenanceRecordList {
+public class DeviceMaintenanceRecordResponse {
     /**
      * 保养编号
      */
@@ -16,11 +15,6 @@ public class DeviceMaintenanceRecordList {
      * 设备编号
      */
     private Integer deviceID;
-
-    /**
-     * 设备名称
-     */
-    private String deviceName;
 
     /**
      * 资产编号
@@ -37,4 +31,9 @@ public class DeviceMaintenanceRecordList {
      * 保养内容
      */
     private String maintenanceContent;
+
+    /**
+     * 备注
+     */
+    private String remark;
 }

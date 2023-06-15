@@ -1,7 +1,9 @@
 package com.ems.usercenter.model.response;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -9,6 +11,10 @@ import java.util.List;
 
 @Data
 public class UserCurrentRes implements Serializable {
+    /**
+     * 用户编号
+     */
+    private Integer userID;
     /**
      * 用户名
      */
