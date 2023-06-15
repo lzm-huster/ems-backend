@@ -1,11 +1,12 @@
 package com.ems.business.model.response;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
-
+@Data
 public class DeviceScrapList {
     /**
      * 报废编号
