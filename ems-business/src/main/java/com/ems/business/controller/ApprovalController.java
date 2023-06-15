@@ -61,12 +61,15 @@ public class ApprovalController {
     /*
      1、根据返回需要审批的申请单。
                        参数:
-                           state 审批状态：“未审批、导师已审批、管理员已审批、申请通过、已入库、驳回”
+                           state 采购申请单审批状态：“未审批、导师已审批、管理员已审批、申请通过、采购中、已入库、驳回”
+                           state 借用申请单审批状态：“未审批、导师已审批、申请通过、借用中、已归还、驳回”
+                           state 报废申请单审批状态：“未完成、已完成”
+
                            id 审批人id
     */
 
     @GetMapping("/purchaseApprovalList")
-    public List<PurchaseApplySheetList> purchaseApprovalList(String state, @RequestHeader(value = "token", required = false) String token) {
+    public List<PurchaseApplySheetList2> purchaseApprovalList(String state, @RequestHeader(value = "token", required = false) String token) {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -78,7 +81,7 @@ public class ApprovalController {
         Integer roleId = userRole.getRoleID();
 
         //要分老师、设备管理员、院领导
-        List<PurchaseApplySheetList> List1 = null;
+        List<PurchaseApplySheetList2> List1 = null;
         if(roleId == 1 ){
             List1 = approvalRecordService.purchaseApprovalListTe(userId, state);
         }else{
@@ -88,7 +91,7 @@ public class ApprovalController {
     }
 
     @GetMapping("/borrowApprovalList")
-    public List<BorrowApplyRecordList> borrowApprovalList(String state, @RequestHeader(value = "token", required = false) String token) {
+    public List<BorrowApplyRecordList2> borrowApprovalList(String state, @RequestHeader(value = "token", required = false) String token) {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -100,7 +103,7 @@ public class ApprovalController {
         Integer roleId = userRole.getRoleID();
 
         //要分老师、设备管理员
-        List<BorrowApplyRecordList> List1 = null;
+        List<BorrowApplyRecordList2> List1 = null;
         if(roleId == 1 ){
             List1 = approvalRecordService.borrowApprovalListTe(userId, state);
         }else{
@@ -159,6 +162,7 @@ public class ApprovalController {
         purchaseApplySheet.setPurchaseApplyState(state);
         purchaseApplySheetService.updateById(purchaseApplySheet);
 
+
         //修改审批记录（审批记录在申请单提交的时候就自动生成）：填写ApprovalRecord中的ApprovalDate，使其从空值变为非空
         QueryWrapper<ApprovalRecord> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("ApplySheetID", applyId).eq("ApproverID", userId);
@@ -168,6 +172,9 @@ public class ApprovalController {
                 //填入当前时间
                 Date date = new Date();
                 approvalRecord.setApprovalDate(date);
+                //填入审批描述
+                approvalRecord.setApprovalDescription(purchaseApplySheet.getPurchaseApplyDescription());
+                //更新到数据库
                 approvalRecordService.updateById(approvalRecord);
             } else {
                 System.out.println("已有审批记录");
@@ -210,6 +217,9 @@ public class ApprovalController {
                 //填入当前时间
                 Date date = new Date();
                 approvalRecord.setApprovalDate(date);
+                //填入审批描述
+                approvalRecord.setApprovalDescription(borrowApplyRecord.getApplyDescription());
+                //更新到数据库
                 approvalRecordService.updateById(approvalRecord);
             } else {
                 System.out.println("已有审批记录");
@@ -251,6 +261,9 @@ public class ApprovalController {
                 //填入当前时间
                 Date date = new Date();
                 approvalRecord.setApprovalDate(date);
+                //填入审批描述
+                approvalRecord.setApprovalDescription(deviceScrapRecord.getScrapReason());
+                //更新到数据库
                 approvalRecordService.updateById(approvalRecord);
             } else {
                 System.out.println("已有审批记录");
@@ -312,7 +325,7 @@ public class ApprovalController {
 //    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 //    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     @GetMapping("/getPSheetByTime")
-    public List<PurchaseApplySheetList> getPSheetByTime(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date mindate, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date maxdate, @RequestHeader(value="token", required = false) String token) {
+    public List<PurchaseApplySheetList2> getPSheetByTime(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date mindate, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date maxdate, @RequestHeader(value="token", required = false) String token) {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -328,7 +341,7 @@ public class ApprovalController {
 //        String maxdate = dateFormat.format(maxdate);
 
         //要分老师、设备管理员、院领导
-        List<PurchaseApplySheetList> List1 = null;
+        List<PurchaseApplySheetList2> List1 = null;
         if(roleId == 1 ){
             List1 = approvalRecordService.getPSheetByTimeTe(mindate, maxdate,userId);
         }else{
@@ -339,7 +352,7 @@ public class ApprovalController {
 
 
     @GetMapping("/getBSheetByTime")
-    public List<BorrowApplyRecordList> getBSheetByTime(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date mindate, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date maxdate, @RequestHeader(value="token", required = false) String token) {
+    public List<BorrowApplyRecordList2> getBSheetByTime(@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date mindate, @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") Date maxdate, @RequestHeader(value="token", required = false) String token) {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -353,7 +366,7 @@ public class ApprovalController {
 
 
         //要分老师、设备管理员、院领导
-        List<BorrowApplyRecordList> List1 = null;
+        List<BorrowApplyRecordList2> List1 = null;
         if(roleId == 1 ){
             List1 = approvalRecordService.getBSheetByTimeTe(mindate, maxdate,userId);
         }else{
@@ -379,7 +392,7 @@ public class ApprovalController {
      * 按照价格区间筛选采购申请单
      */
     @GetMapping("/getPSheetByPrize")
-    public List<PurchaseApplySheetList> getPSheetByPrize(double minprize, double maxprize, @RequestHeader(value="token", required = false) String token) {
+    public List<PurchaseApplySheetList2> getPSheetByPrize(double minprize, double maxprize, @RequestHeader(value="token", required = false) String token) {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -391,7 +404,7 @@ public class ApprovalController {
         Integer roleId = userRole.getRoleID();
 
         //要分老师、设备管理员、院领导
-        List<PurchaseApplySheetList> List1 = null;
+        List<PurchaseApplySheetList2> List1 = null;
         if(roleId == 1 ){
             List1 = approvalRecordService.getPSheetByPrizeTe(minprize, maxprize,userId);
         }else{
@@ -405,14 +418,14 @@ public class ApprovalController {
      * 按照用户类型筛选借用申请单_设备管理员
      */
     @GetMapping("/getAllBSheetByUserType")
-    public List<BorrowApplyRecordList> getAllBSheetByUserType(Integer rid, @RequestHeader(value="token", required = false) String token) {
+    public List<BorrowApplyRecordList2> getAllBSheetByUserType(Integer rid, @RequestHeader(value="token", required = false) String token) {
 
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
 
         Integer userId = user.getUserID();
 
-        List<BorrowApplyRecordList> List1 = null;
+        List<BorrowApplyRecordList2> List1 = null;
         List1 = approvalRecordService.getAllBSheetByUserType(rid);
         return List1;
 

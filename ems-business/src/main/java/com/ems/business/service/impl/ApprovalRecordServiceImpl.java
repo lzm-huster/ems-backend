@@ -7,9 +7,9 @@ import com.ems.business.mapper.PurchaseApplySheetMapper;
 import com.ems.business.model.entity.ApprovalRecord;
 import com.ems.business.model.entity.PurchaseApply;
 import com.ems.business.model.response.ApprovalRecordResponse;
-import com.ems.business.model.response.BorrowApplyRecordList;
+import com.ems.business.model.response.BorrowApplyRecordList2;
 import com.ems.business.model.response.DeviceScrapList;
-import com.ems.business.model.response.PurchaseApplySheetList;
+import com.ems.business.model.response.PurchaseApplySheetList2;
 import com.ems.business.service.ApprovalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,29 +31,29 @@ public class ApprovalRecordServiceImpl extends ServiceImpl<ApprovalRecordMapper,
 
 
     @Override
-    public List<PurchaseApplySheetList> purchaseApprovalListTe(Integer id, String state) {
-        List<PurchaseApplySheetList> List1 = null;
+    public List<PurchaseApplySheetList2> purchaseApprovalListTe(Integer id, String state) {
+        List<PurchaseApplySheetList2> List1 = null;
         List1 = approvalRecordMapper.purchaseApprovalListTe(id,state);
         return List1;
     }
 
     @Override
-    public List<PurchaseApplySheetList> purchaseApprovalList(String state) {
-        List<PurchaseApplySheetList> List1 = null;
+    public List<PurchaseApplySheetList2> purchaseApprovalList(String state) {
+        List<PurchaseApplySheetList2> List1 = null;
         List1 = approvalRecordMapper.purchaseApprovalList(state);
         return List1;
     }
 
     @Override
-    public List<BorrowApplyRecordList> borrowApprovalListTe(Integer id, String state) {
-        List<BorrowApplyRecordList> List1 = null;
+    public List<BorrowApplyRecordList2> borrowApprovalListTe(Integer id, String state) {
+        List<BorrowApplyRecordList2> List1 = null;
         List1 = approvalRecordMapper.borrowApprovalListTe(id, state);
         return List1;
     }
 
     @Override
-    public List<BorrowApplyRecordList> borrowApprovalList(String state) {
-        List<BorrowApplyRecordList> List1 = null;
+    public List<BorrowApplyRecordList2> borrowApprovalList(String state) {
+        List<BorrowApplyRecordList2> List1 = null;
         List1 = approvalRecordMapper.borrowApprovalList(state);
         return List1;
     }
@@ -87,29 +87,29 @@ public class ApprovalRecordServiceImpl extends ServiceImpl<ApprovalRecordMapper,
     }
 
     @Override
-    public List<PurchaseApplySheetList> getPSheetByTimeTe(Date mindate, Date maxdate, Integer id) {
-        List<PurchaseApplySheetList> List1 = null;
+    public List<PurchaseApplySheetList2> getPSheetByTimeTe(Date mindate, Date maxdate, Integer id) {
+        List<PurchaseApplySheetList2> List1 = null;
         List1 = approvalRecordMapper.getPSheetByTimeTe(mindate, maxdate, id);
         return List1;
     }
 
     @Override
-    public List<PurchaseApplySheetList> getPSheetByTime(Date mindate, Date maxdate) {
-        List<PurchaseApplySheetList> List1 = null;
+    public List<PurchaseApplySheetList2> getPSheetByTime(Date mindate, Date maxdate) {
+        List<PurchaseApplySheetList2> List1 = null;
         List1 = approvalRecordMapper.getPSheetByTime(mindate, maxdate);
         return List1;
     }
 
     @Override
-    public List<BorrowApplyRecordList> getBSheetByTimeTe(Date mindate, Date maxdate, Integer id) {
-        List<BorrowApplyRecordList> List1 = null;
+    public List<BorrowApplyRecordList2> getBSheetByTimeTe(Date mindate, Date maxdate, Integer id) {
+        List<BorrowApplyRecordList2> List1 = null;
         List1 = approvalRecordMapper.getBSheetByTimeTe(mindate, maxdate, id);
         return List1;
     }
 
     @Override
-    public List<BorrowApplyRecordList> getBSheetByTime(Date mindate, Date maxdate) {
-        List<BorrowApplyRecordList> List1 = null;
+    public List<BorrowApplyRecordList2> getBSheetByTime(Date mindate, Date maxdate) {
+        List<BorrowApplyRecordList2> List1 = null;
         List1 = approvalRecordMapper.getBSheetByTime(mindate, maxdate);
         return List1;
     }
@@ -122,22 +122,22 @@ public class ApprovalRecordServiceImpl extends ServiceImpl<ApprovalRecordMapper,
     }
 
     @Override
-    public List<PurchaseApplySheetList> getPSheetByPrizeTe(double minprize, double maxprize, Integer id) {
-        List<PurchaseApplySheetList> List1 = null;
+    public List<PurchaseApplySheetList2> getPSheetByPrizeTe(double minprize, double maxprize, Integer id) {
+        List<PurchaseApplySheetList2> List1 = null;
         List1 = approvalRecordMapper.getPSheetByPrizeTe(minprize, maxprize, id);
         return List1;
     }
 
     @Override
-    public List<PurchaseApplySheetList> getPSheetByPrize(double minprize, double maxprize) {
-        List<PurchaseApplySheetList> List1 = null;
+    public List<PurchaseApplySheetList2> getPSheetByPrize(double minprize, double maxprize) {
+        List<PurchaseApplySheetList2> List1 = null;
         List1 = approvalRecordMapper.getPSheetByPrize(minprize, maxprize);
         return List1;
     }
 
     @Override
-    public List<BorrowApplyRecordList> getAllBSheetByUserType(Integer rid) {
-        List<BorrowApplyRecordList> List1 = null;
+    public List<BorrowApplyRecordList2> getAllBSheetByUserType(Integer rid) {
+        List<BorrowApplyRecordList2> List1 = null;
         List1 = approvalRecordMapper.getAllBSheetByUserType(rid);
         return List1;
     }

@@ -6,6 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 @Data
 public class DeviceScrapList {
     /**
@@ -49,4 +50,10 @@ public class DeviceScrapList {
      * 设备责任人
      */
     private String scrapPerson;
+
+    /**
+     * 用户类型
+     */
+    @TableField(value = "RoleName")
+    private String roleName;
 }
