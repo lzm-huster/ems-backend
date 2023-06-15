@@ -1,20 +1,12 @@
 package com.ems.business.model.request;
 
-import com.baomidou.mybatisplus.annotation.TableField;
-
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Date;
 
 @Data
-public class DeviceScrapListreq {
-    /**
-     * 报废编号
-     */
-
-    private Integer scrapID;
+public class DeviceScrapListReq {
 
     /**
      * 设备编号
@@ -30,7 +22,6 @@ public class DeviceScrapListreq {
     /**
      * 报废原因
      */
-
     private String scrapReason;
     /**
      * 设备名称
@@ -43,11 +34,6 @@ public class DeviceScrapListreq {
 
     private String scrapPerson;
 
-    /**
-     * 报废设备图片列表
-     */
-
-    private MultipartFile scrapImages;
     /**
      * 备注
      */

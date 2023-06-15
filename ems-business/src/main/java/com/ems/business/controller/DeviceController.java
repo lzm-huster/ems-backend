@@ -109,7 +109,7 @@ public class DeviceController {
     }
 
     @PostMapping("insertDevice")
-    @ApiOperation(value = "图片上传",notes = "图片上传",consumes = "multipart/form-data",response = Object.class)
+    @ApiOperation(value = "插入设备信息",notes = "插入",consumes = "multipart/form-data",response = Object.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "files", paramType="form", value = "文件", dataType="file", collectionFormat="array"),
     })
