@@ -58,6 +58,6 @@ public class PurchaseApplySheetList2 {
      * 预算
      */
     @TableField(value = "PurchaseBudget")
-    private String purchaseBudgete;
+    private String purchaseBudget;
 
 }
