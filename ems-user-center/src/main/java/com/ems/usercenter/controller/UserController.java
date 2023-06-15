@@ -321,15 +321,22 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户联系方式不能为空");
         }
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("IDNumber", userAddReq.getIDNumber()).or()
-                .eq("Email", userAddReq.getEmail()).or()
-                .eq("PhoneNumber", userAddReq.getPhoneNumber());
+        if (ObjectUtil.isNotNull(userAddReq.getIDNumber())){
+            queryWrapper.eq("IDNumber", userAddReq.getIDNumber());
+        }
+        if (ObjectUtil.isNotNull(userAddReq.getEmail())){
+            queryWrapper.eq("Email", userAddReq.getEmail());
+        }
+        if (ObjectUtil.isNotNull(userAddReq.getPhoneNumber())){
+            queryWrapper.eq("PhoneNumber",userAddReq.getPhoneNumber());
+        }
         List<User> users = userService.list(queryWrapper);
         if (!users.isEmpty()) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR, "已存在相同的学号/工号或邮箱或手机号的用户记录");
         }
         User user = new User();
         BeanUtils.copyProperties(userAddReq, user);
+        user.setAvatar(defaultAvatar);
         if (StringUtils.isBlank(user.getPassword())) {
             MD5 md5 = new MD5(salt.getBytes());
             user.setPassword(md5.digestHex("ems123456"));
