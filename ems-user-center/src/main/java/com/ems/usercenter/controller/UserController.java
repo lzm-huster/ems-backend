@@ -3,6 +3,7 @@ package com.ems.usercenter.controller;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.digest.MD5;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
@@ -16,10 +17,7 @@ import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
-import com.ems.usercenter.model.request.UserAddReq;
-import com.ems.usercenter.model.request.UserLoginReq;
-import com.ems.usercenter.model.request.UserRegisterReq;
-import com.ems.usercenter.model.request.UserUpdateReq;
+import com.ems.usercenter.model.request.*;
 import com.ems.usercenter.model.response.UserCurrentRes;
 import com.ems.usercenter.model.response.UserDetailRes;
 import com.ems.usercenter.service.PermissionService;
@@ -212,6 +210,42 @@ public class UserController {
         return true;
     }
 
+    /***
+     * 用户修改密码
+     */
+    @PostMapping("/updatePassword")
+    public boolean updatePassword(@RequestBody UserUpdatePasswordReq updatePasswordReq,@RequestParam(value = "token",required = false) String token){
+        String oldPass = updatePasswordReq.getOldPass();
+        String newPass = updatePasswordReq.getNewPass();
+        String confirm = updatePasswordReq.getConfirm();
+        if (StringUtils.isBlank(oldPass)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"旧密码为空");
+        }
+        if (StringUtils.isBlank(newPass)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"新密码为空");
+        }
+        if (StringUtils.isBlank(confirm)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"确认新密码为空");
+        }
+        if (!StringUtils.equals(newPass,confirm)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"两次新密码输入不一致");
+        }
+        Map<Object, Object> redisMapFromToken = userRedisConstant.getRedisMapFromToken(token);
+        User user = (User) redisMapFromToken.get(RedisConstant.UserInfo);
+        MD5 md5 = new MD5(salt.getBytes());
+        String oldPassMd5 = md5.digestHex(oldPass);
+        if (!StringUtils.equals(user.getPassword(),oldPassMd5)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"旧密码错误");
+        }
+        user.setPassword(md5.digestHex(newPass));
+        boolean update = userService.updateById(user);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"密码更新失败");
+        }
+        userRedisConstant.storeUserInfoRedis(user,token);
+        return true;
+    }
+
     /**
      * 获取当前用户详细信息
      *
@@ -325,10 +359,10 @@ public class UserController {
             queryWrapper.eq("IDNumber", userAddReq.getIDNumber());
         }
         if (ObjectUtil.isNotNull(userAddReq.getEmail())){
-            queryWrapper.eq("Email", userAddReq.getEmail());
+            queryWrapper.or().eq("Email", userAddReq.getEmail());
         }
         if (ObjectUtil.isNotNull(userAddReq.getPhoneNumber())){
-            queryWrapper.eq("PhoneNumber",userAddReq.getPhoneNumber());
+            queryWrapper.or().eq("PhoneNumber",userAddReq.getPhoneNumber());
         }
         List<User> users = userService.list(queryWrapper);
         if (!users.isEmpty()) {
@@ -417,6 +451,20 @@ public class UserController {
         }
         if (ObjectUtil.isNull(userId)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"用户ID不能为空");
+        }
+        QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
+        if (ObjectUtil.isNotNull(userUpdateReq.getIDNumber())){
+            userQueryWrapper.or().eq("IDNumber", userUpdateReq.getIDNumber());
+        }
+        if (ObjectUtil.isNotNull(userUpdateReq.getEmail())){
+            userQueryWrapper.or().eq("Email", userUpdateReq.getEmail());
+        }
+        if (ObjectUtil.isNotNull(userUpdateReq.getPhoneNumber())){
+            userQueryWrapper.or().eq("PhoneNumber",userUpdateReq.getPhoneNumber());
+        }
+        List<User> list = userService.list(userQueryWrapper);
+        if (CollectionUtils.isNotEmpty(list)){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"已存在相同的学号/工号或邮箱或手机号的用户记录");
         }
         Integer id = Integer.valueOf(userId);
         User user = userService.getUserById(id);
