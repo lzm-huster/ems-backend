@@ -70,5 +70,7 @@ public interface ApprovalRecordService extends IService<ApprovalRecord> {
     //5、按照用户类型筛选借用申请单：设备管理员（全部）
     public List<BorrowApplyRecordList2> getAllBSheetByUserType(Integer rid);
 
+    // 生成审批记录
+    public List<ApprovalRecord> genApprovalRecord(Integer applySheetId, String applyType,Integer tutorId);
 
 }

@@ -208,6 +208,14 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
             "where ur.RoleId = #{rid} and br.IsDeleted = 0;")
     public List<BorrowApplyRecordList2> getAllBSheetByUserType(Integer rid);
 
+
+    @Select("SELECT UserID FROM UserRole WHERE RoleID = 2 ORDER BY RAND() LIMIT 1;")
+    public Integer getRandAdmin();
+
+    @Select("SELECT UserID FROM UserRole WHERE RoleID = 4 ORDER BY RAND() LIMIT 1;")
+    public Integer getRandLeader();
+
+
 }
 
 
