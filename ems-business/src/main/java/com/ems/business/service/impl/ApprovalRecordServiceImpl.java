@@ -1,6 +1,7 @@
 package com.ems.business.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 
 import com.ems.business.mapper.ApprovalRecordMapper;
@@ -12,6 +13,8 @@ import com.ems.business.model.response.BorrowApplyRecordList2;
 import com.ems.business.model.response.DeviceScrapList;
 import com.ems.business.model.response.PurchaseApplySheetList2;
 import com.ems.business.service.ApprovalRecordService;
+import com.ems.common.ErrorCode;
+import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -143,46 +146,49 @@ public class ApprovalRecordServiceImpl extends ServiceImpl<ApprovalRecordMapper,
         return List1;
     }
 
-    // 用于生成审批记录
+    // 用于生成审批记录，成功返回1，失败返回0
     @Override
-    public List<ApprovalRecord> genApprovalRecord(Integer applySheetId, String applyType, Integer tutorId) {
+    public int genApprovalRecord(Integer applySheetId, String applyType, Integer tutorId) {
         //每个审批记录目前只生成三个字段。
         //若导师id为空，则说明是教职工，生成两张单子；否则生成三张单子
 
+        int Number=0;
 
-        //1、生成导师审批记录
-        if(applyType != "Scrap" && ObjectUtil.isNotNull(tutorId) )
-        {
-            ApprovalRecord approvalRecord1 = new ApprovalRecord();
-            approvalRecord1.setApplySheetID(applySheetId);
-            approvalRecord1.setApplyType(applyType);
-            approvalRecord1.setApproverID(tutorId);
-            approvalRecordMapper.insert(approvalRecord1);
+        if (ObjectUtil.isNull(applySheetId)|| ObjectUtil.isNull(applyType)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在必要的参数为空");
         }
+        else{
+            Number += 1;
 
-        //2、生成设备管理员审批记录
-        ApprovalRecord approvalRecord2 = new ApprovalRecord();
-        approvalRecord2.setApplySheetID(applySheetId);
-        approvalRecord2.setApplyType(applyType);
-        approvalRecord2.setApproverID(approvalRecordMapper.getRandAdmin());
-        approvalRecordMapper.insert(approvalRecord2);
+            //1、生成导师审批记录
+            if(applyType != "Scrap" && ObjectUtil.isNotNull(tutorId) )
+            {
+                ApprovalRecord approvalRecord1 = new ApprovalRecord();
+                approvalRecord1.setApplySheetID(applySheetId);
+                approvalRecord1.setApplyType(applyType);
+                approvalRecord1.setApproverID(tutorId);
+                approvalRecordMapper.insert(approvalRecord1);
+            }
 
+            //2、生成设备管理员审批记录
+            ApprovalRecord approvalRecord2 = new ApprovalRecord();
+            approvalRecord2.setApplySheetID(applySheetId);
+            approvalRecord2.setApplyType(applyType);
+            approvalRecord2.setApproverID(approvalRecordMapper.getRandAdmin());
+            approvalRecordMapper.insert(approvalRecord2);
 
-        //3、生成院领导审批记录
-        if(applyType == "Purchase")
-        {
-            ApprovalRecord approvalRecord3 = new ApprovalRecord();
-            approvalRecord3.setApplySheetID(applySheetId);
-            approvalRecord3.setApplyType(applyType);
-            approvalRecord3.setApproverID(approvalRecordMapper.getRandLeader());
-            approvalRecordMapper.insert(approvalRecord3);
+            //3、生成院领导审批记录
+            if(applyType == "Purchase")
+            {
+                ApprovalRecord approvalRecord3 = new ApprovalRecord();
+                approvalRecord3.setApplySheetID(applySheetId);
+                approvalRecord3.setApplyType(applyType);
+                approvalRecord3.setApproverID(approvalRecordMapper.getRandLeader());
+                approvalRecordMapper.insert(approvalRecord3);
+            }
         }
-
-
-
-        return null;
+        return Number;
     }
-
 
 }
 
