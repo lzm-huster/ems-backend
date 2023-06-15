@@ -1,11 +1,13 @@
 package com.ems.business.model.response;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
+@Data
 public class DeviceScrapList {
     /**
      * 报废编号
@@ -48,4 +50,10 @@ public class DeviceScrapList {
      * 设备责任人
      */
     private String scrapPerson;
+
+    /**
+     * 用户类型
+     */
+    @TableField(value = "RoleName")
+    private String roleName;
 }

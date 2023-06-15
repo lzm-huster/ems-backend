@@ -1,10 +1,11 @@
 package com.ems.business.model.response;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-
+@Data
 public class ApprovalRecordResponse {
 //    private Object originalObject;
 //    private String Approver;
