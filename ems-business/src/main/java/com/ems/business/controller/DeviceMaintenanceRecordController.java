@@ -6,6 +6,7 @@ import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.DeviceMaintenanceRecordMapper;
 import com.ems.business.model.entity.DeviceMaintenanceRecord;
 import com.ems.business.model.response.DeviceMaintenanceRecordList;
+import com.ems.business.model.response.DeviceMaintenanceRecordResponse;
 import com.ems.business.service.DeviceMaintenanceRecordService;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
@@ -33,12 +34,12 @@ public class DeviceMaintenanceRecordController {
     private UserRedisConstant redisConstant;
     @GetMapping("/deviceMaintenanceDetailQuery")
     //根据设备保养记录编号返回设备保养记录表
-    public DeviceMaintenanceRecord getDeviceMaintenanceRecord (Integer maintenanceId){
+    public List<DeviceMaintenanceRecordResponse> getDeviceMaintenanceRecord (Integer maintenanceId){
 
         if (ObjectUtil.isNull(maintenanceId)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"设备保养记录Id参数为空");
         }
-        DeviceMaintenanceRecord maintenanceRecord = deviceMaintenanceRecordService.getDeviceMaintenanceRecord(maintenanceId);
+        List<DeviceMaintenanceRecordResponse> maintenanceRecord = deviceMaintenanceRecordService.getDeviceMaintenanceRecord(maintenanceId);
         return maintenanceRecord;}
 
     //新增一条设备保养记录返回受影响条数，成功返回1，失败返回0

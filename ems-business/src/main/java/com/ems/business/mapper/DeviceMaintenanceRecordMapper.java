@@ -3,6 +3,7 @@ package com.ems.business.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.business.model.entity.DeviceMaintenanceRecord;
 import com.ems.business.model.response.DeviceMaintenanceRecordList;
+import com.ems.business.model.response.DeviceMaintenanceRecordResponse;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
@@ -30,8 +31,8 @@ public interface DeviceMaintenanceRecordMapper extends BaseMapper<DeviceMaintena
             "where d.UserID = #{UserID} and m.IsDeleted=0;")
     List<DeviceMaintenanceRecordList> getDeviceMaintenanceRecordList(Integer UserID);
     //根据MaintenanceID查询设备保养表
-    @Select("select * from `DeviceMaintenanceRecord` where `MaintenanceID` = #{MaintenanceID} and DeviceMaintenanceRecord.IsDeleted=0;")
-    DeviceMaintenanceRecord selectById(Integer MaintenanceID);
+    @Select("select d.AssetNumber, m.MaintenanceID, m.DeviceID, m.MaintenanceTime, m.MaintenanceContent, m.remark from Device d inner join DeviceMaintenanceRecord m on d.DeviceID = m.DeviceID where `MaintenanceID` = #{MaintenanceID} and m.IsDeleted=0;")
+    List<DeviceMaintenanceRecordResponse> selectById(Integer MaintenanceID);
     //根据MaintenanceID删除设备保养记录，成功返回1，失败返回0
     @Select("update 'DeviceMaintenanceRecord' set 'IsDeleted' = 1 " +
             "where 'MaintenanceID' = #{MaintenanceID} and DeviceMaintenanceRecord.IsDeleted=0;")
