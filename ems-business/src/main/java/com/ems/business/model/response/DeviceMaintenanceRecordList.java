@@ -1,6 +1,5 @@
 package com.ems.business.model.response;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -22,6 +21,11 @@ public class DeviceMaintenanceRecordList {
      * 设备名称
      */
     private String deviceName;
+
+    /**
+     * 资产编号
+     */
+    private String assetNumber;
 
     /**
      * 保养时间
