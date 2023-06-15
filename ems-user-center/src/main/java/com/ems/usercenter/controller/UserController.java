@@ -153,6 +153,10 @@ public class UserController {
         userCurrentRes.setUserPermissionList(permissionList);
         return userCurrentRes;
     }
+    @GetMapping("/staff")
+    public List<UserDetailRes> getStaffList(){
+        return userService.getStaffList();
+    }
 
     /**
      * 获取验证码

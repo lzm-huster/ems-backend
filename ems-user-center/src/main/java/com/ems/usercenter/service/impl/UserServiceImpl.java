@@ -137,4 +137,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         return userMapper.getAllDetail();
     }
 
+    @Override
+    public List<UserDetailRes> getStaffList() {
+        return userMapper.getStaffList();
+    }
+
 }

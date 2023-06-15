@@ -41,4 +41,5 @@ public interface UserService extends IService<User> {
 
     UserDetailRes getUserDetail(int userId);
     List<UserDetailRes> getAllDetail();
+    List<UserDetailRes> getStaffList();
 }
