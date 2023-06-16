@@ -64,7 +64,7 @@ public class DeviceMaintenanceRecordController {
 
     //更新一条设备保养记录返回受影响条数，成功返回1，失败返回0
     @PostMapping("/deviceMaintenanceListUpdate")
-    public int updateDeviceMaintenanceRecord(@NotNull DeviceMaintenanceRecord deviceMaintenanceRecord) {
+    public int updateDeviceMaintenanceRecord(@RequestBody DeviceMaintenanceRecord deviceMaintenanceRecord) {
 
         Integer maintenanceId = deviceMaintenanceRecord.getMaintenanceID();
 
@@ -83,13 +83,13 @@ public class DeviceMaintenanceRecordController {
 
     //根据MaintenanceID删除设备保养记录，成功返回1，失败返回0
     @PostMapping("/deleteDeviceMaintenanceRecordByMaintenanceID")
-    public int deleteDeviceMaintenanceRecordByMaintenanceID(int maintenanceID) {
+    public int deleteDeviceMaintenanceRecordByMaintenanceID(Integer maintenanceID) {
         if (ObjectUtil.isNull(maintenanceID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "设备保养记录Id参数为空");
         }
 
         int number = 0;
-        number = deviceMaintenanceRecordMapper.deleteDeviceMaintenanceRecordByMaintenanceID(maintenanceID);
+        number = deviceMaintenanceRecordMapper.deleteById(maintenanceID);
         if (ObjectUtil.equal(number, 0)) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR);
         }
