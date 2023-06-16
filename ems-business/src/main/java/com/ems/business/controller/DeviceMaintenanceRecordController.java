@@ -25,7 +25,6 @@ import java.util.Map;
 @ResponseResult
 @RestController
 @RequestMapping("/maintenance")
-
 public class DeviceMaintenanceRecordController {
     @Autowired
     private DeviceMaintenanceRecordService deviceMaintenanceRecordService;
