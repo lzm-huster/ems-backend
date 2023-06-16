@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -157,25 +158,25 @@ public class RepairController {
     }
     @PostMapping("/insertDeviceRepairRecord")
     //插入维修记录
-    public int insertRepairRecord(@NotNull DeviceRepairListreq deviceRepairListreq){
+    public boolean insertRepairRecord(@NotNull DeviceRepairListreq deviceRepairListreq){
+        Integer deviceID = deviceRepairListreq.getDeviceID();
+        BigDecimal repairFee = deviceRepairListreq.getRepairFee();
+        String deviceName = deviceRepairListreq.getDeviceName();
+        String repairContent = deviceRepairListreq.getRepairContent();
+        if (ObjectUtil.isNull(deviceID)||ObjectUtil.isNull(repairFee)||StringUtils.isBlank(deviceName)||StringUtils.isBlank(repairContent)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分参数为空");
+        }
         //将request的数据转换为数据表中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
         BeanUtils.copyProperties(deviceRepairListreq,deviceRepairRecord);
 
-        if(ObjectUtil.isEmpty(deviceRepairRecord.getRepairID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
-        else {
-            //将数据插入表中
-            boolean state=deviceRepairRecordService.save(deviceRepairRecord);
-            if(state) {
-                /*Device device = new Device();
-                device.setDeviceID(deviceRepairListreq.getDeviceID());
-                device.setDeviceState("维修中");
-                deviceService.updateById(device);*/
-                return 1;
-            }
-            else
-                throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
+
+        //将数据插入表中
+        boolean state = deviceRepairRecordService.save(deviceRepairRecord);
+        if(!state) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
         }
+        return true;
     }
 
     @PostMapping("/updateDeviceRepairRecord")
