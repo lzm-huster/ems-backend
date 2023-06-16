@@ -153,8 +153,8 @@ public class RepairController {
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
 
     }
-    @ApiOperation(value = "插入",notes = "插入",consumes = "application/json",response = Object.class)
-    @PostMapping("/insertDeviceRepairRecord")
+
+    @PostMapping(value = "/insertDeviceRepairRecord")
     public boolean insertRepairRecord(@RequestBody DeviceRepairListReq deviceRepairListreq){
         Integer deviceID = deviceRepairListreq.getDeviceID();
         BigDecimal repairFee = deviceRepairListreq.getRepairFee();
@@ -176,9 +176,9 @@ public class RepairController {
         return true;
     }
 
-    @PostMapping("/updateDeviceRepairRecord")
+    @PostMapping(value = "/updateDeviceRepairRecord")
     //更新维修记录
-    public int updateRepairRecord(@NotNull DeviceRepairListReq deviceRepairListreq){
+    public int updateRepairRecord(@RequestBody DeviceRepairListReq deviceRepairListreq){
         //将request的数据转换为entity中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
         BeanUtils.copyProperties(deviceRepairListreq,deviceRepairRecord);

@@ -47,7 +47,7 @@ public class DeviceMaintenanceRecordController {
 
     //新增一条设备保养记录返回受影响条数，成功返回1，失败返回0
     @PostMapping("/deviceMaintenanceListInsert")
-    public boolean insertDeviceMaintenanceRecord(@NotNull DeviceMaintenanceRecord deviceMaintenanceRecord) {
+    public boolean insertDeviceMaintenanceRecord(@RequestBody DeviceMaintenanceRecord deviceMaintenanceRecord) {
 
         Integer deviceId = deviceMaintenanceRecord.getDeviceID();
         Date maintenanceTime = deviceMaintenanceRecord.getMaintenanceTime();
