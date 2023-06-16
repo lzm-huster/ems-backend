@@ -165,7 +165,7 @@ public class CheckController {
     })
     @PostMapping("/insertDeviceCheckRecord")
     //插入报废记录
-    public boolean insertDeviceCheckRecord(@RequestBody DeviceCheckListreq deviceCheckListreq,@RequestPart("files") MultipartFile[] files){
+    public boolean insertDeviceCheckRecord( DeviceCheckListreq deviceCheckListreq,@RequestPart("files") MultipartFile[] files){
         Integer deviceID = deviceCheckListreq.getDeviceID();
         String checker = deviceCheckListreq.getChecker();
         String deviceState = deviceCheckListreq.getDeviceState();
