@@ -1,6 +1,7 @@
 package com.ems.business.model.entity;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,7 +20,7 @@ public class DeviceRepairRecord implements Serializable {
     /**
      * 维修编号
      */
-    @TableField(value = "RepairID")
+    @TableId(value = "RepairID")
     private Integer repairID;
 
     /**
