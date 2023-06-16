@@ -1,13 +1,9 @@
 package com.ems.business.service.impl;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-
 import com.ems.business.mapper.ApprovalRecordMapper;
-import com.ems.business.mapper.PurchaseApplySheetMapper;
 import com.ems.business.model.entity.ApprovalRecord;
-import com.ems.business.model.entity.PurchaseApply;
 import com.ems.business.model.response.ApprovalRecordResponse;
 import com.ems.business.model.response.BorrowApplyRecordList2;
 import com.ems.business.model.response.DeviceScrapList;
@@ -15,6 +11,7 @@ import com.ems.business.model.response.PurchaseApplySheetList2;
 import com.ems.business.service.ApprovalRecordService;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
+import com.ems.usercenter.mapper.UserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +30,8 @@ public class ApprovalRecordServiceImpl extends ServiceImpl<ApprovalRecordMapper,
     @Autowired
     private ApprovalRecordMapper approvalRecordMapper;
 
+    @Autowired
+    private UserMapper userMapper;
 
     @Override
     public List<PurchaseApplySheetList2> purchaseApprovalListTe(Integer id, String state) {
@@ -148,20 +147,23 @@ public class ApprovalRecordServiceImpl extends ServiceImpl<ApprovalRecordMapper,
 
     // 用于生成审批记录，成功返回1，失败返回0
     @Override
-    public int genApprovalRecord(Integer applySheetId, String applyType, Integer tutorId) {
+    public int genApprovalRecord(Integer userId,Integer applySheetId, String applyType, Integer tutorId) {
         //每个审批记录目前只生成三个字段。
         //若导师id为空，则说明是教职工，生成两张单子；否则生成三张单子
 
         int Number=0;
 
-        if (ObjectUtil.isNull(applySheetId)|| ObjectUtil.isNull(applyType)) {
+        if (ObjectUtil.isNull(userId)||ObjectUtil.isNull(applySheetId)|| ObjectUtil.isNull(applyType)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在必要的参数为空");
         }
         else{
+            String RoleName=null;
+            RoleName=userMapper.getRoleNameByUserID(userId);
+
             Number += 1;
 
             //1、生成导师审批记录
-            if(applyType != "Scrap" && ObjectUtil.isNotNull(tutorId) )
+            if(applyType != "Scrap" && RoleName.contains("Student") )
             {
                 ApprovalRecord approvalRecord1 = new ApprovalRecord();
                 approvalRecord1.setApplySheetID(applySheetId);

@@ -160,6 +160,8 @@ public class BorrowApplyRecordController {
         if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
         {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "学生身份导师数据不能为空");
+        }else if(ObjectUtil.isNull(borrowerID))  {
+            borrowApplyRecord.setApproveTutorID(borrowerID);
         }
 
 
@@ -170,7 +172,7 @@ public class BorrowApplyRecordController {
         {
             //获取添加的借用申请单ID，添加待审批记录
             int ID=borrowApplyRecordMapper.getLatestBorrowApplyID(borrowerID);
-            approvalRecordServiceImpl.genApprovalRecord(ID,"Borrow", approveTutorID);
+            approvalRecordServiceImpl.genApprovalRecord(borrowerID,ID,"Borrow", approveTutorID);
         }
 
         return Number;

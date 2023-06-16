@@ -103,8 +103,9 @@ public class PurchaseApplySheetController {
         if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
         {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "学生身份导师数据不能为空");
+        }else if(ObjectUtil.isNull(purchaseApplicantID)) {
+            purchaseApplySheet.setApproveTutorID(purchaseApplicantID);
         }
-
 
         int Number=0;
         Number= purchaseApplySheetMapper.insert(purchaseApplySheet);
@@ -113,7 +114,7 @@ public class PurchaseApplySheetController {
         {
             //获取添加的采购申请单ID，添加待审批记录
             int ID=purchaseApplySheetMapper.getLatestPurchaseApplySheetID(purchaseApplicantID);
-            approvalRecordServiceImpl.genApprovalRecord(ID,"Purchase", approveTutorID);
+            approvalRecordServiceImpl.genApprovalRecord(purchaseApplicantID,ID,"Purchase", approveTutorID);
         }
 
 
