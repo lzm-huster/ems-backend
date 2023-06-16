@@ -230,17 +230,11 @@ public class ScrapController {
             if (!save){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存报废信息失败");
             }
-            ApprovalRecord approvalRecord = new ApprovalRecord();
-            approvalRecord.setApplyType(scrapPrefix);
-            approvalRecord.setApplySheetID(deviceScrapRecord.getScrapID());
-            boolean save1 = approvalRecordService.save(approvalRecord);
-            if (!save1){
-                throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存审批单失败");
+            int num = approvalRecordService.genApprovalRecord(deviceScrapRecord.getScrapID(), scrapPrefix, null);
+            if (ObjectUtil.equal(num,0)){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"新建审批信息出错");
             }
         }
-
-
-
         return true;
     }
 

@@ -3,6 +3,7 @@ import cn.hutool.core.util.ObjectUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceRepairRecord;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -155,22 +157,29 @@ public class RepairController {
     @Transactional
     @PostMapping("/insertDeviceRepairRecord")
     //插入维修记录
-    public int insertRepairRecord(@NotNull DeviceRepairInsertListreq deviceRepairInsertListreq){
+    public boolean insertRepairRecord(@NotNull DeviceRepairInsertListreq deviceRepairListreq){
+        Integer deviceID = deviceRepairListreq.getDeviceID();
+        BigDecimal repairFee = deviceRepairListreq.getRepairFee();
+        String deviceName = deviceRepairListreq.getDeviceName();
+        String repairContent = deviceRepairListreq.getRepairContent();
+        if (ObjectUtil.isNull(deviceID)||ObjectUtil.isNull(repairFee)|| StringUtils.isBlank(deviceName)||StringUtils.isBlank(repairContent)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分参数为空");
+        }
         //将request的数据转换为数据表中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
-        BeanUtils.copyProperties(deviceRepairInsertListreq,deviceRepairRecord);
+        BeanUtils.copyProperties(deviceRepairListreq,deviceRepairRecord);
         deviceRepairRecord.setRemark("维修中");
         //将数据插入表中
         boolean state=deviceRepairRecordService.save(deviceRepairRecord);
         if(state) {
             Device device = new Device();
-            device.setDeviceID(deviceRepairInsertListreq.getDeviceID());
+            device.setDeviceID(deviceRepairListreq.getDeviceID());
             device.setDeviceState("维修中");
             boolean update = deviceService.updateById(device);
             if (!update){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
             }
-            return 1;
+            return true;
         }
         else
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
