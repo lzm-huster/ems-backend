@@ -54,7 +54,7 @@ jobs:
           key: ${{ secrets.HOST_TOKEN}}
           script: |
             docker login -u=${{ secrets.DOCKER_USER }} -p=baixiaofei57420~
-            docker pull lbaixiaofei/ems-backend:latest
+            docker pull lbaixiaofei/ems-backend
             docker rm -f ems-back
             docker run --name=ems-back -d -p 8101:8101 lbaixiaofei/ems-backend:latest
             docker image prune -af
