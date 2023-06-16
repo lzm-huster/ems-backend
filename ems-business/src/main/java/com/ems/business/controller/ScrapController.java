@@ -28,6 +28,7 @@ import com.ems.usercenter.service.UserRoleService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -172,7 +173,7 @@ public class ScrapController {
     })
     @PostMapping("/insertDeviceScarpRecord")
     //插入报废记录
-    public boolean insertDeviceScarpRecord(@NotNull DeviceScrapListReq deviceScrapListreq,@RequestPart("files") MultipartFile[] files,@RequestHeader(value = "token",required = false) String token){
+    public boolean insertDeviceScarpRecord(@RequestBody DeviceScrapListReq deviceScrapListreq, @RequestPart("files") MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
         Integer deviceID = deviceScrapListreq.getDeviceID();
         String deviceName = deviceScrapListreq.getDeviceName();
         String scrapPerson = deviceScrapListreq.getScrapPerson();

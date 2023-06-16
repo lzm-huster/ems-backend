@@ -23,6 +23,7 @@ import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -158,7 +159,7 @@ public class RepairController {
     }
     @PostMapping("/insertDeviceRepairRecord")
     //插入维修记录
-    public boolean insertRepairRecord(@NotNull DeviceRepairListreq deviceRepairListreq){
+    public boolean insertRepairRecord(@RequestBody DeviceRepairListreq deviceRepairListreq){
         Integer deviceID = deviceRepairListreq.getDeviceID();
         BigDecimal repairFee = deviceRepairListreq.getRepairFee();
         String deviceName = deviceRepairListreq.getDeviceName();
