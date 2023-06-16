@@ -1,12 +1,16 @@
 package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.business.model.entity.*;
-import com.ems.business.model.request.DeviceScrapListReq;
+import com.ems.business.model.entity.DeviceScrapRecord;
+import com.ems.business.model.request.DeviceScrapListInsertReq;
+import com.ems.business.model.request.DeviceScrapListUpdateReq;
 import com.ems.business.model.response.DeviceScrapDetail;
 import com.ems.business.service.ApprovalRecordService;
 import com.ems.business.service.DeviceService;
@@ -30,12 +34,17 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 //import org.testng.annotations.Test;
 
+
+import javax.xml.transform.Result;
+import java.lang.reflect.Type;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -147,15 +156,18 @@ public class ScrapController {
             queryWrapper.eq("ScrapID", scrapID);
             DeviceScrapRecord deviceScrapRecord = deviceScrapRecordService.getOne(queryWrapper);
 
-            QueryWrapper<Device> queryWrapper1 = new QueryWrapper<>();
-            queryWrapper1.eq("DeviceID",deviceScrapRecord.getDeviceID());
-
             DeviceScrapDetail deviceScrapDetail = new DeviceScrapDetail();
             BeanUtils.copyProperties(deviceScrapRecord,deviceScrapDetail);
 
+            QueryWrapper<Device> queryWrapper1 = new QueryWrapper<>();
+            queryWrapper1.eq("DeviceID",deviceScrapRecord.getDeviceID());
             Device device =deviceService.getOne(queryWrapper1);
             deviceScrapDetail.setDeviceName(device.getDeviceName());
             deviceScrapDetail.setAssetNumber(device.getAssetNumber());
+
+            Gson gson = new Gson();
+            List<String> scrapImages =gson.fromJson(deviceScrapRecord.getScrapImages(),new TypeToken<List<String>>(){}.getType());
+            deviceScrapDetail.setScrapImages(scrapImages);
 
             return deviceScrapDetail;
         }
@@ -225,14 +237,25 @@ public class ScrapController {
         return true;
     }
 
+    @Transactional
+    @ApiOperation(value = "更新设备信息",notes = "更新",consumes = "multipart/form-data",response = Object.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "files", paramType="form", value = "文件", dataType="file", collectionFormat="array"),
+    })
     @PostMapping("/updateDeviceScarpRecord")
     //更新报废记录
-    public int updateScarpRecord(@NotNull DeviceScrapListReq deviceScrapListreq){
-//        //将request的数据转换为数据表中的格式
+    public int updateScarpRecord(@NotNull DeviceScrapListUpdateReq deviceScrapListupdatereq,@RequestPart("files") MultipartFile[] files){
+          //将request的数据转换为数据表中的格式
 //        String path = cosService.uploadFile(deviceScrapListreq.getScrapImages(),"Scarp");
+//       deviceScrapRecord.setScrapImages(path);
         DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
-        BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
-//        deviceScrapRecord.setScrapImages(path);
+        BeanUtils.copyProperties(deviceScrapListupdatereq,deviceScrapRecord);
+        List<String> pathList = cosService.batchUpload(files, scrapPrefix);
+        if (ObjectUtil.isNull(pathList)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
+        }
+        String pathStr = JSONUtil.toJsonStr(pathList);
+        deviceScrapRecord.setScrapImages(pathStr);
 
         if(ObjectUtil.isEmpty(deviceScrapRecord.getScrapID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
@@ -244,10 +267,10 @@ public class ScrapController {
 
             if (state)
             {
-                Device device=new Device();
-                device.setDeviceID(deviceScrapListreq.getDeviceID());
-                device.setDeviceState("已报废");
-                deviceService.updateById(device);
+               /*     Device device = new Device();
+                    device.setDeviceID(deviceScrapListupdatereq.getDeviceID());
+                    device.setDeviceState("已报废");
+                    deviceService.updateById(device);*/
 
                 return 1;
             }

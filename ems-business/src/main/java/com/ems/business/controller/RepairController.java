@@ -3,10 +3,12 @@ import cn.hutool.core.util.ObjectUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceRepairRecord;
-import com.ems.business.model.request.DeviceRepairListReq;
+import com.ems.business.model.request.DeviceRepairInsertListreq;
+import com.ems.business.model.request.DeviceRepairUpdateListReq;
 import com.ems.business.model.response.DeviceRepairDetail;
 import com.ems.business.model.response.DeviceRepairListRes;
 import com.ems.business.service.DeviceRepairRecordService;
@@ -20,11 +22,10 @@ import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
-import io.swagger.annotations.ApiOperation;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -151,37 +152,47 @@ public class RepairController {
             else return deviceRepairDetail;
             }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
-
     }
 
+    @Transactional
     @PostMapping(value = "/insertDeviceRepairRecord")
-    public boolean insertRepairRecord(@RequestBody DeviceRepairListReq deviceRepairListreq){
+    //插入维修记录
+    public boolean insertRepairRecord(@NotNull DeviceRepairInsertListreq deviceRepairListreq){
         Integer deviceID = deviceRepairListreq.getDeviceID();
         BigDecimal repairFee = deviceRepairListreq.getRepairFee();
         String deviceName = deviceRepairListreq.getDeviceName();
         String repairContent = deviceRepairListreq.getRepairContent();
-        if (ObjectUtil.isNull(deviceID)||ObjectUtil.isNull(repairFee)||StringUtils.isBlank(deviceName)||StringUtils.isBlank(repairContent)){
+        if (ObjectUtil.isNull(deviceID)||ObjectUtil.isNull(repairFee)|| StringUtils.isBlank(deviceName)||StringUtils.isBlank(repairContent)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分参数为空");
         }
         //将request的数据转换为数据表中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
         BeanUtils.copyProperties(deviceRepairListreq,deviceRepairRecord);
-
-
+        deviceRepairRecord.setRemark("维修中");
         //将数据插入表中
-        boolean state = deviceRepairRecordService.save(deviceRepairRecord);
-        if(!state) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
+        boolean state=deviceRepairRecordService.save(deviceRepairRecord);
+        if(state) {
+            Device device = new Device();
+            device.setDeviceID(deviceRepairListreq.getDeviceID());
+            device.setDeviceState("维修中");
+            boolean update = deviceService.updateById(device);
+            if (!update){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
+            }
+            return true;
         }
-        return true;
+        else
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
+
     }
 
-    @PostMapping(value = "/updateDeviceRepairRecord")
+    @Transactional
+    @PostMapping("/updateDeviceRepairRecord")
     //更新维修记录
-    public int updateRepairRecord(@RequestBody DeviceRepairListReq deviceRepairListreq){
+    public int updateRepairRecord(@NotNull DeviceRepairUpdateListReq deviceRepairUpdateListReq){
         //将request的数据转换为entity中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
-        BeanUtils.copyProperties(deviceRepairListreq,deviceRepairRecord);
+        BeanUtils.copyProperties(deviceRepairUpdateListReq,deviceRepairRecord);
 
         if(ObjectUtil.isEmpty(deviceRepairRecord.getRepairID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
@@ -192,10 +203,17 @@ public class RepairController {
 
             if (state)
             {
-                /*Device device = new Device();
-                device.setDeviceID(deviceRepairListreq.getDeviceID());
-                device.setDeviceState("维修中");
-                deviceService.updateById(device);*/
+                if(deviceRepairRecord.getRemark().contains("维修完成"))
+                {
+                    Device device = new Device();
+                    device.setDeviceID(deviceRepairUpdateListReq.getDeviceID());
+                    device.setDeviceState("正常");
+
+                    boolean update = deviceService.updateById(device);
+                    if (!update){
+                        throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
+                    }
+                }
                 return 1;
             }
             else

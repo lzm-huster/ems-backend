@@ -1,22 +1,36 @@
 package com.ems.business.model.request;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.Data;
+import com.baomidou.mybatisplus.annotation.TableField;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
+import lombok.Data;
 @Data
-public class DeviceScrapListReq {
+public class DeviceScrapListUpdateReq {
+
+    /**
+     * 报废编号
+     */
+
+    private Integer scrapID;
 
     /**
      * 设备编号
      */
 
     private Integer deviceID;
+
+    /**
+     * 设备责任人
+     */
+
+    private String scrapPerson;
+
     /**
      * 报废时间
      */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date scrapTime;
 
     /**
@@ -28,15 +42,12 @@ public class DeviceScrapListReq {
      */
 
     private String deviceName;
-    /**
-     * 设备责任人
-     */
 
-    private String scrapPerson;
 
     /**
      * 备注
      */
 
     private String remark;
+
 }

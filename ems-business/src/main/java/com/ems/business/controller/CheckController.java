@@ -11,6 +11,7 @@ import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceCheckRecord;
 
 import com.ems.business.model.request.DeviceCheckListreq;
+import com.ems.business.model.request.DeviceCheckUpdateListReq;
 import com.ems.business.model.response.DeviceCheckDetail;
 import com.ems.business.model.response.DeviceCheckListRes;
 import com.ems.business.service.DeviceCheckRecordService;
@@ -25,6 +26,8 @@ import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -54,6 +57,8 @@ public class CheckController {
     private UserRedisConstant redisConstant;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private DeviceCheckRecordMapper deviceCheckRecordMapper;
     @Autowired
     private CosService cosService;
     private static final String checkPrefix  = "Check";
@@ -153,6 +158,10 @@ public class CheckController {
             deviceCheckDetail.setDeviceName(device.getDeviceName());
             deviceCheckDetail.setAssetNumber(device.getAssetNumber());
 
+            Gson gson = new Gson();
+            List<String> checkImages =gson.fromJson(deviceCheckRecord.getCheckImages(),new TypeToken<List<String>>(){}.getType());
+            deviceCheckDetail.setCheckImages(checkImages);
+
             return deviceCheckDetail;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
@@ -208,26 +217,32 @@ public class CheckController {
 
     @PostMapping("/updateDeviceCheckRecord")
     //更新报废记录
-    public int updateCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
-//        //将request的数据转换为数据表中的格式
-//        String path = cosService.uploadFile(deviceCheckListreq.getCheckImages(),"Check");
-//        DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
-//        BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
-//        deviceCheckRecord.setCheckImages(path);
-//
-//        if(ObjectUtil.isEmpty(deviceCheckListreq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
-//        else {
-//            //将数据更新进表中
-//            UpdateWrapper<DeviceCheckRecord> userUpdateWrapper = new UpdateWrapper<>();
-//            userUpdateWrapper.eq("CheckID", deviceCheckRecord.getCheckID());
-//            int state = deviceCheckRecordMapper.update(deviceCheckRecord, userUpdateWrapper);
-//
-//            if (state == 1 )
-//                return 1;
-//            else
-//                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
-//        }
-        return 1;
+    public int updateCheckRecord(@NotNull DeviceCheckUpdateListReq deviceCheckUpdateListReq, @RequestPart("files") MultipartFile[] files){
+        //将request的数据转换为数据表中的格式
+
+        DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
+        BeanUtils.copyProperties(deviceCheckUpdateListReq,deviceCheckRecord);
+        List<String> pathList = cosService.batchUpload(files, checkPrefix);
+        if (ObjectUtil.isNull(pathList)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
+        }
+        String pathStr = JSONUtil.toJsonStr(pathList);
+        deviceCheckRecord.setCheckImages(pathStr);
+/*        String path = cosService.uploadFile(deviceCheckListreq.getCheckImages(),"Check");
+        deviceCheckRecord.setCheckImages(path);*/
+
+        if(ObjectUtil.isEmpty(deviceCheckUpdateListReq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
+        else {
+            //将数据更新进表中
+            UpdateWrapper<DeviceCheckRecord> userUpdateWrapper = new UpdateWrapper<>();
+            userUpdateWrapper.eq("CheckID", deviceCheckRecord.getCheckID());
+            int state = deviceCheckRecordMapper.update(deviceCheckRecord, userUpdateWrapper);
+
+            if (state == 1 )
+                return 1;
+            else
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
+        }
     }
 
 
