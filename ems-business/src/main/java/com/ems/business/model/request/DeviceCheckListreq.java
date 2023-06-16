@@ -36,11 +36,6 @@ public class DeviceCheckListreq {
 
     private String deviceState;
     /**
-     * 核查图片列表
-     */
-
-    private MultipartFile checkImages;
-    /**
      * 备注
      */
 

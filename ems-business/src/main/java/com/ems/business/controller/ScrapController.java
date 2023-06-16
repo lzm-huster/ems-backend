@@ -5,13 +5,10 @@ import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.ems.business.model.entity.Device;
-import com.ems.business.model.entity.DeviceCheckRecord;
-import com.ems.business.model.entity.DeviceRepairRecord;
-import com.ems.business.model.entity.DeviceScrapRecord;
-import com.ems.business.model.request.DeviceRepairListreq;
+import com.ems.business.model.entity.*;
 import com.ems.business.model.request.DeviceScrapListReq;
 import com.ems.business.model.response.DeviceScrapDetail;
+import com.ems.business.service.ApprovalRecordService;
 import com.ems.business.service.DeviceService;
 import com.ems.cos.service.CosService;
 import com.ems.redis.constant.RedisConstant;
@@ -29,6 +26,7 @@ import com.ems.usercenter.service.UserRoleService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +36,6 @@ import org.springframework.web.multipart.MultipartFile;
 //import org.testng.annotations.Test;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -59,7 +56,10 @@ public class ScrapController {
     private RoleService roleService;
     @Autowired
     private CosService cosService;
-    private static final String scrapPrefix = "scrap";
+    @Autowired
+    private ApprovalRecordService approvalRecordService;
+    private static final String scrapPrefix = "Scrap";
+
 
 
     //获取当前用户的角色名称以判断查询范围
@@ -169,7 +169,7 @@ public class ScrapController {
     })
     @PostMapping("/insertDeviceScarpRecord")
     //插入报废记录
-    public boolean insertDeviceScarpRecord(@NotNull DeviceScrapListReq deviceScrapListreq,@RequestPart("files") MultipartFile[] files){
+    public boolean insertDeviceScarpRecord( DeviceScrapListReq deviceScrapListreq, @RequestPart("files") MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
         Integer deviceID = deviceScrapListreq.getDeviceID();
         String deviceName = deviceScrapListreq.getDeviceName();
         String scrapPerson = deviceScrapListreq.getScrapPerson();
@@ -177,28 +177,50 @@ public class ScrapController {
         if (ObjectUtil.isNull(deviceID)|| StringUtils.isBlank(deviceName)||StringUtils.isBlank(scrapPerson)||ObjectUtil.isNull(scrapTime)){
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分参数为空");
         }
-        List<String> pathList = cosService.batchUpload(files, scrapPrefix);
-        if (ObjectUtil.isNull(pathList)) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
+        String pathStr = null;
+        if (files.length>0){
+            List<String> pathList = cosService.batchUpload(files, scrapPrefix);
+            if (ObjectUtil.isNull(pathList)) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
+            }
+            pathStr = JSONUtil.toJsonStr(pathList);
         }
-        String pathStr = JSONUtil.toJsonStr(pathList);
+
 
         Device deviceServiceById = deviceService.getById(deviceID);
         if (ObjectUtil.isNull(deviceServiceById)){
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"查找设备失败");
         }
-        deviceServiceById.setDeviceState("已报废");
-        boolean update = deviceService.updateById(deviceServiceById);
-        if (!update){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
-        }
-        DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
-        BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
-        deviceScrapRecord.setDeviceState("已报废");
-        deviceScrapRecord.setScrapImages(pathStr);
-        boolean save = deviceScrapRecordService.save(deviceScrapRecord);
-        if (!save){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存报废信息失败");
+        Map<Object, Object> redisMapFromToken = redisConstant.getRedisMapFromToken(token);
+        List<String> roles = (List<String>) redisMapFromToken.get(RedisConstant.UserRole);
+        User user = (User) redisMapFromToken.get(RedisConstant.UserInfo);
+        if (roles.get(0).contains("deviceAdmin")){
+            deviceServiceById.setDeviceState("已报废");
+            boolean update = deviceService.updateById(deviceServiceById);
+            if (!update){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
+            }
+            DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
+            BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
+            deviceScrapRecord.setDeviceState("已报废");
+            deviceScrapRecord.setScrapImages(pathStr);
+            boolean save = deviceScrapRecordService.save(deviceScrapRecord);
+            if (!save){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存报废信息失败");
+            }
+        }else {
+            DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
+            BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
+            deviceScrapRecord.setDeviceState("正常");
+            deviceScrapRecord.setScrapImages(pathStr);
+            boolean save = deviceScrapRecordService.save(deviceScrapRecord);
+            if (!save){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存报废信息失败");
+            }
+            int num = approvalRecordService.genApprovalRecord(deviceScrapRecord.getScrapID(), scrapPrefix, null);
+            if (ObjectUtil.equal(num,0)){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"新建审批信息出错");
+            }
         }
         return true;
     }
