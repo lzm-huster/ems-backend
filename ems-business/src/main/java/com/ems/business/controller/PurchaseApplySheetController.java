@@ -9,6 +9,7 @@ import com.ems.business.mapper.PurchaseApplyMapper;
 import com.ems.business.mapper.PurchaseApplySheetMapper;
 import com.ems.business.model.entity.PurchaseApplySheet;
 import com.ems.business.model.response.PurchaseApplySheetList;
+import com.ems.business.service.impl.ApprovalRecordServiceImpl;
 import com.ems.business.service.impl.PurchaseApplySheetServiceImpl;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
@@ -40,6 +41,8 @@ public class PurchaseApplySheetController {
     @Autowired
     private UserRedisConstant redisConstant;
 
+    @Autowired
+    private ApprovalRecordServiceImpl approvalRecordServiceImpl;
 
     @AuthCheck
     @GetMapping("/getPurchaseApplySheetList")
@@ -91,11 +94,29 @@ public class PurchaseApplySheetController {
         purchaseApplySheet.setPurchaseApplyDate(new Date());
         purchaseApplySheet.setPurchaseApplyState("未审批");
 
-        if (ObjectUtil.isNull(approveTutorID)|| StringUtils.isBlank(purchaseApplyDescription)||ObjectUtil.isNull(purchaseApplicantID)) {
+        if ( StringUtils.isBlank(purchaseApplyDescription)||ObjectUtil.isNull(purchaseApplicantID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
+
+        //学生需要导师，教职工不需要
+        String RoleName=userMapper.getRoleNameByUserID(purchaseApplicantID);
+        if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
+        {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "学生身份导师数据不能为空");
+        }
+
+
         int Number=0;
         Number= purchaseApplySheetMapper.insert(purchaseApplySheet);
+
+        if(Number!=0)
+        {
+            //获取添加的采购申请单ID，添加待审批记录
+            int ID=purchaseApplySheetMapper.getLatestPurchaseApplySheetID(purchaseApplicantID);
+            approvalRecordServiceImpl.genApprovalRecord(ID,"Purchase", approveTutorID);
+        }
+
+
         return Number;
 
     }

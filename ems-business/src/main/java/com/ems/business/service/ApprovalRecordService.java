@@ -2,9 +2,10 @@ package com.ems.business.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ems.business.model.entity.ApprovalRecord;
-import com.ems.business.model.entity.PurchaseApply;
-import com.ems.business.model.response.*;
-import org.apache.ibatis.annotations.Select;
+import com.ems.business.model.response.ApprovalRecordResponse;
+import com.ems.business.model.response.BorrowApplyRecordList2;
+import com.ems.business.model.response.DeviceScrapList;
+import com.ems.business.model.response.PurchaseApplySheetList2;
 
 import java.util.Date;
 import java.util.List;
