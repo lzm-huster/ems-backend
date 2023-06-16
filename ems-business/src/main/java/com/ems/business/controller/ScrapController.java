@@ -200,14 +200,14 @@ public class ScrapController {
         List<String> roles = (List<String>) redisMapFromToken.get(RedisConstant.UserRole);
         User user = (User) redisMapFromToken.get(RedisConstant.UserInfo);
         if (roles.get(0).contains("deviceAdmin")){
-            deviceServiceById.setDeviceState("已报废");
+            deviceServiceById.setDeviceState("报废");
             boolean update = deviceService.updateById(deviceServiceById);
             if (!update){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
             }
             DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
             BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
-            deviceScrapRecord.setDeviceState("已报废");
+            deviceScrapRecord.setDeviceState("报废");
             deviceScrapRecord.setScrapImages(pathStr);
             boolean save = deviceScrapRecordService.save(deviceScrapRecord);
             if (!save){
@@ -222,7 +222,7 @@ public class ScrapController {
             if (!save){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存报废信息失败");
             }
-            int num = approvalRecordService.genApprovalRecord(user.getUserID(),deviceScrapRecord.getScrapID(), scrapPrefix, null);
+            int num = approvalRecordService.genApprovalRecord(user.getUserID(),deviceScrapRecord.getScrapID(), "Scrap", null);
             if (ObjectUtil.equal(num,0)){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"新建审批信息出错");
             }
