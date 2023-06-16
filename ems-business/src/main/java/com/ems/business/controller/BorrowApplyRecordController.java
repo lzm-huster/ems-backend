@@ -9,6 +9,7 @@ import com.ems.business.mapper.BorrowApplyRecordMapper;
 import com.ems.business.mapper.BorrowApplySheetMapper;
 import com.ems.business.model.entity.BorrowApplyRecord;
 import com.ems.business.model.response.BorrowApplyRecordList;
+import com.ems.business.service.impl.ApprovalRecordServiceImpl;
 import com.ems.business.service.impl.BorrowApplyRecordServiceImpl;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
@@ -41,6 +42,9 @@ public class BorrowApplyRecordController {
 
     @Autowired
     private UserRedisConstant redisConstant;
+
+    @Autowired
+    private ApprovalRecordServiceImpl approvalRecordServiceImpl;
 
     @AuthCheck
     @GetMapping("/getBorrowApplyRecordList")
@@ -136,19 +140,39 @@ public class BorrowApplyRecordController {
     public int insertBorrowApplyRecord(@NotNull BorrowApplyRecord borrowApplyRecord)
     {
 
+
         //提取传入实体数据
         Integer approveTutorID = borrowApplyRecord.getApproveTutorID();
         String applyDescription = borrowApplyRecord.getApplyDescription();
         Integer borrowerID = borrowApplyRecord.getBorrowerID();
+
+
         //部分数据系统赋值
         borrowApplyRecord.setBorrowApplyDate(new Date());
-        borrowApplyRecord.setBorrowApplyState("申请中");
+        borrowApplyRecord.setBorrowApplyState("未审批");
 
-        if (ObjectUtil.isNull(approveTutorID)|| ObjectUtil.isNull(borrowerID)||StringUtils.isBlank(applyDescription)) {
+        if ( ObjectUtil.isNull(borrowerID)||StringUtils.isBlank(applyDescription)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
+
+        //学生需要导师，教职工不需要
+        String RoleName=userMapper.getRoleNameByUserID(borrowerID);
+        if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
+        {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "学生身份导师数据不能为空");
+        }
+
+
         int Number=0;
         Number= borrowApplyRecordMapper.insert(borrowApplyRecord);
+
+        if(Number!=0)
+        {
+            //获取添加的借用申请单ID，添加待审批记录
+            int ID=borrowApplyRecordMapper.getLatestBorrowApplyID(borrowerID);
+            approvalRecordServiceImpl.genApprovalRecord(ID,"Borrow", approveTutorID);
+        }
+
         return Number;
 
     }
