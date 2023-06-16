@@ -145,6 +145,7 @@ public class ApprovalRecordServiceImpl extends ServiceImpl<ApprovalRecordMapper,
         return List1;
     }
 
+
     // 用于生成审批记录，成功返回1，失败返回0
     @Override
     public int genApprovalRecord(Integer userId,Integer applySheetId, String applyType, Integer tutorId) {

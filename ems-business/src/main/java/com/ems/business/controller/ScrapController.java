@@ -1,30 +1,28 @@
 package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
-
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
-import com.ems.business.model.entity.*;
+import com.ems.annotation.ResponseResult;
+import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceScrapRecord;
 import com.ems.business.model.request.DeviceScrapListInsertReq;
 import com.ems.business.model.request.DeviceScrapListUpdateReq;
 import com.ems.business.model.response.DeviceScrapDetail;
+import com.ems.business.model.response.DeviceScrapListRes;
 import com.ems.business.service.ApprovalRecordService;
+import com.ems.business.service.DeviceScrapRecordService;
 import com.ems.business.service.DeviceService;
+import com.ems.common.ErrorCode;
 import com.ems.cos.service.CosService;
+import com.ems.exception.BusinessException;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.model.entity.Role;
 import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
-import com.ems.annotation.ResponseResult;
-import com.ems.business.model.response.DeviceScrapListRes;
-import com.ems.business.service.DeviceScrapRecordService;
-import com.ems.common.ErrorCode;
-import com.ems.exception.BusinessException;
 import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
 import com.google.gson.Gson;
@@ -32,21 +30,14 @@ import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-//import org.testng.annotations.Test;
 
-
-import javax.xml.transform.Result;
-import java.lang.reflect.Type;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -231,7 +222,7 @@ public class ScrapController {
             if (!save){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存报废信息失败");
             }
-            int num = approvalRecordService.genApprovalRecord(deviceScrapRecord.getScrapID(), scrapPrefix, null);
+            int num = approvalRecordService.genApprovalRecord(user.getUserID(),deviceScrapRecord.getScrapID(), scrapPrefix, null);
             if (ObjectUtil.equal(num,0)){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"新建审批信息出错");
             }

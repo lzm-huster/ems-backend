@@ -155,6 +155,7 @@ public class BorrowApplyRecordController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
 
+        
         //学生需要导师，教职工不需要
         String RoleName=userMapper.getRoleNameByUserID(borrowerID);
         if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))

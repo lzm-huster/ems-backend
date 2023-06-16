@@ -98,6 +98,7 @@ public class PurchaseApplySheetController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
 
+
         //学生需要导师，教职工不需要
         String RoleName=userMapper.getRoleNameByUserID(purchaseApplicantID);
         if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
