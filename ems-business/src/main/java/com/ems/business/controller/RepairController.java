@@ -1,19 +1,16 @@
 package com.ems.business.controller;
 import cn.hutool.core.util.ObjectUtil;
 
-import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.model.entity.Device;
-import com.ems.business.model.entity.DeviceCheckRecord;
 import com.ems.business.model.entity.DeviceRepairRecord;
-import com.ems.business.model.request.DeviceRepairListreq;
+import com.ems.business.model.request.DeviceRepairListReq;
 import com.ems.business.model.response.DeviceRepairDetail;
 import com.ems.business.model.response.DeviceRepairListRes;
 import com.ems.business.service.DeviceRepairRecordService;
 import com.ems.business.service.DeviceService;
-import com.ems.business.service.impl.DeviceRepairRecordServiceImpl;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.redis.constant.RedisConstant;
@@ -23,10 +20,8 @@ import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.ObjectUtils;
@@ -158,8 +153,7 @@ public class RepairController {
 
     }
     @PostMapping("/insertDeviceRepairRecord")
-    //插入维修记录
-    public boolean insertRepairRecord(@RequestBody DeviceRepairListreq deviceRepairListreq){
+    public boolean insertRepairRecord(@RequestBody DeviceRepairListReq deviceRepairListreq){
         Integer deviceID = deviceRepairListreq.getDeviceID();
         BigDecimal repairFee = deviceRepairListreq.getRepairFee();
         String deviceName = deviceRepairListreq.getDeviceName();
@@ -182,7 +176,7 @@ public class RepairController {
 
     @PostMapping("/updateDeviceRepairRecord")
     //更新维修记录
-    public int updateRepairRecord(@NotNull DeviceRepairListreq deviceRepairListreq){
+    public int updateRepairRecord(@NotNull DeviceRepairListReq deviceRepairListreq){
         //将request的数据转换为entity中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
         BeanUtils.copyProperties(deviceRepairListreq,deviceRepairRecord);
