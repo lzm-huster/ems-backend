@@ -174,13 +174,13 @@ public class RepairController {
         if(!state) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
         }
-        Device device = new Device();
-        device.setDeviceID(deviceRepairListreq.getDeviceID());
-        device.setDeviceState("维修中");
-        boolean update = deviceService.updateById(device);
-        if (!update){
-            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
-        }
+//        Device device = new Device();
+//        device.setDeviceID(deviceRepairListreq.getDeviceID());
+//        device.setDeviceState("维修中");
+//        boolean update = deviceService.updateById(device);
+//        if (!update){
+//            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
+//        }
         return true;
     }
 
