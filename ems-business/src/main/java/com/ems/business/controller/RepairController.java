@@ -20,6 +20,7 @@ import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
@@ -152,6 +153,7 @@ public class RepairController {
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
 
     }
+    @ApiOperation(value = "插入",notes = "插入",consumes = "application/json",response = Object.class)
     @PostMapping("/insertDeviceRepairRecord")
     public boolean insertRepairRecord(@RequestBody DeviceRepairListReq deviceRepairListreq){
         Integer deviceID = deviceRepairListreq.getDeviceID();
