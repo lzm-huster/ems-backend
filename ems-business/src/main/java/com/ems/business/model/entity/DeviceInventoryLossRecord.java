@@ -1,6 +1,8 @@
 package com.ems.business.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -18,7 +20,7 @@ public class DeviceInventoryLossRecord implements Serializable {
     /**
      * 盘亏编号
      */
-    @TableField(value = "InventoryLossID")
+    @TableId(value = "InventoryLossID",type = IdType.AUTO)
     private Integer inventoryLossID;
 
     /**

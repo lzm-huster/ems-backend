@@ -1,5 +1,6 @@
 package com.ems.business.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -20,7 +21,7 @@ public class DeviceRepairRecord implements Serializable {
     /**
      * 维修编号
      */
-    @TableId(value = "RepairID")
+    @TableId(value = "RepairID",type = IdType.AUTO)
     private Integer repairID;
 
     /**
