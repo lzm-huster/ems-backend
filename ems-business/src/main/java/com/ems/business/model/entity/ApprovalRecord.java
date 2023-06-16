@@ -1,5 +1,6 @@
 package com.ems.business.model.entity;
 
+import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -19,7 +20,7 @@ public class ApprovalRecord implements Serializable {
     /**
      * 审批记录编号
      */
-    @TableId(value = "ApprovalID")
+    @TableId(value = "ApprovalID",type = IdType.AUTO)
     private Integer approvalID;
 
     /**
