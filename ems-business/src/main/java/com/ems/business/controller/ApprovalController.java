@@ -63,7 +63,11 @@ public class ApprovalController {
                        参数:
                            state 采购申请单审批状态：“未审批、导师已审批、管理员已审批、申请通过、采购中、已入库、驳回”
                            state 借用申请单审批状态：“未审批、导师已审批、申请通过、借用中、已归还、驳回”
-                           state 报废申请单审批状态：“未完成、已完成、驳回（？）”
+                           state 报废申请单审批状态：“未完成、已完成、驳回”
+
+                           state 采购申请单审批状态：“待导师审批、待管理员审批、待院领导审批、申请通过、采购中、已入库、驳回”
+                           state 借用申请单审批状态：“待导师审批、待管理员审批、申请通过、借用中、已归还、驳回”
+                           state 报废申请单审批状态：“未完成、已完成、驳回”
 
                            id 审批人id
     */
@@ -82,7 +86,7 @@ public class ApprovalController {
 
         //要分老师、设备管理员、院领导
         List<PurchaseApplySheetList2> List1 = null;
-        if(roleId == 1 ){
+        if(roleId == 3 ){
             List1 = approvalRecordService.purchaseApprovalListTe(userId, state);
         }else{
             List1 = approvalRecordService.purchaseApprovalList(state);
@@ -104,7 +108,7 @@ public class ApprovalController {
 
         //要分老师、设备管理员
         List<BorrowApplyRecordList2> List1 = null;
-        if(roleId == 1 ){
+        if(roleId == 3 ){
             List1 = approvalRecordService.borrowApprovalListTe(userId, state);
         }else{
             List1 = approvalRecordService.borrowApprovalList(state);
@@ -342,7 +346,7 @@ public class ApprovalController {
 
         //要分老师、设备管理员、院领导
         List<PurchaseApplySheetList2> List1 = null;
-        if(roleId == 1 ){
+        if(roleId == 3 ){
             List1 = approvalRecordService.getPSheetByTimeTe(mindate, maxdate,userId);
         }else{
             List1 = approvalRecordService.getPSheetByTime(mindate, maxdate);
@@ -367,7 +371,7 @@ public class ApprovalController {
 
         //要分老师、设备管理员、院领导
         List<BorrowApplyRecordList2> List1 = null;
-        if(roleId == 1 ){
+        if(roleId == 3 ){
             List1 = approvalRecordService.getBSheetByTimeTe(mindate, maxdate,userId);
         }else{
             List1 = approvalRecordService.getBSheetByTime(mindate, maxdate);
@@ -405,7 +409,7 @@ public class ApprovalController {
 
         //要分老师、设备管理员、院领导
         List<PurchaseApplySheetList2> List1 = null;
-        if(roleId == 1 ){
+        if(roleId == 3 ){
             List1 = approvalRecordService.getPSheetByPrizeTe(minprize, maxprize,userId);
         }else{
             List1 = approvalRecordService.getPSheetByPrize(minprize, maxprize);
