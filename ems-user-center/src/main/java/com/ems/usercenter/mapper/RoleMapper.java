@@ -20,7 +20,7 @@ public interface RoleMapper extends BaseMapper<Role> {
     @Select("select r.RoleName " +
             "from Role r " +
             "inner join UserRole ur on r.RoleID = ur.RoleID " +
-            "where ur.UserID = #{userId}")
+            "where ur.UserID = #{userId} and ur.IsDeleted = 0 and r.IsDeleted = 0")
     List<String> getRoleListByUserId(Integer userId);
     @Select("select r.RoleID,r.RoleName,r.RoleDescription from Role r")
     List<RoleSimpleRes> getRoleList();

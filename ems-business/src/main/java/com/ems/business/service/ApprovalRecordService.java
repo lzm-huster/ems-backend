@@ -17,18 +17,18 @@ import java.util.List;
 */
 public interface ApprovalRecordService extends IService<ApprovalRecord> {
 
-    // 1、返回需要审批的采购申请单：老师   PurchaseApplySheetList
-    public List<PurchaseApplySheetList> purchaseApprovalListTe(Integer id, String state);
+    // 1、返回需要审批的采购申请单：老师   PurchaseApplySheetList2
+    public List<PurchaseApplySheetList2> purchaseApprovalListTe(Integer id, String state);
 
-    // 1、返回需要审批的采购申请单：设备管理员/院领导 （全部）   PurchaseApplySheetList
-    public List<PurchaseApplySheetList> purchaseApprovalList(String state);
+    // 1、返回需要审批的采购申请单：设备管理员/院领导 （全部）   PurchaseApplySheetList2
+    public List<PurchaseApplySheetList2> purchaseApprovalList(String state);
 
 
-    // 2、返回需要审批的借用申请单：老师   BorrowApplyRecordList
-    public List<BorrowApplyRecordList> borrowApprovalListTe(Integer id, String state);
+    // 2、返回需要审批的借用申请单：老师   BorrowApplyRecordList2
+    public List<BorrowApplyRecordList2> borrowApprovalListTe(Integer id, String state);
 
-    // 2、返回需要审批的借用申请单：设备管理员 （全部）   BorrowApplyRecordList
-    public List<BorrowApplyRecordList> borrowApprovalList(String state);
+    // 2、返回需要审批的借用申请单：设备管理员 （全部）   BorrowApplyRecordList2
+    public List<BorrowApplyRecordList2> borrowApprovalList(String state);
 
     // 3、返回需要审批的报废申请单：设备管理员 （全部）   DeviceScrapListRes
     public List<DeviceScrapList> scrapApprovalList(String state);
@@ -46,29 +46,31 @@ public interface ApprovalRecordService extends IService<ApprovalRecord> {
 
 
     //1、按照设备申请时间筛选采购申请单：老师
-    public List<PurchaseApplySheetList> getPSheetByTimeTe(Date mindate, Date maxdate, Integer id);
+    public List<PurchaseApplySheetList2> getPSheetByTimeTe(Date mindate, Date maxdate, Integer id);
 
     //1、按照设备申请时间筛选采购申请单：设备管理员/院领导 （全部）
-    public List<PurchaseApplySheetList> getPSheetByTime(Date mindate, Date maxdate);
+    public List<PurchaseApplySheetList2> getPSheetByTime(Date mindate, Date maxdate);
 
     //2、按照设备申请时间筛选借用申请单：老师
-    public List<BorrowApplyRecordList> getBSheetByTimeTe(Date mindate, Date maxdate, Integer id);
+    public List<BorrowApplyRecordList2> getBSheetByTimeTe(Date mindate, Date maxdate, Integer id);
 
     //2、按照设备申请时间筛选借用申请单：设备管理员 （全部）
-    public List<BorrowApplyRecordList> getBSheetByTime(Date mindate, Date maxdate);
+    public List<BorrowApplyRecordList2> getBSheetByTime(Date mindate, Date maxdate);
 
     //3、按照设备申请时间筛选报废申请单 （全部）
     public List<DeviceScrapList> getSSheetByTime(Date mindate, Date maxdate);
 
     //4、照价格区间筛选采购申请单：老师
-    public List<PurchaseApplySheetList> getPSheetByPrizeTe(double minprize, double maxprize, Integer id);
+    public List<PurchaseApplySheetList2> getPSheetByPrizeTe(double minprize, double maxprize, Integer id);
 
     //4、照价格区间筛选采购申请单：设备管理员、院领导（全部）
-    public List<PurchaseApplySheetList> getPSheetByPrize(double minprize, double maxprize);
+    public List<PurchaseApplySheetList2> getPSheetByPrize(double minprize, double maxprize);
 
 
     //5、按照用户类型筛选借用申请单：设备管理员（全部）
-    public List<BorrowApplyRecordList> getAllBSheetByUserType(Integer rid);
+    public List<BorrowApplyRecordList2> getAllBSheetByUserType(Integer rid);
 
+    // 生成审批记录
+    public int genApprovalRecord(Integer applySheetId, String applyType,Integer tutorId);
 
 }

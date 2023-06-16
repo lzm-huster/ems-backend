@@ -4,6 +4,7 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.DeviceCheckRecordMapper;
 import com.ems.business.model.entity.Device;
@@ -27,12 +28,17 @@ import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -55,7 +61,8 @@ public class CheckController {
     private DeviceCheckRecordMapper deviceCheckRecordMapper;
     @Autowired
     private CosService cosService;
-    private static final String checkPrefix = "check";
+    private static final String checkPrefix  = "Check";
+
 
 
     //获取当前用户的角色名称以判断查询范围
@@ -160,25 +167,54 @@ public class CheckController {
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }
 
-
+    @Transactional
+    @ApiOperation(value = "插入设备信息",notes = "插入",consumes = "multipart/form-data",response = Object.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "files", paramType="form", value = "文件", dataType="file", collectionFormat="array"),
+    })
     @PostMapping("/insertDeviceCheckRecord")
     //插入报废记录
-    public int insertDeviceCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
-        //将request的数据转换为数据表中的格式
-        String path = cosService.uploadFile(deviceCheckListreq.getCheckImages(),"Check");
-        DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
-        BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
-        deviceCheckRecord.setCheckImages(path);
-
-        if(ObjectUtil.isEmpty(deviceCheckListreq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
-        else {
-            //将数据插入表中
-            boolean state=deviceCheckRecordService.save(deviceCheckRecord);
-            if(state)
-                return 1;
-            else
-                throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
+    public boolean insertDeviceCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq,@RequestPart("files") MultipartFile[] files){
+        Integer deviceID = deviceCheckListreq.getDeviceID();
+        String checker = deviceCheckListreq.getChecker();
+        String deviceState = deviceCheckListreq.getDeviceState();
+        Date checkTime = deviceCheckListreq.getCheckTime();
+        if (ObjectUtil.isNull(deviceID)|| StringUtils.isBlank(checker)||StringUtils.isBlank(deviceState)||ObjectUtil.isNull(checkTime)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分参数为空");
         }
+        String pathStr = null;
+        if (files.length>0){
+            List<String> pathList = cosService.batchUpload(files, checkPrefix);
+            if (ObjectUtil.isNull(pathList)) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
+            }
+            pathStr = JSONUtil.toJsonStr(pathList);
+        }
+        Device deviceServiceById = deviceService.getById(deviceID);
+        if (ObjectUtil.isNull(deviceServiceById)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"查找设备失败");
+        }
+        if ("正常".equals(deviceState)){
+            DeviceCheckRecord deviceCheckRecord = new DeviceCheckRecord();
+            BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
+            boolean save = deviceCheckRecordService.save(deviceCheckRecord);
+            if (!save){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存核查信息失败");
+            }
+        }else {
+            deviceServiceById.setDeviceState(deviceState);
+            boolean update = deviceService.updateById(deviceServiceById);
+            if (!update){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存设备状态失败");
+            }
+            DeviceCheckRecord deviceCheckRecord = new DeviceCheckRecord();
+            BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
+            boolean save = deviceCheckRecordService.save(deviceCheckRecord);
+            if (!save){
+                throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存核查信息失败");
+            }
+        }
+        return true;
     }
 
     @PostMapping("/updateDeviceCheckRecord")

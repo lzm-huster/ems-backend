@@ -21,55 +21,66 @@ import java.util.List;
 @Mapper
 public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
-    // 1、返回需要审批的采购申请单：老师   PurchaseApplySheetList
+    // 1、返回需要审批的采购申请单：老师   PurchaseApplySheetList2
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName deviceList, u2.UserName,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName approveTutorName, r.RoleName, p.PurchaseBudget purchaseBudget \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on ps.PurchaseApplicantID = u2.UserID \n"+
+            "inner join UserRole ur on ps.PurchaseApplicantID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where ps.ApproveTutorID=#{id} and ps.PurchaseApplyState = #{state} and ps.IsDeleted = 0;")
-    public List<PurchaseApplySheetList> purchaseApprovalListTe(Integer id, String state);
+    public List<PurchaseApplySheetList2> purchaseApprovalListTe(Integer id, String state);
 
-    // 1、返回需要审批的采购申请单：设备管理员/院领导 （全部）   PurchaseApplySheetList
+    // 1、返回需要审批的采购申请单：设备管理员/院领导 （全部）   PurchaseApplySheetList2
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName deviceList, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName approveTutorName, r.RoleName, p.PurchaseBudget purchaseBudget \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on ps.PurchaseApplicantID = u2.UserID \n"+
+            "inner join UserRole ur on ps.PurchaseApplicantID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where ps.PurchaseApplyState = #{state} and ps.IsDeleted = 0;")
-    public List<PurchaseApplySheetList> purchaseApprovalList(String state);
+    public List<PurchaseApplySheetList2> purchaseApprovalList(String state);
 
 
-    // 2、返回需要审批的借用申请单：老师   BorrowApplyRecordList
+    // 2、返回需要审批的借用申请单：老师   BorrowApplyRecordList2
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName  \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName, r.RoleName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
-            "inner join Device d on d.DeviceID=d.DeviceID \n"+
+            "inner join Device d on bs.DeviceID=d.DeviceID \n"+
+            "inner join UserRole ur on br.BorrowerID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where br.ApproveTutorID=#{id} and br.BorrowApplyState = #{state} and br.IsDeleted = 0;")
-    public List<BorrowApplyRecordList> borrowApprovalListTe(Integer id, String state);
+    public List<BorrowApplyRecordList2> borrowApprovalListTe(Integer id, String state);
 
-    // 2、返回需要审批的借用申请单：设备管理员 （全部）   BorrowApplyRecordList
+    // 2、返回需要审批的借用申请单：设备管理员 （全部）   BorrowApplyRecordList2
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName  \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName, r.RoleName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
-            "inner join Device d on d.DeviceID=d.DeviceID \n"+
+            "inner join Device d on bs.DeviceID=d.DeviceID \n"+
+            "inner join UserRole ur on br.BorrowerID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where br.BorrowApplyState = #{state} and br.IsDeleted = 0;")
-    public List<BorrowApplyRecordList> borrowApprovalList(String state);
+    public List<BorrowApplyRecordList2> borrowApprovalList(String state);
 
     // 3、返回需要审批的报废申请单：设备管理员 （全部）   DeviceScrapListRes
 
     @Select("\n" +
-            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, q.ScrapPerson \n"+
+            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, q.ScrapPerson, r.RoleName \n"+
             "from DeviceScrapRecord q \n"+
             "inner join Device p on p.DeviceID=q.DeviceID \n"+
+            "inner join User u on q.ScrapPerson = u.UserName \n"+
+            "inner join UserRole ur on u.UserID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where q.ScrapState = #{state} and q.IsDeleted = 0;")
     public List<DeviceScrapList> scrapApprovalList(String state);
 
@@ -100,85 +111,110 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
 
     //1、按照设备申请时间筛选采购申请单：老师
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName deviceList, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName approveTutorName, r.RoleName, p.PurchaseBudget purchaseBudget \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on ps.PurchaseApplicantID = u2.UserID \n"+
+            "inner join UserRole ur on ps.PurchaseApplicantID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where ps.ApproveTutorID=#{id} and ps.PurchaseApplyDate >= #{mindate} and ps.PurchaseApplyDate <= #{maxdate} and ps.IsDeleted = 0;")
-    public List<PurchaseApplySheetList> getPSheetByTimeTe(Date mindate, Date maxdate, Integer id);
+    public List<PurchaseApplySheetList2> getPSheetByTimeTe(Date mindate, Date maxdate, Integer id);
 
     //1、按照设备申请时间筛选采购申请单：设备管理员/院领导 （全部）
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName deviceList, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName approveTutorName, r.RoleName, p.PurchaseBudget purchaseBudget \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on ps.PurchaseApplicantID = u2.UserID \n"+
+            "inner join UserRole ur on ps.PurchaseApplicantID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where ps.PurchaseApplyDate >= #{mindate} and ps.PurchaseApplyDate <= #{maxdate} and ps.IsDeleted = 0;")
-    public List<PurchaseApplySheetList> getPSheetByTime(Date mindate, Date maxdate);
+    public List<PurchaseApplySheetList2> getPSheetByTime(Date mindate, Date maxdate);
 
     //2、按照设备申请时间筛选借用申请单：老师
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName  \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName, r.RoleName  \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
-            "inner join Device d on d.DeviceID=d.DeviceID \n"+
+            "inner join Device d on bs.DeviceID=d.DeviceID \n"+
+            "inner join UserRole ur on br.BorrowerID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where br.ApproveTutorID=#{id} and br.BorrowApplyState >= #{mindate} and br.BorrowApplyState <= #{maxdate} and br.IsDeleted = 0;")
-    public List<BorrowApplyRecordList> getBSheetByTimeTe(Date mindate, Date maxdate, Integer id);
+    public List<BorrowApplyRecordList2> getBSheetByTimeTe(Date mindate, Date maxdate, Integer id);
 
     //2、按照设备申请时间筛选借用申请单：设备管理员 （全部）
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName  \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName, r.RoleName  \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID \n" +
-            "inner join Device d on d.DeviceID=d.DeviceID \n"+
+            "inner join Device d on bs.DeviceID=d.DeviceID \n"+
+            "inner join UserRole ur on br.BorrowerID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where br.BorrowApplyState >= #{mindate} and br.BorrowApplyState <= #{maxdate} and br.IsDeleted = 0;")
-    public List<BorrowApplyRecordList> getBSheetByTime(Date mindate, Date maxdate);
+    public List<BorrowApplyRecordList2> getBSheetByTime(Date mindate, Date maxdate);
 
     //3、按照设备申请时间筛选报废申请单 （全部）
     @Select("\n" +
-            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, q.ScrapPerson \n"+
+            "select q.ScrapID, q.DeviceID, p.AssetNumber, q.ScrapTime, q.ScrapReason, q.ScrapState, p.DeviceName, q.ScrapPerson, r.RoleName \n"+
             "from DeviceScrapRecord q \n"+
             "inner join Device p on p.DeviceID=q.DeviceID \n"+
+            "inner join User u on q.ScrapPerson = u.UserName \n"+
+            "inner join UserRole ur on u.UserID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where q.ScrapTime >= #{mindate} and q.ScrapTime <+ #{maxdate} and q.IsDeleted = 0;")
     public List<DeviceScrapList> getSSheetByTime(Date mindate, Date maxdate);
 
     //4、照价格区间筛选采购申请单：老师
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName deviceList, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName approveTutorName, r.RoleName, p.PurchaseBudget purchaseBudget \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on ps.PurchaseApplicantID = u2.UserID \n"+
+            "inner join UserRole ur on ps.PurchaseApplicantID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where ps.ApproveTutorID=#{id} and p.PurchaseBudget >= #{minprize} and p.PurchaseBudget <= #{maxprize} and ps.IsDeleted = 0;")
-    public List<PurchaseApplySheetList> getPSheetByPrizeTe(double minprize, double maxprize,Integer id);
+    public List<PurchaseApplySheetList2> getPSheetByPrizeTe(double minprize, double maxprize,Integer id);
 
     //4、照价格区间筛选采购申请单：设备管理员、院领导（全部）
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName \n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName deviceList, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName approveTutorName, r.RoleName, p.PurchaseBudget purchaseBudget \n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on ps.PurchaseApplicantID = u2.UserID \n"+
+            "inner join UserRole ur on ps.PurchaseApplicantID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where p.PurchaseBudget >= #{minprize} and p.PurchaseBudget <= #{maxprize}and ps.IsDeleted = 0; ")
-    public List<PurchaseApplySheetList> getPSheetByPrize(double minprize, double maxprize);
+    public List<PurchaseApplySheetList2> getPSheetByPrize(double minprize, double maxprize);
 
     //5、按照提出借用申请的用户类型筛选借用申请单：设备管理员（全部）
     @Select("\n" +
-            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName , u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName \n" +
+            "select br.BorrowApplyID, d.AssetNumber, bs.DeviceName deviceList, u2.UserName ,br.BorrowApplyDate,br.BorrowApplyState,u1.UserName approveTutorName, r.RoleName \n" +
             "from BorrowApplyRecord br\n" +
             "inner join BorrowApplySheet bs on br.BorrowApplyID = bs.BorrowApplyID\n" +
             "inner join User u1 on br.ApproveTutorID = u1.UserID \n" +
             "inner join User u2 on br.BorrowerID = u2.UserID\n" +
             "inner join UserRole ur on u2.UserId = ur.UserID \n" +
-            "inner join Device d on d.DeviceID=d.DeviceID \n"+
+            "inner join Device d on bs.DeviceID=d.DeviceID \n"+
+            "inner join UserRole ur on br.BorrowerID = ur.UserID \n"+
+            "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where ur.RoleId = #{rid} and br.IsDeleted = 0;")
-    public List<BorrowApplyRecordList> getAllBSheetByUserType(Integer rid);
+    public List<BorrowApplyRecordList2> getAllBSheetByUserType(Integer rid);
+
+
+    @Select("SELECT UserID FROM UserRole WHERE RoleID = 2 ORDER BY RAND() LIMIT 1;")
+    public Integer getRandAdmin();
+
+    @Select("SELECT UserID FROM UserRole WHERE RoleID = 4 ORDER BY RAND() LIMIT 1;")
+    public Integer getRandLeader();
+
 
 }
 

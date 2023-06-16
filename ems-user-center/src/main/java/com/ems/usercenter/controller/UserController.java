@@ -214,7 +214,7 @@ public class UserController {
      * 用户修改密码
      */
     @PostMapping("/updatePassword")
-    public boolean updatePassword(@RequestBody UserUpdatePasswordReq updatePasswordReq,@RequestParam(value = "token",required = false) String token){
+    public boolean updatePassword(@RequestBody UserUpdatePasswordReq updatePasswordReq,@RequestHeader(value = "token",required = false) String token){
         String oldPass = updatePasswordReq.getOldPass();
         String newPass = updatePasswordReq.getNewPass();
         String confirm = updatePasswordReq.getConfirm();
