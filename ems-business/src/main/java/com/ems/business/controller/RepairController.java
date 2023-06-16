@@ -152,10 +152,10 @@ public class RepairController {
             else return deviceRepairDetail;
             }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
-
     }
+
     @Transactional
-    @PostMapping("/insertDeviceRepairRecord")
+    @PostMapping(value = "/insertDeviceRepairRecord")
     //插入维修记录
     public boolean insertRepairRecord(@NotNull DeviceRepairInsertListreq deviceRepairListreq){
         Integer deviceID = deviceRepairListreq.getDeviceID();
