@@ -199,7 +199,6 @@ public class CheckController {
             if (!update){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存设备状态失败");
             }
-
             boolean save = deviceCheckRecordService.save(deviceCheckRecord);
             if (!save){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存核查信息失败");
