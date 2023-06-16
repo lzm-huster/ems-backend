@@ -13,6 +13,7 @@ import com.ems.exception.BusinessException;
 import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.model.entity.User;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -51,7 +52,7 @@ public class DeviceMaintenanceRecordController {
         Integer deviceId = deviceMaintenanceRecord.getDeviceID();
         Date maintenanceTime = deviceMaintenanceRecord.getMaintenanceTime();
         String maintenanceContent = deviceMaintenanceRecord.getMaintenanceContent();
-        if (ObjectUtil.isNull(deviceId) || ObjectUtil.isNull(maintenanceTime) || ObjectUtil.isNull(maintenanceContent)) {
+        if (ObjectUtil.isNull(deviceId) || ObjectUtil.isNull(maintenanceTime) || StringUtils.isBlank(maintenanceContent)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
         int number = 0;
