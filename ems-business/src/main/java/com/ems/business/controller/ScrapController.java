@@ -27,6 +27,8 @@ import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
@@ -181,7 +183,7 @@ public class ScrapController {
     })
     @PostMapping("/insertDeviceScarpRecord")
     //插入报废记录
-    public boolean insertDeviceScarpRecord(@RequestParam DeviceScrapListReq deviceScrapListreq, @RequestPart("files") MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
+    public boolean insertDeviceScarpRecord(@RequestParam DeviceScrapListInsertReq deviceScrapListreq, @RequestPart("files") MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
         Integer deviceID = deviceScrapListreq.getDeviceID();
         String deviceName = deviceScrapListreq.getDeviceName();
         String scrapPerson = deviceScrapListreq.getScrapPerson();
