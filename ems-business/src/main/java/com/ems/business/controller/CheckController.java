@@ -173,7 +173,7 @@ public class CheckController {
             @ApiImplicitParam(name = "files", paramType="form", value = "文件", dataType="file", collectionFormat="array"),
     })
     @PostMapping("/insertDeviceCheckRecord")
-    public boolean insertDeviceCheckRecord( @RequestParam DeviceCheckListreq deviceCheckListreq,@RequestPart("files") MultipartFile[] files){
+    public boolean insertDeviceCheckRecord(  DeviceCheckListreq deviceCheckListreq,@RequestPart("files") MultipartFile[] files){
         Integer deviceID = deviceCheckListreq.getDeviceID();
         String checker = deviceCheckListreq.getChecker();
         String deviceState = deviceCheckListreq.getDeviceState();

@@ -157,7 +157,7 @@ public class RepairController {
     @Transactional
     @PostMapping(value = "/insertDeviceRepairRecord")
     //插入维修记录
-    public boolean insertRepairRecord(@NotNull DeviceRepairInsertListreq deviceRepairListreq){
+    public boolean insertRepairRecord(@RequestBody DeviceRepairInsertListreq deviceRepairListreq){
         Integer deviceID = deviceRepairListreq.getDeviceID();
         BigDecimal repairFee = deviceRepairListreq.getRepairFee();
         String deviceName = deviceRepairListreq.getDeviceName();
@@ -168,28 +168,26 @@ public class RepairController {
         //将request的数据转换为数据表中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
         BeanUtils.copyProperties(deviceRepairListreq,deviceRepairRecord);
-        deviceRepairRecord.setRemark("维修中");
+//        deviceRepairRecord.setRemark("维修中");
         //将数据插入表中
         boolean state=deviceRepairRecordService.save(deviceRepairRecord);
-        if(state) {
-            Device device = new Device();
-            device.setDeviceID(deviceRepairListreq.getDeviceID());
-            device.setDeviceState("维修中");
-            boolean update = deviceService.updateById(device);
-            if (!update){
-                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
-            }
-            return true;
-        }
-        else
+        if(!state) {
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"插入数据失败");
-
+        }
+        Device device = new Device();
+        device.setDeviceID(deviceRepairListreq.getDeviceID());
+        device.setDeviceState("维修中");
+        boolean update = deviceService.updateById(device);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
+        }
+        return true;
     }
 
     @Transactional
     @PostMapping("/updateDeviceRepairRecord")
     //更新维修记录
-    public int updateRepairRecord(@NotNull DeviceRepairUpdateListReq deviceRepairUpdateListReq){
+    public int updateRepairRecord(@RequestBody DeviceRepairUpdateListReq deviceRepairUpdateListReq){
         //将request的数据转换为entity中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
         BeanUtils.copyProperties(deviceRepairUpdateListReq,deviceRepairRecord);
