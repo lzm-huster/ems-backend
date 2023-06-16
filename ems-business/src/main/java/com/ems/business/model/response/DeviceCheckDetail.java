@@ -54,7 +54,7 @@ public class DeviceCheckDetail {
      * 核查图片列表
      */
     @TableField(value = "CheckImages")
-    private String checkImages;
+    private List<String> checkImages;
     /**
      * 备注
      */

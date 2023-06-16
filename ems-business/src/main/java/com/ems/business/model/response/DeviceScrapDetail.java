@@ -54,7 +54,7 @@ public class DeviceScrapDetail {
      * 报废设备图片列表
      */
     @TableField(value = "ScrapImages")
-    private String scrapImages;
+    private List<String> scrapImages;
 
     /**
      * 设备报废状态

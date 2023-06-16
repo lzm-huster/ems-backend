@@ -1,6 +1,7 @@
 package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.ems.annotation.ResponseResult;
@@ -9,6 +10,7 @@ import com.ems.business.model.entity.Device;
 import com.ems.business.model.entity.DeviceCheckRecord;
 
 import com.ems.business.model.request.DeviceCheckListreq;
+import com.ems.business.model.request.DeviceCheckUpdateListReq;
 import com.ems.business.model.response.DeviceCheckDetail;
 import com.ems.business.model.response.DeviceCheckListRes;
 import com.ems.business.service.DeviceCheckRecordService;
@@ -23,10 +25,13 @@ import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.RoleService;
 import com.ems.usercenter.service.UserRoleService;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +55,7 @@ public class CheckController {
     private DeviceCheckRecordMapper deviceCheckRecordMapper;
     @Autowired
     private CosService cosService;
-
+    private static final String checkPrefix = "check";
 
 
     //获取当前用户的角色名称以判断查询范围
@@ -146,10 +151,15 @@ public class CheckController {
             deviceCheckDetail.setDeviceName(device.getDeviceName());
             deviceCheckDetail.setAssetNumber(device.getAssetNumber());
 
+            Gson gson = new Gson();
+            List<String> checkImages =gson.fromJson(deviceCheckRecord.getCheckImages(),new TypeToken<List<String>>(){}.getType());
+            deviceCheckDetail.setCheckImages(checkImages);
+
             return deviceCheckDetail;
         }
         else throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在重要参数为空");
     }
+
 
     @PostMapping("/insertDeviceCheckRecord")
     //插入报废记录
@@ -173,14 +183,21 @@ public class CheckController {
 
     @PostMapping("/updateDeviceCheckRecord")
     //更新报废记录
-    public int updateCheckRecord(@NotNull DeviceCheckListreq deviceCheckListreq){
+    public int updateCheckRecord(@NotNull DeviceCheckUpdateListReq deviceCheckUpdateListReq, @RequestPart("files") MultipartFile[] files){
         //将request的数据转换为数据表中的格式
-        String path = cosService.uploadFile(deviceCheckListreq.getCheckImages(),"Check");
-        DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
-        BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
-        deviceCheckRecord.setCheckImages(path);
 
-        if(ObjectUtil.isEmpty(deviceCheckListreq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
+        DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
+        BeanUtils.copyProperties(deviceCheckUpdateListReq,deviceCheckRecord);
+        List<String> pathList = cosService.batchUpload(files, checkPrefix);
+        if (ObjectUtil.isNull(pathList)) {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
+        }
+        String pathStr = JSONUtil.toJsonStr(pathList);
+        deviceCheckRecord.setCheckImages(pathStr);
+/*        String path = cosService.uploadFile(deviceCheckListreq.getCheckImages(),"Check");
+        deviceCheckRecord.setCheckImages(path);*/
+
+        if(ObjectUtil.isEmpty(deviceCheckUpdateListReq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
         else {
             //将数据更新进表中
             UpdateWrapper<DeviceCheckRecord> userUpdateWrapper = new UpdateWrapper<>();

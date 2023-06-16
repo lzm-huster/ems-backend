@@ -1,14 +1,10 @@
 package com.ems.business.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.business.model.entity.DeviceRepairRecord;
-import com.ems.business.model.request.DeviceRepairListreq;
 import com.ems.business.model.response.DeviceRepairListRes;
 import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
-import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 /**

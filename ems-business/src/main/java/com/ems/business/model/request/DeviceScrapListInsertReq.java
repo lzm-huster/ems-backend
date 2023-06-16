@@ -6,13 +6,19 @@ import org.springframework.format.annotation.DateTimeFormat;
 import java.util.Date;
 
 @Data
-public class DeviceScrapListReq {
+public class DeviceScrapListInsertReq {
 
     /**
      * 设备编号
      */
 
     private Integer deviceID;
+    /**
+     * 设备责任人
+     */
+
+    private String scrapPerson;
+
     /**
      * 报废时间
      */
@@ -28,11 +34,7 @@ public class DeviceScrapListReq {
      */
 
     private String deviceName;
-    /**
-     * 设备责任人
-     */
 
-    private String scrapPerson;
 
     /**
      * 备注
