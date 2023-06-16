@@ -169,7 +169,7 @@ public class ScrapController {
     })
     @PostMapping("/insertDeviceScarpRecord")
     //插入报废记录
-    public boolean insertDeviceScarpRecord( DeviceScrapListReq deviceScrapListreq, @RequestPart("files") MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
+    public boolean insertDeviceScarpRecord(@RequestParam DeviceScrapListReq deviceScrapListreq, @RequestPart("files") MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
         Integer deviceID = deviceScrapListreq.getDeviceID();
         String deviceName = deviceScrapListreq.getDeviceName();
         String scrapPerson = deviceScrapListreq.getScrapPerson();

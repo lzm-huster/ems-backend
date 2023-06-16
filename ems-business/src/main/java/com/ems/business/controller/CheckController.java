@@ -159,13 +159,12 @@ public class CheckController {
     }
 
     @Transactional
-    @ApiOperation(value = "插入设备信息",notes = "插入",consumes = "multipart/form-data",response = Object.class)
+    @ApiOperation(value = "插入核查信息",notes = "插入",consumes = "multipart/form-data",response = Object.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "files", paramType="form", value = "文件", dataType="file", collectionFormat="array"),
     })
     @PostMapping("/insertDeviceCheckRecord")
-    //插入报废记录
-    public boolean insertDeviceCheckRecord( DeviceCheckListreq deviceCheckListreq,@RequestPart("files") MultipartFile[] files){
+    public boolean insertDeviceCheckRecord( @RequestParam DeviceCheckListreq deviceCheckListreq,@RequestPart("files") MultipartFile[] files){
         Integer deviceID = deviceCheckListreq.getDeviceID();
         String checker = deviceCheckListreq.getChecker();
         String deviceState = deviceCheckListreq.getDeviceState();
