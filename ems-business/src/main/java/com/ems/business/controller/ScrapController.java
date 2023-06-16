@@ -199,6 +199,7 @@ public class ScrapController {
         Map<Object, Object> redisMapFromToken = redisConstant.getRedisMapFromToken(token);
         List<String> roles = (List<String>) redisMapFromToken.get(RedisConstant.UserRole);
         User user = (User) redisMapFromToken.get(RedisConstant.UserInfo);
+
         if (roles.get(0).contains("deviceAdmin")){
             deviceServiceById.setDeviceState("报废");
             boolean update = deviceService.updateById(deviceServiceById);
