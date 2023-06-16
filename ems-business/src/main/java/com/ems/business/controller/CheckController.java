@@ -185,9 +185,10 @@ public class CheckController {
         if (ObjectUtil.isNull(deviceServiceById)){
             throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"查找设备失败");
         }
+        DeviceCheckRecord deviceCheckRecord = new DeviceCheckRecord();
+        BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
+        deviceCheckRecord.setCheckImages(pathStr);
         if ("正常".equals(deviceState)){
-            DeviceCheckRecord deviceCheckRecord = new DeviceCheckRecord();
-            BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
             boolean save = deviceCheckRecordService.save(deviceCheckRecord);
             if (!save){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存核查信息失败");
@@ -198,8 +199,7 @@ public class CheckController {
             if (!update){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存设备状态失败");
             }
-            DeviceCheckRecord deviceCheckRecord = new DeviceCheckRecord();
-            BeanUtils.copyProperties(deviceCheckListreq,deviceCheckRecord);
+
             boolean save = deviceCheckRecordService.save(deviceCheckRecord);
             if (!save){
                 throw new BusinessException(ErrorCode.OPERATION_ERROR,"保存核查信息失败");
