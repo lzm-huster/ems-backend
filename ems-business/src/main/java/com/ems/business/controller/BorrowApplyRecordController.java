@@ -151,7 +151,7 @@ public class BorrowApplyRecordController {
         borrowApplyRecord.setBorrowApplyDate(new Date());
         borrowApplyRecord.setBorrowApplyState("未审批");
 
-        if ( ObjectUtil.isNull(borrowerID)||StringUtils.isBlank(applyDescription)) {
+        if ( ObjectUtil.isNull(borrowerID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
 
@@ -161,7 +161,7 @@ public class BorrowApplyRecordController {
         if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
         {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "学生身份导师数据不能为空");
-        }else if(ObjectUtil.isNull(borrowerID))  {
+        }else if(ObjectUtil.isNull(borrowApplyRecord.getApproveTutorID()))  {
             borrowApplyRecord.setApproveTutorID(borrowerID);
         }
 
