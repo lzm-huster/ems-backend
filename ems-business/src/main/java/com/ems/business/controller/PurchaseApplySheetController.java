@@ -83,7 +83,7 @@ public class PurchaseApplySheetController {
 
     @PostMapping("/insertPurchaseApplySheet")
     //插入一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
-    public int insertPurchaseApplySheet(@NotNull PurchaseApplySheet purchaseApplySheet)
+    public int insertPurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
     {
 
         //提取传入实体部分数据
@@ -126,7 +126,7 @@ public class PurchaseApplySheetController {
 
     @PostMapping("/updatePurchaseApplySheet")
     //更新一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
-    public int updatePurchaseApplySheet(@NotNull PurchaseApplySheet purchaseApplySheet)
+    public int updatePurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
     {
         //判断主键是否为空
         Integer purchaseApplySheetID = purchaseApplySheet.getPurchaseApplySheetID();
