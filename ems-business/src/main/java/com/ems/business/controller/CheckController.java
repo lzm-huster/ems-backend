@@ -182,7 +182,7 @@ public class CheckController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分参数为空");
         }
         String pathStr = null;
-        if (files.length>0){
+        if (ObjectUtil.isNotNull(files) && files.length > 0){
             List<String> pathList = cosService.batchUpload(files, checkPrefix);
             if (ObjectUtil.isNull(pathList)) {
                 throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
