@@ -17,7 +17,6 @@ import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -83,7 +82,7 @@ public class PurchaseApplySheetController {
 
     @PostMapping("/insertPurchaseApplySheet")
     //插入一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
-    public int insertPurchaseApplySheet(@NotNull PurchaseApplySheet purchaseApplySheet)
+    public int insertPurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
     {
 
         //提取传入实体部分数据
@@ -126,7 +125,7 @@ public class PurchaseApplySheetController {
 
     @PostMapping("/updatePurchaseApplySheet")
     //更新一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
-    public int updatePurchaseApplySheet(@NotNull PurchaseApplySheet purchaseApplySheet)
+    public int updatePurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
     {
         //判断主键是否为空
         Integer purchaseApplySheetID = purchaseApplySheet.getPurchaseApplySheetID();
@@ -161,7 +160,7 @@ public class PurchaseApplySheetController {
 
     @PostMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
     //根据PurchaseApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
-    public int deletePurchaseApplySheetByPurchaseApplySheetID(int PurchaseApplySheetID)
+    public int deletePurchaseApplySheetByPurchaseApplySheetID(@RequestBody int PurchaseApplySheetID)
     {
         if (ObjectUtil.isNull(PurchaseApplySheetID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");

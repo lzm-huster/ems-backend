@@ -1,15 +1,17 @@
 package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.auth0.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ems.annotation.ResponseResult;
-import com.ems.business.model.entity.*;
-import com.ems.business.model.response.*;
-import com.ems.business.service.PurchaseApplyService;
+import com.ems.business.model.entity.ApprovalRecord;
+import com.ems.business.model.entity.BorrowApplyRecord;
+import com.ems.business.model.entity.DeviceScrapRecord;
+import com.ems.business.model.entity.PurchaseApplySheet;
+import com.ems.business.model.response.ApprovalRecordResponse;
+import com.ems.business.model.response.BorrowApplyRecordList2;
+import com.ems.business.model.response.DeviceScrapList;
+import com.ems.business.model.response.PurchaseApplySheetList2;
 import com.ems.business.service.impl.*;
-//import jdk.nashorn.internal.parser.Token;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.redis.constant.RedisConstant;
@@ -17,13 +19,13 @@ import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.UserRoleService;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhangwy
@@ -144,7 +146,7 @@ public class ApprovalController {
 
     @PostMapping("/purchaseApprovalRecord")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    public void purchaseApprovalRecord(String state, PurchaseApplySheet purchaseApplySheet, @RequestHeader(value = "token",required = false) String token) {
+    public void purchaseApprovalRecord(@RequestBody String state, PurchaseApplySheet purchaseApplySheet, @RequestHeader(value = "token",required = false) String token) {
         //获取用户信息
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -191,7 +193,7 @@ public class ApprovalController {
 
     @PostMapping("/borrowApprovalRecord")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    public void borrowApprovalRecord(String state, BorrowApplyRecord borrowApplyRecord, @RequestHeader(value = "token",required = false) String token) {
+    public void borrowApprovalRecord(@RequestBody String state, BorrowApplyRecord borrowApplyRecord, @RequestHeader(value = "token",required = false) String token) {
         //获取用户信息
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -236,7 +238,7 @@ public class ApprovalController {
 
     @PostMapping("/scrapApprovalRecord")   //报废只能由负责人申请，学生不能申请
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    public void scrapApprovalRecord(String state, DeviceScrapRecord deviceScrapRecord, @RequestHeader(value = "token",required = false) String token) {
+    public void scrapApprovalRecord(@RequestBody String state, DeviceScrapRecord deviceScrapRecord, @RequestHeader(value = "token",required = false) String token) {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         Integer userId = user.getUserID();

@@ -17,7 +17,6 @@ import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -137,7 +136,7 @@ public class BorrowApplyRecordController {
 
     @PostMapping("/insertBorrowApplyRecord")
     //插入一条设备借用申请单数据，成功返回1，失败返回0
-    public int insertBorrowApplyRecord(@NotNull BorrowApplyRecord borrowApplyRecord)
+    public int insertBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
     {
 
 
@@ -183,7 +182,7 @@ public class BorrowApplyRecordController {
 
     @PostMapping("/updateBorrowApplyRecord")
     //更新一条设备借用申请单数据，成功返回1，失败返回0
-    public int updateBorrowApplyRecord(BorrowApplyRecord borrowApplyRecord)
+    public int updateBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
     {
         //判断主键是否为空
         Integer borrowApplyID = borrowApplyRecord.getBorrowApplyID();
@@ -220,7 +219,7 @@ public class BorrowApplyRecordController {
     @Transactional
     @PostMapping("deleteBorrowApplyRecordByBorrowApplyID")
     //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
-    public int deleteBorrowApplyRecordByBorrowApplyRecordID(int BorrowApplyID)
+    public int deleteBorrowApplyRecordByBorrowApplyRecordID(@RequestBody int BorrowApplyID)
     {
         if (ObjectUtil.isNull(BorrowApplyID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");

@@ -8,7 +8,6 @@ import com.ems.business.mapper.BorrowApplySheetMapper;
 import com.ems.business.model.entity.BorrowApplySheet;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -58,7 +57,7 @@ public class BorrowApplySheetController {
 
     @PostMapping("/insertBorrowApplySheet")
     //插入一条借用设备信息返回受影响条数，成功返回1，失败返回0
-    public int insertBorrowApplySheet(@NotNull BorrowApplySheet borrowApplySheet)
+    public int insertBorrowApplySheet(@RequestBody BorrowApplySheet borrowApplySheet)
     {
         //提取传入实体信息
         Integer deviceID = borrowApplySheet.getDeviceID();
@@ -80,7 +79,7 @@ public class BorrowApplySheetController {
 
     @PostMapping("/updateBorrowApplySheet")
     //更新一条借用设备信息返回受影响条数，成功返回1，失败返回0
-    public int updateBorrowApplySheet(@NotNull BorrowApplySheet borrowApplySheet)
+    public int updateBorrowApplySheet(@RequestBody BorrowApplySheet borrowApplySheet)
     {
         //判断主键是否为空
         Integer borrowID = borrowApplySheet.getBorrowID();

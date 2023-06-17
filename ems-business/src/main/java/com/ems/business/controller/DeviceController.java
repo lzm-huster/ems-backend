@@ -21,7 +21,6 @@ import com.ems.usercenter.model.entity.User;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -174,7 +173,7 @@ public class DeviceController {
 
     @PostMapping("UpdateDevice")
     //更新一条Device数据,返回受影响条数
-    public int UpdateDevice(@NotNull Device device) {
+    public int UpdateDevice(@RequestBody Device device) {
         //提取前端传入实体的属性值
         Integer deviceID = device.getDeviceID();
 
@@ -207,7 +206,7 @@ public class DeviceController {
 
     @PostMapping("deleteDeviceByDeviceID")
     //根据DeviceID删除一条Device数据，成功返回1，失败返回0
-    public int deleteDeviceByDeviceID(int DeviceID) {
+    public int deleteDeviceByDeviceID(@RequestBody int DeviceID) {
         if (ObjectUtil.isNull(DeviceID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入实体主键DeviceID为空");
         }

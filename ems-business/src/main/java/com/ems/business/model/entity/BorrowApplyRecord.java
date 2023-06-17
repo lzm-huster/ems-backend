@@ -68,6 +68,7 @@ public class BorrowApplyRecord implements Serializable {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 
+
     /**
      * 更新时间
      */

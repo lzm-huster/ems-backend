@@ -8,10 +8,7 @@ import com.ems.business.model.entity.PurchaseApply;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -29,7 +26,7 @@ public class PurchaseApplyController {
 
     @PostMapping("/insertPurchaseApply")
     //插入一条采购设备数据,返回受影响行数，0表示不成功，1表示成功
-    public int insertPurchaseApply(PurchaseApply purchaseApply)
+    public int insertPurchaseApply(@RequestBody PurchaseApply purchaseApply)
     {
 
         //提取传入实体的数据
@@ -54,7 +51,7 @@ public class PurchaseApplyController {
 
     @PostMapping("/updatePurchaseApply")
     //更新一条采购设备数据，返回受影响函数，0表示不成功，1表示成功
-    public int updatePurchaseApply(PurchaseApply purchaseApply)
+    public int updatePurchaseApply(@RequestBody PurchaseApply purchaseApply)
     {
         //判断主键是否为空
         Integer purchaseApplyID = purchaseApply.getPurchaseApplyID();
