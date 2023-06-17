@@ -34,8 +34,8 @@ public interface DeviceMaintenanceRecordMapper extends BaseMapper<DeviceMaintena
     @Select("select d.AssetNumber, m.MaintenanceID, m.DeviceID, m.MaintenanceTime, m.MaintenanceContent, m.remark from Device d inner join DeviceMaintenanceRecord m on d.DeviceID = m.DeviceID where `MaintenanceID` = #{MaintenanceID} and m.IsDeleted=0;")
     List<DeviceMaintenanceRecordResponse> selectById(Integer MaintenanceID);
     //根据MaintenanceID删除设备保养记录，成功返回1，失败返回0
-    @Select("update 'DeviceMaintenanceRecord' set 'IsDeleted' = 1 " +
-            "where 'MaintenanceID' = #{MaintenanceID} and DeviceMaintenanceRecord.IsDeleted=0;")
+    @Select("update DeviceMaintenanceRecord set IsDeleted = 1 " +
+            "where MaintenanceID = #{MaintenanceID} and IsDeleted=0;")
     public Integer deleteDeviceMaintenanceRecordByMaintenanceID(int MaintenanceID);
 }
 
