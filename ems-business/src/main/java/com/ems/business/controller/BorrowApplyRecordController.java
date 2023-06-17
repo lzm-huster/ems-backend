@@ -137,7 +137,7 @@ public class BorrowApplyRecordController {
 
     @PostMapping("/insertBorrowApplyRecord")
     //插入一条设备借用申请单数据，成功返回1，失败返回0
-    public int insertBorrowApplyRecord(@NotNull BorrowApplyRecord borrowApplyRecord)
+    public int insertBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
     {
 
 
@@ -183,7 +183,7 @@ public class BorrowApplyRecordController {
 
     @PostMapping("/updateBorrowApplyRecord")
     //更新一条设备借用申请单数据，成功返回1，失败返回0
-    public int updateBorrowApplyRecord(BorrowApplyRecord borrowApplyRecord)
+    public int updateBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
     {
         //判断主键是否为空
         Integer borrowApplyID = borrowApplyRecord.getBorrowApplyID();
