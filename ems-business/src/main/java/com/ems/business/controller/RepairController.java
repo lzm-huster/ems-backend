@@ -187,36 +187,23 @@ public class RepairController {
     @Transactional
     @PostMapping("/updateDeviceRepairRecord")
     //更新维修记录
-    public int updateRepairRecord(@RequestBody DeviceRepairUpdateListReq deviceRepairUpdateListReq){
+    public boolean updateRepairRecord(@RequestBody DeviceRepairUpdateListReq deviceRepairUpdateListReq){
         //将request的数据转换为entity中的格式
         DeviceRepairRecord deviceRepairRecord=new DeviceRepairRecord();
         BeanUtils.copyProperties(deviceRepairUpdateListReq,deviceRepairRecord);
 
         if(ObjectUtil.isEmpty(deviceRepairRecord.getRepairID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
-        else {
-            //将数据更新进表中
-            UpdateWrapper<DeviceRepairRecord> userUpdateWrapper = new UpdateWrapper<>();
-            userUpdateWrapper.eq("RepairID", deviceRepairRecord.getRepairID());
-            boolean state = deviceRepairRecordService.update(deviceRepairRecord, userUpdateWrapper);
 
-            if (state)
-            {
-                if(deviceRepairRecord.getRemark().contains("维修完成"))
-                {
-                    Device device = new Device();
-                    device.setDeviceID(deviceRepairUpdateListReq.getDeviceID());
-                    device.setDeviceState("正常");
+        //将数据更新进表中
+        UpdateWrapper<DeviceRepairRecord> userUpdateWrapper = new UpdateWrapper<>();
+        userUpdateWrapper.eq("RepairID", deviceRepairRecord.getRepairID());
+        boolean state = deviceRepairRecordService.update(deviceRepairRecord, userUpdateWrapper);
 
-                    boolean update = deviceService.updateById(device);
-                    if (!update){
-                        throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新设备状态失败");
-                    }
-                }
-                return 1;
-            }
-            else
-                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
+        if (!state)
+        {
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
         }
+        return true;
     }
 
     @PostMapping("/deleteDeviceRepairRecord")

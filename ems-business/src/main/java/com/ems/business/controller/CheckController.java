@@ -215,34 +215,43 @@ public class CheckController {
         return true;
     }
 
+    @Transactional
     @PostMapping("/updateDeviceCheckRecord")
     //更新报废记录
-    public int updateCheckRecord(@NotNull DeviceCheckUpdateListReq deviceCheckUpdateListReq, @RequestPart("files") MultipartFile[] files){
+    public boolean updateCheckRecord(@NotNull DeviceCheckUpdateListReq deviceCheckUpdateListReq, @RequestPart("files") MultipartFile[] files){
         //将request的数据转换为数据表中的格式
-
-        DeviceCheckRecord deviceCheckRecord=new DeviceCheckRecord();
+        Integer checkID = deviceCheckUpdateListReq.getCheckID();
+        Integer deviceID = deviceCheckUpdateListReq.getDeviceID();
+        String checker = deviceCheckUpdateListReq.getChecker();
+        String deviceState = deviceCheckUpdateListReq.getDeviceState();
+        Date checkTime = deviceCheckUpdateListReq.getCheckTime();
+        if (ObjectUtil.isNull(checkID)|| ObjectUtil.isNull(deviceID)|| StringUtils.isBlank(checker)||StringUtils.isBlank(deviceState)||ObjectUtil.isNull(checkTime)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分参数为空");
+        }
+        String pathStr = null;
+        if (ObjectUtil.isNotNull(files) && files.length > 0){
+            List<String> pathList = cosService.batchUpload(files, checkPrefix);
+            if (ObjectUtil.isNull(pathList)) {
+                throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
+            }
+            pathStr = JSONUtil.toJsonStr(pathList);
+        }
+        Device deviceServiceById = deviceService.getById(deviceID);
+        if (ObjectUtil.isNull(deviceServiceById)){
+            throw new BusinessException(ErrorCode.NOT_FOUND_ERROR,"查找设备失败");
+        }
+        DeviceCheckRecord deviceCheckRecord = deviceCheckRecordService.getById(checkID);
+        if (ObjectUtil.isNull(deviceCheckRecord)){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"该记录不存在");
+        }
         BeanUtils.copyProperties(deviceCheckUpdateListReq,deviceCheckRecord);
-        List<String> pathList = cosService.batchUpload(files, checkPrefix);
-        if (ObjectUtil.isNull(pathList)) {
-            throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");
-        }
-        String pathStr = JSONUtil.toJsonStr(pathList);
         deviceCheckRecord.setCheckImages(pathStr);
-/*        String path = cosService.uploadFile(deviceCheckListreq.getCheckImages(),"Check");
-        deviceCheckRecord.setCheckImages(path);*/
 
-        if(ObjectUtil.isEmpty(deviceCheckUpdateListReq.getCheckID())) throw new BusinessException(ErrorCode.PARAMS_ERROR,"重要数据缺失");
-        else {
-            //将数据更新进表中
-            UpdateWrapper<DeviceCheckRecord> userUpdateWrapper = new UpdateWrapper<>();
-            userUpdateWrapper.eq("CheckID", deviceCheckRecord.getCheckID());
-            int state = deviceCheckRecordMapper.update(deviceCheckRecord, userUpdateWrapper);
-
-            if (state == 1 )
-                return 1;
-            else
-                throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新操作失败");
+        boolean update = deviceCheckRecordService.updateById(deviceCheckRecord);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新核查记录失败");
         }
+        return true;
     }
 
 
