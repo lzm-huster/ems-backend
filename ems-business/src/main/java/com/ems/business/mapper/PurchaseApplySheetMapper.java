@@ -38,7 +38,7 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
-            "inner join User u2 on ps.PurchaseApplicantID = u2.UserID"+
+            "inner join User u2 on ps.PurchaseApplicantID = u2.UserID "+
             "where ps.IsDeleted=0;\n")
     public List<PurchaseApplySheetList> getAllPurchaseApplySheetList();
 

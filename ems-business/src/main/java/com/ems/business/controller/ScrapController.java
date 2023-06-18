@@ -174,7 +174,7 @@ public class ScrapController {
     })
     @PostMapping("/insertDeviceScarpRecord")
     //插入报废记录
-    public boolean insertDeviceScarpRecord(@RequestParam DeviceScrapListInsertReq deviceScrapListreq, @RequestPart(value = "files",required = false) MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
+    public boolean insertDeviceScarpRecord( DeviceScrapListInsertReq deviceScrapListreq, @RequestPart(value = "files",required = false) MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
         Integer deviceID = deviceScrapListreq.getDeviceID();
         String deviceName = deviceScrapListreq.getDeviceName();
         String scrapPerson = deviceScrapListreq.getScrapPerson();
@@ -183,7 +183,7 @@ public class ScrapController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"部分参数为空");
         }
         String pathStr = null;
-        if (files.length>0){
+        if (ObjectUtil.isNotNull(files) && files.length > 0){
             List<String> pathList = cosService.batchUpload(files, scrapPrefix);
             if (ObjectUtil.isNull(pathList)) {
                 throw new BusinessException(ErrorCode.OPERATION_ERROR, "文件上传失败");

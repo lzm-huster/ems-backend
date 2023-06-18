@@ -93,7 +93,7 @@ public class PurchaseApplySheetController {
         purchaseApplySheet.setPurchaseApplyDate(new Date());
         purchaseApplySheet.setPurchaseApplyState("未审批");
 
-        if ( StringUtils.isBlank(purchaseApplyDescription)||ObjectUtil.isNull(purchaseApplicantID)) {
+        if (ObjectUtil.isNull(purchaseApplicantID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
         }
 
@@ -103,7 +103,7 @@ public class PurchaseApplySheetController {
         if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
         {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "学生身份导师数据不能为空");
-        }else if(ObjectUtil.isNull(purchaseApplicantID)) {
+        }else if(ObjectUtil.isNull(purchaseApplySheet.getApproveTutorID())) {
             purchaseApplySheet.setApproveTutorID(purchaseApplicantID);
         }
 
