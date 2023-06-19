@@ -34,7 +34,7 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
 
     // 管理员：查询所有相关采购申请单数据
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName Applicant,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName TutorName\n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName deviceList, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName approveTutorName\n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +

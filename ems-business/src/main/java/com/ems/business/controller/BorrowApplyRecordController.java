@@ -2,7 +2,6 @@ package com.ems.business.controller;
 
 
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.BorrowApplyRecordMapper;
@@ -163,7 +162,7 @@ public class BorrowApplyRecordController {
         if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
         {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "学生身份导师数据不能为空");
-        }else if(ObjectUtil.isNull(borrowApplyRecord.getApproveTutorID()))  {
+        }else if(ObjectUtil.isNull(approveTutorID)||approveTutorID==0)  {
             borrowApplyRecord.setApproveTutorID(borrowerID);
         }
 
