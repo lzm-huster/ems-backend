@@ -2,6 +2,7 @@ package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.BorrowApplyRecordMapper;
 import com.ems.business.mapper.BorrowApplySheetMapper;
@@ -25,7 +26,7 @@ public class BorrowApplySheetController {
     private  BorrowApplySheetMapper borrowApplySheetMapper;
 
 
-
+    @AuthCheck(mustAuth = {"borrow:query"})
     @GetMapping("/getBorrowApplySheets")
     //返回查看设备采购申请单对应设备详情数据
     public List<BorrowApplySheet> getBorrowApplySheets(int BorrowApplyID)
@@ -40,8 +41,9 @@ public class BorrowApplySheetController {
         return borrowApplySheets;
     }
 
-    @GetMapping("/getBorrowDescription")
 
+    @AuthCheck(mustAuth = {"borrow:query"})
+    @GetMapping("/getBorrowDescription")
     //根据BorrowApplyID查看设备采购申请单详情数据(一条申请单数据)
     public String getBorrowDescription(int BorrowApplyID)
     {
@@ -55,6 +57,7 @@ public class BorrowApplySheetController {
         return description;
     }
 
+    @AuthCheck(mustAuth = {"borrow:add"})
     @PostMapping("/insertBorrowApplySheet")
     //插入一条借用设备信息返回受影响条数，成功返回1，失败返回0
     public int insertBorrowApplySheet(@RequestBody BorrowApplySheet borrowApplySheet)
@@ -77,6 +80,7 @@ public class BorrowApplySheetController {
 
     }
 
+    @AuthCheck(mustAuth = {"borrow:update"})
     @PostMapping("/updateBorrowApplySheet")
     //更新一条借用设备信息返回受影响条数，成功返回1，失败返回0
     public int updateBorrowApplySheet(@RequestBody BorrowApplySheet borrowApplySheet)

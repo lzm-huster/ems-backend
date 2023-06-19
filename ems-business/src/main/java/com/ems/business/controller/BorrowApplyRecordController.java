@@ -46,7 +46,7 @@ public class BorrowApplyRecordController {
     @Autowired
     private ApprovalRecordServiceImpl approvalRecordServiceImpl;
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"borrow:list"})
     @GetMapping("/getBorrowApplyRecordList")
     //返回设备借用申请单列表数据
     public List<BorrowApplyRecordList> getBorrowApplyRecordList(@RequestHeader(value = "token",required = false) String token)
@@ -71,7 +71,7 @@ public class BorrowApplyRecordController {
         return borrowApplyRecordLists;
     }
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"borrow:query"})
     @GetMapping("/getBorrowDeviceNumber")
     //返回设备借用列表借用中的设备数量
     public int getBorrowDeviceNumber(@RequestHeader(value = "token",required = false) String token)
@@ -94,7 +94,7 @@ public class BorrowApplyRecordController {
         return borrowNumber;
     }
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"borrow:query"})
     @GetMapping("/getReturnDeviceNumber")
     //返回设备借用列表已归还设备数量
     public int getReturnDeviceNumber(@RequestHeader(value = "token",required = false) String token)
@@ -120,7 +120,7 @@ public class BorrowApplyRecordController {
         return returnNumber;
     }
 
-
+    @AuthCheck(mustAuth = {"borrow:query"})
     @GetMapping("/getBorrowApplyRecord")
     //返回查看设备借用申请单对应设备详情数据
     public BorrowApplyRecord getBorrowApplyRecord(int BorrowApplyID)
@@ -136,6 +136,7 @@ public class BorrowApplyRecordController {
     }
 
     @Transactional
+    @AuthCheck(mustAuth = {"borrow:add"})
     @PostMapping("/insertBorrowApplyRecord")
     //插入一条设备借用申请单数据，成功返回1，失败返回0
     public int insertBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
@@ -183,7 +184,7 @@ public class BorrowApplyRecordController {
 
     }
 
-
+    @AuthCheck(mustAuth = {"borrow:update"})
     @PostMapping("/updateBorrowApplyRecord")
     //更新一条设备借用申请单数据，成功返回1，失败返回0
     public int updateBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
@@ -204,7 +205,7 @@ public class BorrowApplyRecordController {
         return Number;
     }
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"borrow:add"})
     @GetMapping("getLatestBorrowApplyRecordID")
     //在添加记录时获取刚添加记录的DeviceID
     public int getLatestBorrowApplyRecordID(@RequestHeader(value = "token",required = false) String token)
@@ -221,6 +222,7 @@ public class BorrowApplyRecordController {
     }
 
     @Transactional
+    @AuthCheck(mustAuth = {"borrow:delete"})
     @PostMapping("deleteBorrowApplyRecordByBorrowApplyID")
     //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
     public int deleteBorrowApplyRecordByBorrowApplyRecordID(@RequestBody int BorrowApplyID)

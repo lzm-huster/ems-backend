@@ -42,7 +42,7 @@ public class PurchaseApplySheetController {
     @Autowired
     private ApprovalRecordServiceImpl approvalRecordServiceImpl;
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"purchase:list"})
     @GetMapping("/getPurchaseApplySheetList")
     //返回设备采购申请单列表数据
     public List<PurchaseApplySheetList> getPurchaseApplySheetList(@RequestHeader(value = "token",required = false) String token)
@@ -65,6 +65,7 @@ public class PurchaseApplySheetController {
         return purchaseApplySheetLists;
     }
 
+    @AuthCheck(mustAuth = {"purchase:query"})
     @GetMapping("/getPurchaseApplySheetByID")
     //  根据采购申请单查询申请单详情
     public PurchaseApplySheet getPurchaseApplySheetByID(int PurchaseApplySheetID)
@@ -79,6 +80,7 @@ public class PurchaseApplySheetController {
         return purchaseApplySheet;
     }
 
+    @AuthCheck(mustAuth = {"purchase:add"})
     @PostMapping("/insertPurchaseApplySheet")
     //插入一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
     public int insertPurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
@@ -121,7 +123,7 @@ public class PurchaseApplySheetController {
 
     }
 
-
+    @AuthCheck(mustAuth = {"purchase:update"})
     @PostMapping("/updatePurchaseApplySheet")
     //更新一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
     public int updatePurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
@@ -142,7 +144,7 @@ public class PurchaseApplySheetController {
         return Number;
     }
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"purchase:add"})
     @GetMapping("getLatestPurchaseApplySheetID")
     //在添加记录时获取刚添加记录的DeviceID
     public int getLatestPurchaseApplySheetID(@RequestHeader(value = "token",required = false) String token)
@@ -157,6 +159,7 @@ public class PurchaseApplySheetController {
         return Number;
     }
 
+    @AuthCheck(mustAuth = {"purchase:delete"})
     @PostMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
     //根据PurchaseApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
     public int deletePurchaseApplySheetByPurchaseApplySheetID(@RequestBody int PurchaseApplySheetID)
