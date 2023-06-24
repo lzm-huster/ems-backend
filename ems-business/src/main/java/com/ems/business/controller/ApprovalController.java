@@ -2,6 +2,8 @@ package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.model.entity.ApprovalRecord;
 import com.ems.business.model.entity.BorrowApplyRecord;
@@ -63,10 +65,6 @@ public class ApprovalController {
     /*
      1、根据返回需要审批的申请单。
                        参数:
-                           state 采购申请单审批状态：“未审批、导师已审批、管理员已审批、申请通过、采购中、已入库、驳回”
-                           state 借用申请单审批状态：“未审批、导师已审批、申请通过、借用中、已归还、驳回”
-                           state 报废申请单审批状态：“未完成、已完成、驳回”
-
                            state 采购申请单审批状态：“待导师审批、待管理员审批、待院领导审批、申请通过、采购中、已入库、驳回”
                            state 借用申请单审批状态：“待导师审批、待管理员审批、申请通过、借用中、已归还、驳回”
                            state 报废申请单审批状态：“未完成、已完成、驳回”
