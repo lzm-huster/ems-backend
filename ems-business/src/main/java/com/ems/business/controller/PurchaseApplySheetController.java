@@ -17,6 +17,7 @@ import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -92,7 +93,6 @@ public class PurchaseApplySheetController {
         Integer purchaseApplicantID = purchaseApplySheet.getPurchaseApplicantID();
         //部分数据系统赋值
         purchaseApplySheet.setPurchaseApplyDate(new Date());
-        purchaseApplySheet.setPurchaseApplyState("未审批");
 
         if (ObjectUtil.isNull(purchaseApplicantID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
@@ -107,6 +107,15 @@ public class PurchaseApplySheetController {
         }else if(ObjectUtil.isNull(approveTutorID)||approveTutorID==0) {
             purchaseApplySheet.setApproveTutorID(purchaseApplicantID);
         }
+
+        //学生申请提交后状态为”待导师审批“，教职工为”待管理员审批“
+        if(RoleName.contains("Student"))
+        {
+            purchaseApplySheet.setPurchaseApplyState("待导师审批");
+        }else{
+            purchaseApplySheet.setPurchaseApplyState("待管理员审批");
+        }
+
 
         int Number=0;
         Number= purchaseApplySheetMapper.insert(purchaseApplySheet);
@@ -159,6 +168,7 @@ public class PurchaseApplySheetController {
         return Number;
     }
 
+    @Transactional
     @AuthCheck(mustAuth = {"purchase:delete"})
     @PostMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
     //根据PurchaseApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
@@ -177,5 +187,22 @@ public class PurchaseApplySheetController {
         return Number;
 
     }
+
+    @AuthCheck(mustAuth = {"purchase:update"})
+    @PostMapping("updateStateByApplySheetID")
+    //根据PurchaseApplySheetID进行采购申请单设备入库操作，成功返回1，失败返回0
+    public int updateStateByApplySheetID(int PurchaseApplySheetID)
+    {
+        if (ObjectUtil.isNull(PurchaseApplySheetID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
+        int Number=0;
+        Number= purchaseApplySheetMapper.updateStateByApplySheetID("已入库",PurchaseApplySheetID);
+        return Number;
+
+    }
+
+
 
 }

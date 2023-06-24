@@ -26,6 +26,13 @@ public interface BorrowApplySheetMapper extends BaseMapper<BorrowApplySheet> {
     @Update("update `BorrowApplySheet` set `IsDeleted`=1 where `BorrowApplyID`=#{BorrowApplyID};")
     public Integer deleteBorrowApplySheetByBorrowApplyID(int BorrowApplyID);
 
+
+    //归还设备：根据传入的BorrowApplyID修改设备的状态
+    @Update("update `Device` set `DeviceState`=#{DeviceState}\n" +
+            " where `DeviceID` in (select DeviceID from BorrowApplySheet where BorrowApplyID=#{BorrowApplyID});")
+    public Integer updateDeviceStateByBorrowApplyID(String DeviceState,int BorrowApplyID);
+
+
 }
 
 

@@ -64,6 +64,11 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
     @Select("select PurchaseApplySheetID from `PurchaseApplySheet` where PurchaseApplicantID=#{PurchaseApplicantID} order by UpdateTime desc limit 1;")
     public Integer getLatestPurchaseApplySheetID(int PurchaseApplicantID);
 
+    //根据PurchaseApplySheetID更改记录的状态
+    @Update("update PurchaseApplySheet set PurchaseApplyState=#{PurchaseApplyState} where PurchaseApplySheetID=#{PurchaseApplySheetID};")
+    public Integer updateStateByApplySheetID(String PurchaseApplyState,Integer PurchaseApplySheetID);
+
+
 //    @Select("select p.PurchaseApplicantID from PurchaseApplySheet where p.PurchaseApplyState='未审批'")
 //    List<String> getIdByState(String State);
 
