@@ -24,6 +24,8 @@ public interface RoleMapper extends BaseMapper<Role> {
     List<String> getRoleListByUserId(Integer userId);
     @Select("select r.RoleID,r.RoleName,r.RoleDescription from Role r")
     List<RoleSimpleRes> getRoleList();
+
+
 }
 
 
