@@ -276,8 +276,6 @@ public class BorrowApplyRecordController {
         int action2=0;
         action2=borrowApplySheetMapper.updateDeviceStateByBorrowApplyID("外借",BorrowApplyID);
 
-        //统计借用设备的费用
-        int action3=0;
 
         if(action1>0 && action2>=0)
         {
@@ -291,8 +289,8 @@ public class BorrowApplyRecordController {
     @Transactional
     @AuthCheck(mustAuth = {"borrow:update"})
     @PostMapping("updateReturnRecordAndDeviceState")
-    //归还设备：根据传入的BorrowApplyID修改设备的状态,操作成功返回1，失败返回0
-    public int updateReturnRecordAndDeviceState(int BorrowApplyID)
+    //归还设备：根据传入的BorrowApplyID和token修改设备的状态,操作成功返回1，失败返回0
+    public int updateReturnRecordAndDeviceState(@RequestHeader(value = "token",required = false) String token,int BorrowApplyID)
     {
         if (ObjectUtil.isNull(BorrowApplyID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入BorrowApplyID为空");
@@ -307,11 +305,26 @@ public class BorrowApplyRecordController {
         //写入目标借用申请单涉及设备的归还时间
         int action3=0;
         action3=borrowApplySheetMapper.updateActualReturnTimeByBorrowApplyID(BorrowApplyID);
-        //写入目标借用申请单涉及设备的借用费用
-        int action4=0;
-        action4=borrowApplyRecordMapper.updateBorrowFeeByBorrowApplyID(BorrowApplyID);
 
-        if(action1>0 && action2>=0&&action3>=0&&action4>=0)
+         //获取学生身份
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
+        String RoleName=null;
+        RoleName=userMapper.getRoleNameByUserID(UserID);
+
+        //写入目标借用申请单涉及设备的借用费用,院外计费，院内为0
+        int action4=0;
+        if(RoleName.contains("external"))
+        {
+            action4=borrowApplyRecordMapper.updateOutBorrowFeeByBorrowApplyID(BorrowApplyID);
+
+        } else {
+            action4=borrowApplyRecordMapper.updateInBorrowFeeByBorrowApplyID(BorrowApplyID);
+        }
+
+        if(action1>0 && action2>=0&&action3>=0 && action4>=0)
         {
             return 1;
         }else {

@@ -135,7 +135,7 @@ public class PurchaseApplySheetController {
     @AuthCheck(mustAuth = {"purchase:update"})
     @PostMapping("/updatePurchaseApplySheet")
     //更新一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
-    public int updatePurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
+    public int updatePurchaseApplySheet( PurchaseApplySheet purchaseApplySheet)
     {
         //判断主键是否为空
         Integer purchaseApplySheetID = purchaseApplySheet.getPurchaseApplySheetID();
