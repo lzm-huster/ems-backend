@@ -89,6 +89,12 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
             "where BorrowApplyID=#{BorrowApplyID};")
     public Integer updateBorrowApplyStateByBorrowApplyID(String BorrowApplyState, Integer BorrowApplyID);
 
+    //传入BorrowApplyID,设备归还时统计设备借用计费
+    @Update("update BorrowApplySheet as b join Device as d on b.DeviceID = d.DeviceID " +
+            "set b.BorrowFee = datediff(ActualReturnTime,b.CreateTime)*d.BorrowRate*UnitPrice " +
+            "where b.BorrowApplyID = #{BorrowApplyID};")
+    public Integer updateBorrowFeeByBorrowApplyID(Integer BorrowApplyID);
+
 
     //按照用户类型筛选借用申请单的列表——教师（联表：BorrowApplyRecord、UserRole）
     @Select("select p from BorrowApplyRecord p"+
