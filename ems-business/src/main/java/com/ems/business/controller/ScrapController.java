@@ -97,9 +97,9 @@ public class ScrapController {
     }
 
 
-    @GetMapping("/getNumCurrentScarp")
+    @GetMapping("/getNumCurrentScrap")
     //获取“当前用户”报废设备记录的数量
-    public int num_current_scarp(@RequestHeader(value = "token",required = false) String token){
+    public int num_current_scrap(@RequestHeader(value = "token",required = false) String token){
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         int userID =user.getUserID();
@@ -172,9 +172,9 @@ public class ScrapController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "files", paramType="form", value = "文件", dataType="file", collectionFormat="array"),
     })
-    @PostMapping("/insertDeviceScarpRecord")
+    @PostMapping("/insertDeviceScrapRecord")
     //插入报废记录
-    public boolean insertDeviceScarpRecord( DeviceScrapListInsertReq deviceScrapListreq, @RequestPart(value = "files",required = false) MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
+    public boolean insertDeviceScrapRecord( DeviceScrapListInsertReq deviceScrapListreq, @RequestPart(value = "files",required = false) MultipartFile[] files, @RequestHeader(value = "token",required = false) String token){
         Integer deviceID = deviceScrapListreq.getDeviceID();
         String deviceName = deviceScrapListreq.getDeviceName();
         String scrapPerson = deviceScrapListreq.getScrapPerson();
@@ -217,7 +217,7 @@ public class ScrapController {
         }else {
             DeviceScrapRecord deviceScrapRecord=new DeviceScrapRecord();
             BeanUtils.copyProperties(deviceScrapListreq,deviceScrapRecord);
-            deviceScrapRecord.setDeviceState("正常");
+            deviceScrapRecord.setDeviceState("已报废");
             deviceScrapRecord.setScrapImages(pathStr);
             boolean save = deviceScrapRecordService.save(deviceScrapRecord);
             if (!save){
@@ -236,9 +236,9 @@ public class ScrapController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "files", paramType="form", value = "文件", dataType="file", collectionFormat="array"),
     })
-    @PostMapping("/updateDeviceScarpRecord")
+    @PostMapping("/updateDeviceScrapRecord")
     //更新报废记录
-    public int updateScarpRecord(@NotNull DeviceScrapListUpdateReq deviceScrapListupdatereq,@RequestPart("files") MultipartFile[] files){
+    public int updateScrapRecord(@NotNull DeviceScrapListUpdateReq deviceScrapListupdatereq,@RequestPart("files") MultipartFile[] files){
           //将request的数据转换为数据表中的格式
 //        String path = cosService.uploadFile(deviceScrapListreq.getScrapImages(),"Scarp");
 //       deviceScrapRecord.setScrapImages(path);
