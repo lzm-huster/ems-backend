@@ -20,6 +20,7 @@ import com.ems.usercenter.service.RoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -93,6 +94,7 @@ public class RoleController {
         roleDetailRes.setPermissionSimpleResListList(permissionListByRoleId);
         return roleDetailRes;
     }
+    @Transactional
     @PostMapping("/update")
     public boolean roleUpdate(@RequestBody RoleUpdateReq roleUpdateReq){
         Integer roleId = roleUpdateReq.getRoleId();
@@ -104,6 +106,12 @@ public class RoleController {
         boolean update = roleService.updateById(role);
         if (!update){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"角色信息更新失败");
+        }
+        QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("RoleID",roleId);
+        boolean remove = rolePermissionService.remove(queryWrapper);
+        if (!remove){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新权限信息失败");
         }
         List<Integer> permissionIdList = roleUpdateReq.getPermissionIdList();
         List<RolePermission> collect = permissionIdList.stream().map(p -> {
