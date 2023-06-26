@@ -2,6 +2,8 @@ package com.ems.usercenter.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.usercenter.model.entity.RolePermission;
+import com.ems.usercenter.model.entity.UserRole;
+import com.github.jeffreyning.mybatisplus.base.MppBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -11,7 +13,7 @@ import org.apache.ibatis.annotations.Mapper;
 * @Entity generator.domain.RolePermission
 */
 @Mapper
-public interface RolePermissionMapper extends BaseMapper<RolePermission> {
+public interface RolePermissionMapper extends MppBaseMapper<RolePermission> {
 
 }
 

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ems.usercenter.mapper.RolePermissionMapper;
 import com.ems.usercenter.model.entity.RolePermission;
 import com.ems.usercenter.service.RolePermissionService;
+import com.github.jeffreyning.mybatisplus.service.MppServiceImpl;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,7 +14,7 @@ import org.springframework.stereotype.Service;
 * @createDate 2023-04-24 09:03:00
 */
 @Service
-public class RolePermissionServiceImpl extends ServiceImpl<RolePermissionMapper, RolePermission>
+public class RolePermissionServiceImpl extends MppServiceImpl<RolePermissionMapper, RolePermission>
     implements RolePermissionService {
 
 }
