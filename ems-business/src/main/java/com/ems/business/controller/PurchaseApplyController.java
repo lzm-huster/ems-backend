@@ -2,6 +2,7 @@ package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
+import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.PurchaseApplyMapper;
 import com.ems.business.model.entity.PurchaseApply;
@@ -23,7 +24,7 @@ public class PurchaseApplyController {
     @Autowired
     private PurchaseApplyMapper purchaseApplyMapper;
 
-
+    @AuthCheck(mustAuth = {"purchase:add"})
     @PostMapping("/insertPurchaseApply")
     //插入一条采购设备数据,返回受影响行数，0表示不成功，1表示成功
     public int insertPurchaseApply(@RequestBody PurchaseApply purchaseApply)
@@ -49,6 +50,7 @@ public class PurchaseApplyController {
 
     }
 
+    @AuthCheck(mustAuth = {"purchase:update"})
     @PostMapping("/updatePurchaseApply")
     //更新一条采购设备数据，返回受影响函数，0表示不成功，1表示成功
     public int updatePurchaseApply(@RequestBody PurchaseApply purchaseApply)
@@ -69,6 +71,7 @@ public class PurchaseApplyController {
         return Number;
     }
 
+    @AuthCheck(mustAuth = {"purchase:query"})
     @GetMapping("/getPurchaseApplyDetailByPurchaseApplySheetID")
     //根据PurchaseApplySheetID查看PurchaseApply详情
     public List<PurchaseApply> getPurchaseApplyDetailByPurchaseApplySheetID(int PurchaseApplySheetID)

@@ -2,7 +2,6 @@ package com.ems.business.controller;
 
 
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.PurchaseApplyMapper;
@@ -17,8 +16,8 @@ import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -44,7 +43,7 @@ public class PurchaseApplySheetController {
     @Autowired
     private ApprovalRecordServiceImpl approvalRecordServiceImpl;
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"purchase:list"})
     @GetMapping("/getPurchaseApplySheetList")
     //返回设备采购申请单列表数据
     public List<PurchaseApplySheetList> getPurchaseApplySheetList(@RequestHeader(value = "token",required = false) String token)
@@ -67,6 +66,7 @@ public class PurchaseApplySheetController {
         return purchaseApplySheetLists;
     }
 
+    @AuthCheck(mustAuth = {"purchase:query"})
     @GetMapping("/getPurchaseApplySheetByID")
     //  根据采购申请单查询申请单详情
     public PurchaseApplySheet getPurchaseApplySheetByID(int PurchaseApplySheetID)
@@ -81,9 +81,10 @@ public class PurchaseApplySheetController {
         return purchaseApplySheet;
     }
 
+    @AuthCheck(mustAuth = {"purchase:add"})
     @PostMapping("/insertPurchaseApplySheet")
     //插入一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
-    public int insertPurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
+    public int insertPurchaseApplySheet( PurchaseApplySheet purchaseApplySheet)
     {
 
         //提取传入实体部分数据
@@ -92,7 +93,6 @@ public class PurchaseApplySheetController {
         Integer purchaseApplicantID = purchaseApplySheet.getPurchaseApplicantID();
         //部分数据系统赋值
         purchaseApplySheet.setPurchaseApplyDate(new Date());
-        purchaseApplySheet.setPurchaseApplyState("未审批");
 
         if (ObjectUtil.isNull(purchaseApplicantID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "存在参数为空");
@@ -104,9 +104,18 @@ public class PurchaseApplySheetController {
         if(ObjectUtil.isNull(approveTutorID)&& RoleName.contains("Student"))
         {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "学生身份导师数据不能为空");
-        }else if(ObjectUtil.isNull(purchaseApplySheet.getApproveTutorID())) {
+        }else if(ObjectUtil.isNull(approveTutorID)||approveTutorID==0) {
             purchaseApplySheet.setApproveTutorID(purchaseApplicantID);
         }
+
+        //学生申请提交后状态为”待导师审批“，教职工为”待管理员审批“
+        if(RoleName.contains("Student"))
+        {
+            purchaseApplySheet.setPurchaseApplyState("待导师审批");
+        }else{
+            purchaseApplySheet.setPurchaseApplyState("待管理员审批");
+        }
+
 
         int Number=0;
         Number= purchaseApplySheetMapper.insert(purchaseApplySheet);
@@ -123,7 +132,7 @@ public class PurchaseApplySheetController {
 
     }
 
-
+    @AuthCheck(mustAuth = {"purchase:update"})
     @PostMapping("/updatePurchaseApplySheet")
     //更新一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
     public int updatePurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
@@ -144,7 +153,7 @@ public class PurchaseApplySheetController {
         return Number;
     }
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"purchase:add"})
     @GetMapping("getLatestPurchaseApplySheetID")
     //在添加记录时获取刚添加记录的DeviceID
     public int getLatestPurchaseApplySheetID(@RequestHeader(value = "token",required = false) String token)
@@ -159,9 +168,11 @@ public class PurchaseApplySheetController {
         return Number;
     }
 
+    @Transactional
+    @AuthCheck(mustAuth = {"purchase:delete"})
     @PostMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
     //根据PurchaseApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
-    public int deletePurchaseApplySheetByPurchaseApplySheetID(int PurchaseApplySheetID)
+    public int deletePurchaseApplySheetByPurchaseApplySheetID( int PurchaseApplySheetID)
     {
         if (ObjectUtil.isNull(PurchaseApplySheetID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
@@ -176,5 +187,22 @@ public class PurchaseApplySheetController {
         return Number;
 
     }
+
+    @AuthCheck(mustAuth = {"purchase:update"})
+    @PostMapping("updateStateByApplySheetID")
+    //根据PurchaseApplySheetID进行采购申请单设备入库操作，成功返回1，失败返回0
+    public int updateStateByApplySheetID(int PurchaseApplySheetID)
+    {
+        if (ObjectUtil.isNull(PurchaseApplySheetID)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
+        int Number=0;
+        Number= purchaseApplySheetMapper.updateStateByApplySheetID("已入库",PurchaseApplySheetID);
+        return Number;
+
+    }
+
+
 
 }

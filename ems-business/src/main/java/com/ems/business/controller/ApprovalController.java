@@ -1,15 +1,17 @@
 package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
-import com.auth0.jwt.JWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.ems.annotation.ResponseResult;
-import com.ems.business.model.entity.*;
-import com.ems.business.model.response.*;
-import com.ems.business.service.PurchaseApplyService;
+import com.ems.business.model.entity.ApprovalRecord;
+import com.ems.business.model.entity.BorrowApplyRecord;
+import com.ems.business.model.entity.DeviceScrapRecord;
+import com.ems.business.model.entity.PurchaseApplySheet;
+import com.ems.business.model.response.ApprovalRecordResponse;
+import com.ems.business.model.response.BorrowApplyRecordList2;
+import com.ems.business.model.response.DeviceScrapList;
+import com.ems.business.model.response.PurchaseApplySheetList2;
 import com.ems.business.service.impl.*;
-//import jdk.nashorn.internal.parser.Token;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
 import com.ems.redis.constant.RedisConstant;
@@ -17,13 +19,13 @@ import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.model.entity.User;
 import com.ems.usercenter.model.entity.UserRole;
 import com.ems.usercenter.service.UserRoleService;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author zhangwy
@@ -61,10 +63,6 @@ public class ApprovalController {
     /*
      1、根据返回需要审批的申请单。
                        参数:
-                           state 采购申请单审批状态：“未审批、导师已审批、管理员已审批、申请通过、采购中、已入库、驳回”
-                           state 借用申请单审批状态：“未审批、导师已审批、申请通过、借用中、已归还、驳回”
-                           state 报废申请单审批状态：“未完成、已完成、驳回”
-
                            state 采购申请单审批状态：“待导师审批、待管理员审批、待院领导审批、申请通过、采购中、已入库、驳回”
                            state 借用申请单审批状态：“待导师审批、待管理员审批、申请通过、借用中、已归还、驳回”
                            state 报废申请单审批状态：“未完成、已完成、驳回”

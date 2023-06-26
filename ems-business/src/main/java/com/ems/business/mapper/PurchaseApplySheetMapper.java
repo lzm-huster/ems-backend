@@ -34,7 +34,7 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
 
     // 管理员：查询所有相关采购申请单数据
     @Select("\n" +
-            "select ps.PurchaseApplySheetID, p.DeviceName, u2.UserName Applicant,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName TutorName\n" +
+            "select ps.PurchaseApplySheetID, p.DeviceName deviceList, u2.UserName ,ps.PurchaseApplyDate, ps.PurchaseApplyState,u1.UserName approveTutorName\n" +
             "from PurchaseApplySheet ps \n" +
             "inner join PurchaseApply p on ps.PurchaseApplySheetID = p.PurchaseApplySheetID \n" +
             "inner join User u1 on ps.ApproveTutorID = u1.UserID \n" +
@@ -63,6 +63,11 @@ public interface PurchaseApplySheetMapper extends BaseMapper<PurchaseApplySheet>
     //获取最近添加的数据的PurchaseApplySheetID
     @Select("select PurchaseApplySheetID from `PurchaseApplySheet` where PurchaseApplicantID=#{PurchaseApplicantID} order by UpdateTime desc limit 1;")
     public Integer getLatestPurchaseApplySheetID(int PurchaseApplicantID);
+
+    //根据PurchaseApplySheetID更改记录的状态
+    @Update("update PurchaseApplySheet set PurchaseApplyState=#{PurchaseApplyState} where PurchaseApplySheetID=#{PurchaseApplySheetID};")
+    public Integer updateStateByApplySheetID(String PurchaseApplyState,Integer PurchaseApplySheetID);
+
 
 //    @Select("select p.PurchaseApplicantID from PurchaseApplySheet where p.PurchaseApplyState='未审批'")
 //    List<String> getIdByState(String State);

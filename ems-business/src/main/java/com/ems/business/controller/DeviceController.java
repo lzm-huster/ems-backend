@@ -21,7 +21,6 @@ import com.ems.usercenter.model.entity.User;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,7 +47,7 @@ public class DeviceController {
     private CosService cosService;
     private static final String devicePrefix = "device";
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"device:list"})
     @GetMapping("/getDeviceList")
     //设备信息列表：管理员返回所有设备列表数据，其他用户返回公用设备数据
     public List<DeviceList> getDeviceList(@RequestHeader(value = "token", required = false) String token) {
@@ -70,7 +69,7 @@ public class DeviceController {
         return deviceLists;
     }
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"device:list"})
     @GetMapping("/getPersonDeviceList")
     //个人信息列表：返回个人名下设备信息列表
     public List<DeviceList> getPersonDeviceList(@RequestHeader(value = "token", required = false) String token) {
@@ -84,6 +83,7 @@ public class DeviceController {
         return deviceLists;
     }
 
+    @AuthCheck(mustAuth = {"device:list"})
     @GetMapping("/getPublicDeviceList")
     //返回公用设备信息列表
     public List<DeviceList> getPublicDeviceList() {
@@ -94,7 +94,7 @@ public class DeviceController {
         return deviceLists;
     }
 
-
+    @AuthCheck(mustAuth = {"device:query"})
     @GetMapping("getDeviceDetail")
     //根据DeviceID查询详细信息
     public Device getDeviceDetail(int DeviceID) {
@@ -108,6 +108,7 @@ public class DeviceController {
         return device;
     }
 
+    @AuthCheck(mustAuth = {"device:add"})
     @PostMapping("insertDevice")
     @ApiOperation(value = "插入设备信息",notes = "插入",consumes = "multipart/form-data",response = Object.class)
     @ApiImplicitParams({
@@ -132,7 +133,7 @@ public class DeviceController {
         String CategoryCode = device.getAssetNumber();
         //部分数据系统赋值
         device.setDeviceState("正常");
-        device.setBorrowRate(0.05);
+        device.setBorrowRate(0.001);
         Date date = new Date();
         device.setPurchaseDate(date);
         //预计五年后报废
@@ -172,9 +173,10 @@ public class DeviceController {
         return Number;
     }
 
+    @AuthCheck(mustAuth = {"device:update"})
     @PostMapping("UpdateDevice")
     //更新一条Device数据,返回受影响条数
-    public int UpdateDevice(@NotNull Device device) {
+    public int UpdateDevice(Device device) {
         //提取前端传入实体的属性值
         Integer deviceID = device.getDeviceID();
 
@@ -190,7 +192,7 @@ public class DeviceController {
         return Number;
     }
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"device:add"})
     @GetMapping("getLatestDeviceID")
     //在添加记录时获取刚添加记录的DeviceID
     public int getLatestDeviceID(@RequestHeader(value = "token", required = false) String token) {
@@ -205,9 +207,10 @@ public class DeviceController {
     }
 
 
+    @AuthCheck(mustAuth = {"device:delete"})
     @PostMapping("deleteDeviceByDeviceID")
     //根据DeviceID删除一条Device数据，成功返回1，失败返回0
-    public int deleteDeviceByDeviceID(int DeviceID) {
+    public int deleteDeviceByDeviceID( int DeviceID) {
         if (ObjectUtil.isNull(DeviceID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入实体主键DeviceID为空");
         }
@@ -218,7 +221,7 @@ public class DeviceController {
         return Number;
     }
 
-    @AuthCheck
+    @AuthCheck(mustAuth = {"device:query"})
     @GetMapping("getDeviceIDAndAssetNumber")
     //根据token返回ID与资产编号键值对,个人返回个人的，管理员返回所有的
     public List<Map<Integer, String>> getDeviceIDAndAssetNumber(@RequestHeader(value = "token", required = false) String token) {
@@ -241,6 +244,7 @@ public class DeviceController {
         return mapList;
     }
 
+    @AuthCheck(mustAuth = {"device:query"})
     @GetMapping("getPublicDeviceIDAndAssetNumber")
     //返回公用ID与资产编号键值对
     public List<Map<Integer, String>> getPublicDeviceIDAndAssetNumber() {

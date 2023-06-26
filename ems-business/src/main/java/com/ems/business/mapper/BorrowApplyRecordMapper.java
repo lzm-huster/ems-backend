@@ -84,6 +84,12 @@ public interface BorrowApplyRecordMapper extends BaseMapper<BorrowApplyRecord> {
     @Update("update `BorrowApplyRecord` set `IsDeleted`=1 where `BorrowApplyID`=#{BorrowApplyID};")
     public Integer deleteBorrowApplyRecordByBorrowApplyID(int BorrowApplyID);
 
+    //传入BorrowApplyID，将借用申请记录的状态更改为已归还
+    @Update("update BorrowApplyRecord set BorrowApplyState=#{BorrowApplyState} \n" +
+            "where BorrowApplyID=#{BorrowApplyID};")
+    public Integer updateBorrowApplyStateByBorrowApplyID(String BorrowApplyState, Integer BorrowApplyID);
+
+
     //按照用户类型筛选借用申请单的列表——教师（联表：BorrowApplyRecord、UserRole）
     @Select("select p from BorrowApplyRecord p"+
             "inner join UserRole ur on p.BorrowerID = ur.UserID"+
