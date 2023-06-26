@@ -10,6 +10,7 @@ import com.ems.usercenter.mapper.RoleMapper;
 import com.ems.usercenter.model.entity.Role;
 import com.ems.usercenter.model.entity.RolePermission;
 import com.ems.usercenter.model.request.RoleAddReq;
+import com.ems.usercenter.model.request.RoleUpdateReq;
 import com.ems.usercenter.model.response.PermissionSimpleRes;
 import com.ems.usercenter.model.response.RoleDetailRes;
 import com.ems.usercenter.model.response.RoleSimpleRes;
@@ -19,6 +20,7 @@ import com.ems.usercenter.service.RoleService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -57,6 +59,18 @@ public class RoleController {
         if (ObjectUtil.isNull(role)){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"新增角色失败，请重试");
         }
+        List<Integer> permissionIdList = roleAddReq.getPermissionIdList();
+        Integer roleID = role.getRoleID();
+        List<RolePermission> collect = permissionIdList.stream().map(p -> {
+            RolePermission rolePermission = new RolePermission();
+            rolePermission.setRoleID(roleID);
+            rolePermission.setPermissionID(p);
+            return rolePermission;
+        }).collect(Collectors.toList());
+        boolean saveBatch = rolePermissionService.saveBatch(collect);
+        if (!saveBatch){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"权限添加失败");
+        }
         RoleSimpleRes roleSimpleRes = new RoleSimpleRes();
         BeanUtils.copyProperties(role,roleSimpleRes);
         return roleSimpleRes;
@@ -79,5 +93,37 @@ public class RoleController {
         BeanUtils.copyProperties(role,roleDetailRes);
         roleDetailRes.setPermissionSimpleResListList(permissionListByRoleId);
         return roleDetailRes;
+    }
+    @Transactional
+    @PostMapping("/update")
+    public boolean roleUpdate(@RequestBody RoleUpdateReq roleUpdateReq){
+        Integer roleId = roleUpdateReq.getRoleId();
+        Role role = roleService.getById(roleId);
+        if (ObjectUtil.isNull(role)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"当前角色不存在");
+        }
+        BeanUtils.copyProperties(roleUpdateReq,role);
+        boolean update = roleService.updateById(role);
+        if (!update){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"角色信息更新失败");
+        }
+        QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("RoleID",roleId);
+        boolean remove = rolePermissionService.remove(queryWrapper);
+        if (!remove){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新权限信息失败");
+        }
+        List<Integer> permissionIdList = roleUpdateReq.getPermissionIdList();
+        List<RolePermission> collect = permissionIdList.stream().map(p -> {
+            RolePermission rolePermission = new RolePermission();
+            rolePermission.setRoleID(roleId);
+            rolePermission.setPermissionID(p);
+            return rolePermission;
+        }).collect(Collectors.toList());
+        boolean saveBatch = rolePermissionService.saveOrUpdateBatchByMultiId(collect);
+        if (!saveBatch){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR,"权限更新失败");
+        }
+        return true;
     }
 }
