@@ -1,10 +1,12 @@
 package com.ems.usercenter.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.ems.usercenter.mapper.RolePermissionMapper;
 import com.ems.usercenter.model.entity.Role;
 import com.ems.usercenter.model.entity.RolePermission;
 import com.ems.usercenter.model.entity.UserRole;
 import com.github.jeffreyning.mybatisplus.service.IMppService;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
 * @author 龙志明
@@ -12,5 +14,7 @@ import com.github.jeffreyning.mybatisplus.service.IMppService;
 * @createDate 2023-04-24 09:03:00
 */
 public interface RolePermissionService extends IMppService<RolePermission> {
+
+    boolean removeAllRolePermission(Integer roleId);
 
 }

@@ -1,5 +1,6 @@
 package com.ems.usercenter.controller;
 
+import cn.hutool.core.lang.hash.Hash;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -21,9 +22,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.context.Theme;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ResponseResult
@@ -107,10 +109,9 @@ public class RoleController {
         if (!update){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"角色信息更新失败");
         }
-        QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("RoleID",roleId);
-        boolean remove = rolePermissionService.remove(queryWrapper);
-        if (!remove){
+
+        boolean remove = rolePermissionService.removeAllRolePermission(roleId);
+        if(!remove){
             throw new BusinessException(ErrorCode.OPERATION_ERROR,"更新权限信息失败");
         }
         List<Integer> permissionIdList = roleUpdateReq.getPermissionIdList();
