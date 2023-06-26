@@ -217,7 +217,7 @@ public class RepairController {
             //更改IsDelete属性，删除记录
             UpdateWrapper<DeviceRepairRecord> userUpdateWrapper = new UpdateWrapper<>();
             userUpdateWrapper.eq("RepairID", repairID);
-            boolean state = deviceRepairRecordService.update(deviceRepairRecord, userUpdateWrapper);
+            boolean state = deviceRepairRecordService.removeById(repairID);
 
             if (state)
             {

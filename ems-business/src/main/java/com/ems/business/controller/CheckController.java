@@ -266,7 +266,7 @@ public class CheckController {
             //更改IsDelete属性，删除记录
             UpdateWrapper<DeviceCheckRecord> userUpdateWrapper = new UpdateWrapper<>();
             userUpdateWrapper.eq("CheckID", checkID);
-            boolean state = deviceCheckRecordService.update(deviceCheckRecord, userUpdateWrapper);
+            boolean state = deviceCheckRecordService.removeById(checkID);
             if (state)
             {
                 return 1;

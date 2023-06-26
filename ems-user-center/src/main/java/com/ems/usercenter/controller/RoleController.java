@@ -1,5 +1,6 @@
 package com.ems.usercenter.controller;
 
+import cn.hutool.core.lang.hash.Hash;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
@@ -24,9 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.context.Theme;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ResponseResult
