@@ -272,9 +272,12 @@ public class BorrowApplyRecordController {
         int action1 =0;
         action1=borrowApplyRecordMapper.updateBorrowApplyStateByBorrowApplyID("借用中",BorrowApplyID);
 
-        //将目标借用申请单涉及设备的状态更改为正常
+        //将目标借用申请单涉及设备的状态更改为外借
         int action2=0;
         action2=borrowApplySheetMapper.updateDeviceStateByBorrowApplyID("外借",BorrowApplyID);
+
+        //统计借用设备的费用
+        int action3=0;
 
         if(action1>0 && action2>=0)
         {
@@ -298,12 +301,17 @@ public class BorrowApplyRecordController {
         //将目标借用申请单状态更改为已完成
         int action1 =0;
         action1=borrowApplyRecordMapper.updateBorrowApplyStateByBorrowApplyID("已归还",BorrowApplyID);
-
         //将目标借用申请单涉及设备的状态更改为正常
         int action2=0;
         action2=borrowApplySheetMapper.updateDeviceStateByBorrowApplyID("正常",BorrowApplyID);
+        //写入目标借用申请单涉及设备的归还时间
+        int action3=0;
+        action3=borrowApplySheetMapper.updateActualReturnTimeByBorrowApplyID(BorrowApplyID);
+        //写入目标借用申请单涉及设备的借用费用
+        int action4=0;
+        action4=borrowApplyRecordMapper.updateBorrowFeeByBorrowApplyID(BorrowApplyID);
 
-        if(action1>0 && action2>=0)
+        if(action1>0 && action2>=0&&action3>=0&&action4>=0)
         {
             return 1;
         }else {

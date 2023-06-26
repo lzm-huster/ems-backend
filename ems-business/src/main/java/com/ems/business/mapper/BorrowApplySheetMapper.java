@@ -32,6 +32,11 @@ public interface BorrowApplySheetMapper extends BaseMapper<BorrowApplySheet> {
             " where `DeviceID` in (select DeviceID from BorrowApplySheet where BorrowApplyID=#{BorrowApplyID});")
     public Integer updateDeviceStateByBorrowApplyID(String DeviceState,int BorrowApplyID);
 
+    //归还设备：根据传入的BorrowApplyID修改实际归还时间
+    @Update("update BorrowApplySheet as b join Device as d on " +
+            "b.DeviceID = d.DeviceID set ActualReturnTime =now()" +
+            " where b.BorrowApplyID =#{BorrowApplyID};")
+    public Integer updateActualReturnTimeByBorrowApplyID(int BorrowApplyID);
 
 }
 
