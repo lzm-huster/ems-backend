@@ -283,7 +283,7 @@ public class ScrapController {
             //更改IsDelete属性，删除记录
             UpdateWrapper<DeviceScrapRecord> userUpdateWrapper = new UpdateWrapper<>();
             userUpdateWrapper.eq("ScrapID", scrapID);
-            boolean state = deviceScrapRecordService.update(deviceScrapRecord, userUpdateWrapper);
+            boolean state = deviceScrapRecordService.removeById(scrapID);
             if (state)
             {
                 return 1;
