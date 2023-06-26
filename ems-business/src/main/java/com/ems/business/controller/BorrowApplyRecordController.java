@@ -139,7 +139,7 @@ public class BorrowApplyRecordController {
     @AuthCheck(mustAuth = {"borrow:add"})
     @PostMapping("/insertBorrowApplyRecord")
     //插入一条设备借用申请单数据，成功返回1，失败返回0
-    public int insertBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
+    public int insertBorrowApplyRecord(BorrowApplyRecord borrowApplyRecord)
     {
 
 
@@ -194,7 +194,7 @@ public class BorrowApplyRecordController {
     @AuthCheck(mustAuth = {"borrow:update"})
     @PostMapping("/updateBorrowApplyRecord")
     //更新一条设备借用申请单数据，成功返回1，失败返回0
-    public int updateBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
+    public int updateBorrowApplyRecord(BorrowApplyRecord borrowApplyRecord)
     {
         //判断主键是否为空
         Integer borrowApplyID = borrowApplyRecord.getBorrowApplyID();
@@ -232,10 +232,18 @@ public class BorrowApplyRecordController {
     @AuthCheck(mustAuth = {"borrow:delete"})
     @PostMapping("deleteBorrowApplyRecordByBorrowApplyID")
     //根据BorrowApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
-    public int deleteBorrowApplyRecordByBorrowApplyRecordID(@RequestBody int BorrowApplyID)
+    public int deleteBorrowApplyRecordByBorrowApplyRecordID(int BorrowApplyID)
     {
         if (ObjectUtil.isNull(BorrowApplyID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
+        }
+
+        BorrowApplyRecord borrowApplyRecord=null;
+        borrowApplyRecord=borrowApplyRecordMapper.getBorrowApplyRecordByBorrowApplyID(BorrowApplyID);
+        String borrowApplyState = borrowApplyRecord.getBorrowApplyState();
+
+        if(borrowApplyState=="借用中"){
+            throw new BusinessException(ErrorCode.OPERATION_ERROR, "请先归还设备再删除借用记录");
         }
 
         //删除借用申请表数据

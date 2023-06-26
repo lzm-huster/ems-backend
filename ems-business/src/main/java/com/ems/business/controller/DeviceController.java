@@ -133,7 +133,7 @@ public class DeviceController {
         String CategoryCode = device.getAssetNumber();
         //部分数据系统赋值
         device.setDeviceState("正常");
-        device.setBorrowRate(0.05);
+        device.setBorrowRate(0.001);
         Date date = new Date();
         device.setPurchaseDate(date);
         //预计五年后报废
@@ -176,7 +176,7 @@ public class DeviceController {
     @AuthCheck(mustAuth = {"device:update"})
     @PostMapping("UpdateDevice")
     //更新一条Device数据,返回受影响条数
-    public int UpdateDevice(@RequestBody Device device) {
+    public int UpdateDevice(Device device) {
         //提取前端传入实体的属性值
         Integer deviceID = device.getDeviceID();
 
@@ -210,7 +210,7 @@ public class DeviceController {
     @AuthCheck(mustAuth = {"device:delete"})
     @PostMapping("deleteDeviceByDeviceID")
     //根据DeviceID删除一条Device数据，成功返回1，失败返回0
-    public int deleteDeviceByDeviceID(@RequestBody int DeviceID) {
+    public int deleteDeviceByDeviceID( int DeviceID) {
         if (ObjectUtil.isNull(DeviceID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入实体主键DeviceID为空");
         }

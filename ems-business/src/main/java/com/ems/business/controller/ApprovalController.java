@@ -2,8 +2,6 @@ package com.ems.business.controller;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.ems.annotation.AuthCheck;
 import com.ems.annotation.ResponseResult;
 import com.ems.business.model.entity.ApprovalRecord;
 import com.ems.business.model.entity.BorrowApplyRecord;
@@ -144,7 +142,7 @@ public class ApprovalController {
 
     @PostMapping("/purchaseApprovalRecord")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    public void purchaseApprovalRecord(@RequestBody String state, PurchaseApplySheet purchaseApplySheet, @RequestHeader(value = "token",required = false) String token) {
+    public void purchaseApprovalRecord(String state, PurchaseApplySheet purchaseApplySheet, @RequestHeader(value = "token",required = false) String token) {
         //获取用户信息
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -191,7 +189,7 @@ public class ApprovalController {
 
     @PostMapping("/borrowApprovalRecord")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    public void borrowApprovalRecord(@RequestBody String state, BorrowApplyRecord borrowApplyRecord, @RequestHeader(value = "token",required = false) String token) {
+    public void borrowApprovalRecord(String state, BorrowApplyRecord borrowApplyRecord, @RequestHeader(value = "token",required = false) String token) {
         //获取用户信息
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
@@ -236,7 +234,7 @@ public class ApprovalController {
 
     @PostMapping("/scrapApprovalRecord")   //报废只能由负责人申请，学生不能申请
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    public void scrapApprovalRecord(@RequestBody String state, DeviceScrapRecord deviceScrapRecord, @RequestHeader(value = "token",required = false) String token) {
+    public void scrapApprovalRecord(String state, DeviceScrapRecord deviceScrapRecord, @RequestHeader(value = "token",required = false) String token) {
         Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
         User user = (User)userInfo.get(RedisConstant.UserInfo);
         Integer userId = user.getUserID();

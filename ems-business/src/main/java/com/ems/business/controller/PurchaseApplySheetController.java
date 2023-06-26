@@ -84,7 +84,7 @@ public class PurchaseApplySheetController {
     @AuthCheck(mustAuth = {"purchase:add"})
     @PostMapping("/insertPurchaseApplySheet")
     //插入一条采购申请单数据,返回受影响行数，0表示不成功，1表示成功
-    public int insertPurchaseApplySheet(@RequestBody PurchaseApplySheet purchaseApplySheet)
+    public int insertPurchaseApplySheet( PurchaseApplySheet purchaseApplySheet)
     {
 
         //提取传入实体部分数据
@@ -172,7 +172,7 @@ public class PurchaseApplySheetController {
     @AuthCheck(mustAuth = {"purchase:delete"})
     @PostMapping("deletePurchaseApplySheetByPurchaseApplySheetID")
     //根据PurchaseApplyRecordID删除借用申请单表数据，并删除关联的借用申请表数据，成功返回1，失败返回0
-    public int deletePurchaseApplySheetByPurchaseApplySheetID(@RequestBody int PurchaseApplySheetID)
+    public int deletePurchaseApplySheetByPurchaseApplySheetID( int PurchaseApplySheetID)
     {
         if (ObjectUtil.isNull(PurchaseApplySheetID)) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR, "传入参数为空");
