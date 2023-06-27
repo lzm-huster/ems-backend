@@ -1,6 +1,5 @@
 package com.ems.business.model.response;
 
-import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -21,14 +20,22 @@ public class BorrowApplySheetList {
     /**
      * 设备编号
      */
-    @TableField(value = "DeviceID")
     private Integer deviceID;
+
+    /**
+     * 资产编号
+     */
+    private String assetNumber;
 
     /**
      * 设备名称
      */
-    @TableField(value = "DeviceName")
     private String deviceName;
+
+    /**
+     * 单价
+     */
+    private Double unitPrice;
 
     /**
      * 归还时间
@@ -39,7 +46,6 @@ public class BorrowApplySheetList {
     /**
      * 借用计费
      */
-    @TableField(value = "BorrowFee")
     private BigDecimal borrowFee;
 
 

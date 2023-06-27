@@ -40,8 +40,8 @@ public interface BorrowApplySheetMapper extends BaseMapper<BorrowApplySheet> {
     public Integer updateActualReturnTimeByBorrowApplyID(int BorrowApplyID);
 
     //返回借用记录计费信息
-    @Select("select bs.BorrowID borrowID,bs.DeviceID deviceID,bs.DeviceName deviceName,bs.ActualReturnTime returnTime,bs.BorrowFee borrowFee\n" +
-            "from BorrowApplyRecord br left join BorrowApplySheet bs on br.BorrowApplyID=bs.BorrowApplyID\n" +
+    @Select("select bs.BorrowID borrowID,bs.DeviceID deviceID,d.AssetNumber assetNumber,d.DeviceName deviceName,d.UnitPrice unitPrice,bs.ActualReturnTime returnTime,bs.BorrowFee borrowFee\n" +
+            "from BorrowApplyRecord br left join BorrowApplySheet bs on br.BorrowApplyID=bs.BorrowApplyID left join Device d on bs.DeviceID = d.DeviceID\n" +
             "where br.BorrowApplyState='已归还' and bs.IsDeleted=0;")
     public List<BorrowApplySheetList> getAllBorrowFeeRecord();
 
