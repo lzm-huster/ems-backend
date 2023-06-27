@@ -20,20 +20,20 @@ public interface UserMapper extends BaseMapper<User> {
     @Select("SELECT  r.RoleName " +
             "FROM UserRole ur " +
             "JOIN Role r ON ur.RoleID = r.RoleID " +
-            "WHERE ur.UserID = #{UserID};")
+            "WHERE ur.UserID = #{UserID} and r.IsDeleted = 0 and ur.IsDeleted = 0;")
     String getRoleNameByUserID(int UserID);
 
     @Select("select u.*, r.RoleName,r.RoleDescription " +
             "from User u " +
             "join UserRole ur on u.UserID = ur.UserID " +
             "join Role r on ur.RoleID = r.RoleID " +
-            "where u.UserID = #{userId} And u.IsDeleted = 0 And r.IsDeleted = 0;")
+            "where u.UserID = #{userId} And u.IsDeleted = 0 And r.IsDeleted = 0 And ur.IsDeleted = 0;")
     UserDetailRes getUserDetail(int userId);
     @Select("select u.*,r.RoleID, r.RoleName,r.RoleDescription " +
             "from User u " +
             "join UserRole ur on u.UserID = ur.UserID " +
             "join Role r on ur.RoleID = r.RoleID " +
-            "where r.IsDeleted = 0 And u.IsDeleted = 0")
+            "where r.IsDeleted = 0 And u.IsDeleted = 0 And ur.IsDeleted = 0")
     List<UserDetailRes> getAllDetail();
 
     @Select("select u.*, r.RoleName, r.RoleDescription " +
