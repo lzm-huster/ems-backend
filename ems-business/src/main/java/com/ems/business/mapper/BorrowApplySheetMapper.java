@@ -2,6 +2,7 @@ package com.ems.business.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.ems.business.model.entity.BorrowApplySheet;
+import com.ems.business.model.response.BorrowApplySheetList;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
@@ -37,6 +38,12 @@ public interface BorrowApplySheetMapper extends BaseMapper<BorrowApplySheet> {
             "b.DeviceID = d.DeviceID set ActualReturnTime =now()" +
             " where b.BorrowApplyID =#{BorrowApplyID};")
     public Integer updateActualReturnTimeByBorrowApplyID(int BorrowApplyID);
+
+    //返回借用记录计费信息
+    @Select("select bs.BorrowID borrowID,bs.DeviceID deviceID,d.AssetNumber assetNumber,d.DeviceName deviceName,d.UnitPrice unitPrice,bs.ActualReturnTime returnTime,bs.BorrowFee borrowFee\n" +
+            "from BorrowApplyRecord br left join BorrowApplySheet bs on br.BorrowApplyID=bs.BorrowApplyID left join Device d on bs.DeviceID = d.DeviceID\n" +
+            "where br.BorrowApplyState='已归还' and bs.IsDeleted=0;")
+    public List<BorrowApplySheetList> getAllBorrowFeeRecord();
 
 }
 

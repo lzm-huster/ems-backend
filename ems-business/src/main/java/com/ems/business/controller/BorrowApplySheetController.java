@@ -7,13 +7,20 @@ import com.ems.annotation.ResponseResult;
 import com.ems.business.mapper.BorrowApplyRecordMapper;
 import com.ems.business.mapper.BorrowApplySheetMapper;
 import com.ems.business.model.entity.BorrowApplySheet;
+import com.ems.business.model.response.BorrowApplySheetList;
 import com.ems.common.ErrorCode;
 import com.ems.exception.BusinessException;
+import com.ems.redis.constant.RedisConstant;
+import com.ems.usercenter.constant.UserRedisConstant;
+import com.ems.usercenter.mapper.UserMapper;
+import com.ems.usercenter.model.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @ResponseResult
 @RestController
@@ -24,6 +31,12 @@ public class BorrowApplySheetController {
     private  BorrowApplyRecordMapper borrowApplyRecordMapper;
     @Autowired
     private  BorrowApplySheetMapper borrowApplySheetMapper;
+
+    @Autowired
+    private UserRedisConstant redisConstant;
+    @Autowired
+    private UserMapper userMapper;
+
 
 
     @AuthCheck(mustAuth = {"borrow:query"})
@@ -60,7 +73,7 @@ public class BorrowApplySheetController {
     @AuthCheck(mustAuth = {"borrow:add"})
     @PostMapping("/insertBorrowApplySheet")
     //插入一条借用设备信息返回受影响条数，成功返回1，失败返回0
-    public int insertBorrowApplySheet(@RequestBody BorrowApplySheet borrowApplySheet)
+    public int insertBorrowApplySheet( BorrowApplySheet borrowApplySheet)
     {
         //提取传入实体信息
         Integer deviceID = borrowApplySheet.getDeviceID();
@@ -83,7 +96,7 @@ public class BorrowApplySheetController {
     @AuthCheck(mustAuth = {"borrow:update"})
     @PostMapping("/updateBorrowApplySheet")
     //更新一条借用设备信息返回受影响条数，成功返回1，失败返回0
-    public int updateBorrowApplySheet(@RequestBody BorrowApplySheet borrowApplySheet)
+    public int updateBorrowApplySheet(BorrowApplySheet borrowApplySheet)
     {
         //判断主键是否为空
         Integer borrowID = borrowApplySheet.getBorrowID();
@@ -101,5 +114,28 @@ public class BorrowApplySheetController {
         return Number;
     }
 
+    //这里不用加权限，内部进行了角色控制
+    @GetMapping("/getAllBorrowFeeRecord")
+    public List<BorrowApplySheetList> getAllBorrowFeeRecord(@RequestHeader(value = "token",required = false) String token)
+    {
+        //获取学生身份
+        Map<Object, Object> userInfo = redisConstant.getRedisMapFromToken(token);
+        User user = (User)userInfo.get(RedisConstant.UserInfo);
+        Integer UserID =user.getUserID();
+
+        String RoleName=null;
+        RoleName=userMapper.getRoleNameByUserID(UserID);
+
+        if(!RoleName.equals("deviceAdmin"))
+        {
+            throw new BusinessException(ErrorCode.FORBIDDEN_ERROR, "只有管理员可以访问该信息");
+        }
+
+        List<BorrowApplySheetList> borrowApplySheetLists=new ArrayList<>();
+        borrowApplySheetLists=borrowApplySheetMapper.getAllBorrowFeeRecord();
+
+        return borrowApplySheetLists;
+
+    }
 
 }
