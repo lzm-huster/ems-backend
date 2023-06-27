@@ -34,9 +34,9 @@ public class ApprovalRecordServiceImpl extends ServiceImpl<ApprovalRecordMapper,
     private UserMapper userMapper;
 
     @Override
-    public List<PurchaseApplySheetList2> purchaseApprovalListTe(Integer id, String state) {
+    public List<PurchaseApplySheetList2> purchaseApprovalListTe(Integer userId, String state) {
         List<PurchaseApplySheetList2> List1 = null;
-        List1 = approvalRecordMapper.purchaseApprovalListTe(id,state);
+        List1 = approvalRecordMapper.purchaseApprovalListTe(userId,state);
         return List1;
     }
 

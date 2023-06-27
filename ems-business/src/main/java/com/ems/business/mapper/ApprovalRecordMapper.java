@@ -6,6 +6,7 @@ import com.ems.business.model.entity.PurchaseApply;
 import com.ems.business.model.entity.DeviceScrapRecord;
 import com.ems.business.model.response.*;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.Date;
@@ -30,8 +31,8 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
             "inner join User u2 on ps.PurchaseApplicantID = u2.UserID \n"+
             "inner join UserRole ur on ps.PurchaseApplicantID = ur.UserID \n"+
             "inner join Role r on ur.RoleID = r.RoleID \n"+
-            "where ps.ApproveTutorID=#{id} and ps.PurchaseApplyState = #{state} and ps.IsDeleted = 0;")
-    public List<PurchaseApplySheetList2> purchaseApprovalListTe(Integer id, String state);
+            "where ps.ApproveTutorID=#{userId} and ps.PurchaseApplyState = #{state} and ps.IsDeleted = 0;")
+    public List<PurchaseApplySheetList2> purchaseApprovalListTe(@Param("userId")Integer userId, @Param("state")String state);
 
     // 1、返回需要审批的采购申请单：设备管理员/院领导 （全部）   PurchaseApplySheetList2
     @Select("\n" +
