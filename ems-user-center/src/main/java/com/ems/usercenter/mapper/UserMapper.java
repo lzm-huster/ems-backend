@@ -40,7 +40,7 @@ public interface UserMapper extends BaseMapper<User> {
             "from User u " +
             "join UserRole ur on u.UserID = ur.UserID " +
             "join Role r ON r.RoleID = ur.RoleID " +
-            "where ur.RoleID = 3 And r.IsDeleted = 0 And u.IsDeleted = 0;")
+            "where ur.RoleID = 3 And r.IsDeleted = 0 And u.IsDeleted = 0 AND r.IsDeleted = 0 And ur.IsDeleted = 0;")
     List<UserDetailRes> getStaffList();
 }
 
