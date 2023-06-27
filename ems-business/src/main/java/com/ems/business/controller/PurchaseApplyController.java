@@ -27,7 +27,7 @@ public class PurchaseApplyController {
     @AuthCheck(mustAuth = {"purchase:add"})
     @PostMapping("/insertPurchaseApply")
     //插入一条采购设备数据,返回受影响行数，0表示不成功，1表示成功
-    public int insertPurchaseApply( PurchaseApply purchaseApply)
+    public int insertPurchaseApply(@RequestBody PurchaseApply purchaseApply)
     {
 
         //提取传入实体的数据
