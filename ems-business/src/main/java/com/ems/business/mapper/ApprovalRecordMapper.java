@@ -58,7 +58,7 @@ public interface ApprovalRecordMapper extends BaseMapper<ApprovalRecord> {
             "inner join UserRole ur on br.BorrowerID = ur.UserID \n"+
             "inner join Role r on ur.RoleID = r.RoleID \n"+
             "where br.ApproveTutorID=#{id} and br.BorrowApplyState = #{state} and br.IsDeleted = 0;")
-    public List<BorrowApplyRecordList2> borrowApprovalListTe(Integer id, String state);
+    public List<BorrowApplyRecordList2> borrowApprovalListTe(@Param("id") Integer id,@Param("state") String state);
 
     // 2、返回需要审批的借用申请单：设备管理员 （全部）   BorrowApplyRecordList2
     @Select("\n" +
