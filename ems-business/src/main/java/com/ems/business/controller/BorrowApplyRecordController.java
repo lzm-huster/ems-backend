@@ -17,6 +17,7 @@ import com.ems.redis.constant.RedisConstant;
 import com.ems.usercenter.constant.UserRedisConstant;
 import com.ems.usercenter.mapper.UserMapper;
 import com.ems.usercenter.model.entity.User;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -139,7 +140,7 @@ public class BorrowApplyRecordController {
     @AuthCheck(mustAuth = {"borrow:add"})
     @PostMapping("/insertBorrowApplyRecord")
     //插入一条设备借用申请单数据，成功返回1，失败返回0
-    public int insertBorrowApplyRecord(BorrowApplyRecord borrowApplyRecord)
+    public int insertBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
     {
 
 
@@ -194,7 +195,7 @@ public class BorrowApplyRecordController {
     @AuthCheck(mustAuth = {"borrow:update"})
     @PostMapping("/updateBorrowApplyRecord")
     //更新一条设备借用申请单数据，成功返回1，失败返回0
-    public int updateBorrowApplyRecord(BorrowApplyRecord borrowApplyRecord)
+    public int updateBorrowApplyRecord(@RequestBody BorrowApplyRecord borrowApplyRecord)
     {
         //判断主键是否为空
         Integer borrowApplyID = borrowApplyRecord.getBorrowApplyID();

@@ -73,7 +73,7 @@ public class BorrowApplySheetController {
     @AuthCheck(mustAuth = {"borrow:add"})
     @PostMapping("/insertBorrowApplySheet")
     //插入一条借用设备信息返回受影响条数，成功返回1，失败返回0
-    public int insertBorrowApplySheet( BorrowApplySheet borrowApplySheet)
+    public int insertBorrowApplySheet(@RequestBody BorrowApplySheet borrowApplySheet)
     {
         //提取传入实体信息
         Integer deviceID = borrowApplySheet.getDeviceID();
@@ -96,7 +96,7 @@ public class BorrowApplySheetController {
     @AuthCheck(mustAuth = {"borrow:update"})
     @PostMapping("/updateBorrowApplySheet")
     //更新一条借用设备信息返回受影响条数，成功返回1，失败返回0
-    public int updateBorrowApplySheet(BorrowApplySheet borrowApplySheet)
+    public int updateBorrowApplySheet(@RequestBody BorrowApplySheet borrowApplySheet)
     {
         //判断主键是否为空
         Integer borrowID = borrowApplySheet.getBorrowID();
