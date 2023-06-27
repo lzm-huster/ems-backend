@@ -12,8 +12,6 @@ public class UserUpdateReq {
      * 用户名
      */
     private String userName;
-
-
     /**
      * 性别
      */
